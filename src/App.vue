@@ -1,119 +1,120 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from '@/components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <ion-app style="flex-direction:row; justify-content: unset;">
+    <ion-split-pane content-id="main-content">
+      <ion-menu content-id="main-content" type="overlay">
+        <ion-content>
+          <ion-list id="inbox-list">
+            <ion-menu-toggle auto-hide="false" v-for="(p, i) in appPages" :key="i">
+              <ion-item
+                @click="selectedIndex = i"
+                router-direction="root"
+                :router-link="p.url"
+                lines="none"
+                detail="false"
+                class="hydrated"
+                :class="{ selected: selectedIndex === i }"
+              >
+                <ion-label>{{ p.title }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </ion-list>
+        </ion-content>
+      </ion-menu>
+      <ion-router-outlet id="main-content"></ion-router-outlet>
+    </ion-split-pane>
+    <!-- <router-view name="extra" style="pointer-events: none !important"></router-view> -->
+  </ion-app>
 </template>
 
-<style>
-@import '@/assets/base.css';
+<script lang="ts">
+import {
+  IonApp,
+  IonContent,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonMenu,
+  IonMenuToggle,
+  IonRouterOutlet,
+  IonSplitPane
+} from "@ionic/vue";
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+import {
+  archiveOutline,
+  archiveSharp,
+  bookmarkOutline,
+  bookmarkSharp,
+  heartOutline,
+  heartSharp,
+  mailOutline,
+  mailSharp,
+  paperPlaneOutline,
+  paperPlaneSharp,
+  trashOutline,
+  trashSharp,
+  warningOutline,
+  warningSharp
+} from "ionicons/icons";
 
-  font-weight: normal;
-}
+import { defineComponent, ref } from "vue";
+import { useRouter, useRoute } from 'vue-router';
 
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+export default defineComponent({
+  name: "App",
+  components: {
+    IonApp,
+    IonContent,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonMenu,
+    IonMenuToggle,
+    IonRouterOutlet,
+    IonSplitPane
+  },
+  setup() {
+    const selectedIndex = ref(0);
+    const appPages = [
+      {
+        title: "Tabs",
+        url: "/tabs",
+      },
+      {
+        title: "Other",
+        url: "/other",
+      },
+    ];
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+    const path = window.location.pathname.split("folder/")[1];
+    if (path !== undefined) {
+      selectedIndex.value = appPages.findIndex(
+        page => page.title.toLowerCase() === path.toLowerCase()
+      );
+    }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
+    const router = useRouter()
+    const route = useRoute()
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    return {
+      selectedIndex,
+      appPages,
+      archiveOutline,
+      archiveSharp,
+      bookmarkOutline,
+      bookmarkSharp,
+      heartOutline,
+      heartSharp,
+      mailOutline,
+      mailSharp,
+      paperPlaneOutline,
+      paperPlaneSharp,
+      trashOutline,
+      trashSharp,
+      warningOutline,
+      warningSharp,
+      isSelected: (url: string) => (url === route.path ? "selected" : "")
+    };
   }
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+});
+</script>

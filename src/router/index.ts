@@ -1,23 +1,48 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from "@ionic/vue-router";
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
+import Home from "../views/Home.vue";
+import Page from "../views/Page.vue";
+import Extra from "../views/Extra.vue";
+
+// const routes = [
+//   { path: "/", component: Home },
+//   { path: "/page", components: { default: Page, extra: Extra } },
+// ]
+
+const routes = [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView
+        path: "",
+        redirect: "/tabs",
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    }
-  ]
-})
+        path: "/tabs",
+        component: () => import("../views/tabs/TabRoot.vue"),
+        children: [
+            {
+                path: "",
+                redirect: "/tabs/speakers",
+            },
+            {
+                path: "/tabs/speakers",
+                component: () => import("../views/tabs/Speakers.vue"),
+            },
+            {
+                path: "/tabs/schedule",
+                component: () => import("../views/tabs/Schedule.vue"),
+            },
+        ],
+    },
 
-export default router
+    {
+        path: "/other",
+        component: () => import("../views/Other.vue"),
+    },
+];
+
+// https://vitejs.dev/guide/env-and-mode.html
+const router = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes,
+});
+
+export default router;
