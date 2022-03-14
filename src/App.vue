@@ -20,7 +20,17 @@
           </ion-list>
         </ion-content>
       </ion-menu>
+      <!-- <ion-router-outlet id="main-content" style="background-color: green; width: 600px;"></ion-router-outlet> -->
       <ion-router-outlet id="main-content"></ion-router-outlet>
+      <!-- <div
+        class="split-pane-main test-class"
+        style="flex: unset; width: 600px; background-color: red;"
+      >
+        <ion-router-outlet id="main-content" style="background-color: green; width: 600px;"></ion-router-outlet>
+      </div>-->
+      <!-- <div style="width: 300px; height: 400px; background-color: red;">
+        <ion-router-outlet id="main-content" style="width: 300px"></ion-router-outlet>
+      </div>-->
     </ion-split-pane>
     <!-- <router-view name="extra" style="pointer-events: none !important"></router-view> -->
   </ion-app>
@@ -118,3 +128,11 @@ export default defineComponent({
   }
 });
 </script>
+
+<style>
+.test-class {
+  flex: unset;
+  width: 600px;
+  background-color: red;
+}
+</style>
