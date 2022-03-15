@@ -12,7 +12,7 @@ import Extra from "../views/Extra.vue";
 const routes = [
     {
         path: "",
-        redirect: "/tabs",
+        component: () => import("../App.vue"),
     },
     {
         path: "/tabs",
