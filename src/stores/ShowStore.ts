@@ -1,5 +1,6 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 // import { useLocalStorage } from "@vueuse/core";
+
 export const useShowStore = defineStore("ShowStore", {
     state: () => {
         return {

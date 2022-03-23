@@ -8,9 +8,13 @@
         <ion-title>default title</ion-title>
       </ion-toolbar>
     </ion-header>-->
-    <ion-tabs @ionTabsWillChange="beforeTabChange" @ionTabsDidChange="afterTabChange">
+    <ion-tabs
+      class="only-on-narrow-screen"
+      @ionTabsWillChange="beforeTabChange"
+      @ionTabsDidChange="afterTabChange"
+    >
       <ion-router-outlet></ion-router-outlet>
-      <ion-tab-bar slot="bottom">
+      <ion-tab-bar v-if="!isWideScreen" slot="bottom">
         <ion-tab-button tab="schedule" href="/tabs/schedule">
           <ion-icon :icon="calendar"></ion-icon>
           <ion-label>Schedule</ion-label>
@@ -27,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, inject, onMounted, ref } from "vue";
 import { useRouter, useRoute } from 'vue-router';
 
 import {
@@ -65,6 +69,8 @@ export default defineComponent({
     IonRouterOutlet
   },
   setup() {
+    const isWideScreen = inject('isWideScreen');
+    const screenWidth = inject('screenWidth')
     const router = useRouter()
     const route = useRoute()
 
@@ -75,13 +81,16 @@ export default defineComponent({
       // do something after tab change
     };
 
+
     return {
       router,
       route,
       calendar,
       personCircle,
       beforeTabChange,
-      afterTabChange
+      afterTabChange,
+      isWideScreen,
+      screenWidth
     };
   }
 });
