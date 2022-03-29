@@ -35,16 +35,12 @@
     import { computed, defineComponent, onMounted, provide, ref } from "vue";
 
     import { useRouter, useRoute } from "vue-router";
-
-    import ShowService from "./services/ShowService";
-
-    import TodoModel from "@/services/TodoModel";
-
-    import Person from "@/services/Person";
+    import TraktApiSession from "@/helpers/http/TraktApiSession";
+    import type { CalendarShow } from "@/helpers/serializers/CalendarShowsSerializer";
 
     const router = useRouter();
     const route = useRoute();
-    
+
     const selectedIndex = ref(0);
     const appPages = [
         {
@@ -66,12 +62,17 @@
 
     const screenWidth = ref(screen.width);
 
-    onMounted(() => {
+    onMounted(async () => {
         window.onresize = () => {
             screenWidth.value = window.innerWidth;
             console.log(`screenWidth=${screenWidth.value}`);
             console.log(`isWideScreen=${isWideScreen.value}`);
         };
+
+        // alternative approach to get around problem of using async in setup without using Suspense
+        // see https://stackoverflow.com/questions/64117116/how-can-i-use-async-await-in-the-vue-3-0-setup-function-using-typescript
+        // const apiResult = await _apiSession.Calendar.getMyCalendarShows();
+        // console.log(apiResult);
     });
 
     const isWideScreen = computed(() => {
@@ -85,20 +86,19 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    // const todoModel1: any = TodoModel(["todo 3", "todo 4"]);
-    // console.log(todoModel1.todos);
-    //
-    // const todoModel2: any = TodoModel(["todo 5", "todo 6"]);
-    // console.log(todoModel2.todos);
-    //
-    // const person1 = new (Person as any)("Bob", 38, true);
-    // // creates a Person instance with properties name: Alice, age: 32, isDeveloper: false and a method writesCode
-    // const person2 = new (Person as any)("Alice", 32);
-    //
-    // // prints out: This person does write code
-    // person1.writesCode();
-    // // prints out: this person does not write code
-    // person2.writesCode();
+    const _apiSession = TraktApiSession(true);
+    
+    // alternative approach to get around problem of using async in setup without using Suspense
+    // see https://stackoverflow.com/questions/64117116/how-can-i-use-async-await-in-the-vue-3-0-setup-function-using-typescript
+    const shows = ref([]);
+    const apiResult = _apiSession.Calendar.getMyCalendarShows()
+        .then((response) => {
+            console.log(response);
+            shows.value = response.data;
+        }, (error) => {
+            console.log(error);
+        });
+    
 </script>
 
 <template>
