@@ -1,51 +1,60 @@
 import axios from "axios";
-import type { AxiosRequestHeaders, AxiosResponse } from "axios";
-import CalendarRequests from "@/helpers/trakt_manager_requests/calendar_requests";
+import type { AxiosRequestHeaders, AxiosResponse, AxiosInstance } from "axios";
+import CalendarRequests from "@/helpers/trakt_api_requests/CalendarRequests";
 import * as Enums from "@/helpers/enums";
 
-export default function TraktApiSession(isUseProxy = false) {
-    const _isUseProxy = isUseProxy;
+interface DoHttpParams {
+    verb: Enums.HttpVerb;
+    url: string;
+    queryParams?: any;
+    postData?: any;
+    serializer: (json: string) => any;
+}
 
-    const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
-    const BASE_URL = "https://api.trakt.tv";
-    const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
-    const CLIENT_SECRET = "8c1902d0284fad4ff6b052f0fdbfd50be1075088ba5d6f33b218734067568148";
-    const ACCESS_TOKEN = "908366de1b222a5cabfda200e6e829633a7c51234ce655d18674b3de5d7e8f4c";
-    const TRAKT_VERSION = 2;
+export default class TraktApiSession {
+    private PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
+    private BASE_URL = "https://api.trakt.tv";
+    private CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
+    private CLIENT_SECRET = "8c1902d0284fad4ff6b052f0fdbfd50be1075088ba5d6f33b218734067568148";
+    private ACCESS_TOKEN = "908366de1b222a5cabfda200e6e829633a7c51234ce655d18674b3de5d7e8f4c";
+    private TRAKT_VERSION = 2;
 
-    const headers: AxiosRequestHeaders = {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-        "trakt-api-key": CLIENT_ID,
-        "trakt-api-version": TRAKT_VERSION,
+    private headers: AxiosRequestHeaders = {
+        Authorization: `Bearer ${this.ACCESS_TOKEN}`,
+        "trakt-api-key": this.CLIENT_ID,
+        "trakt-api-version": this.TRAKT_VERSION,
         "Content-Type": "application/json",
     };
 
-    const _session = axios.create();
-    _session.defaults.baseURL = BASE_URL;
-    _session.defaults.headers.common = headers;
+    private _session: AxiosInstance;
+    private _calendar = new CalendarRequests(this);
+    private readonly _isUseProxy: boolean;
+    
+    public Calendar = this._calendar;
 
-    interface DoHttpParams {
-        verb: Enums.HttpVerb;
-        url: string;
-        queryParams?: any;
-        postData?: any;
-        serializer: (json: string) => any;
+    constructor(isUseProxy: boolean) {
+        this._isUseProxy = isUseProxy;
+        const self = this;
+
+        this._session = axios.create();
+        this._session.defaults.baseURL = this.BASE_URL;
+        this._session.defaults.headers.common = this.headers;
     }
 
-    async function doHttp({
+    doHttp = async ({
         verb,
         url,
         queryParams = null,
         postData = null,
         serializer,
-    }: DoHttpParams) {
+    }: DoHttpParams) => {
         let response: AxiosResponse | null = null;
         try {
             switch (verb) {
                 case Enums.HttpVerb.get:
-                    if (_isUseProxy) url = PROXY_URL + BASE_URL + url;
+                    if (this._isUseProxy) url = this.PROXY_URL + this.BASE_URL + url;
                     console.log("url:", url);
-                    response = await _session.get(url, {
+                    response = await this._session.get(url, {
                         params: queryParams,
                         // transformResponse: [
                         //     (data) => {
@@ -55,7 +64,7 @@ export default function TraktApiSession(isUseProxy = false) {
                     });
                     break;
                 case Enums.HttpVerb.post:
-                    response = await _session.post(url, postData);
+                    response = await this._session.post(url, postData);
                     break;
                 case Enums.HttpVerb.put:
                     break;
@@ -69,15 +78,5 @@ export default function TraktApiSession(isUseProxy = false) {
             debugger;
         }
         return Promise.resolve(response);
-    }
-
-    const apiSession = {
-        doHttp,
-    };
-
-    const _calendar = CalendarRequests(apiSession);
-
-    return {
-        Calendar: _calendar
     };
 }

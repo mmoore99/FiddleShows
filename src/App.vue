@@ -86,7 +86,9 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    const _apiSession = TraktApiSession(true);
+    const _apiSession = new TraktApiSession(true);
+    
+    
     
     // alternative approach to get around problem of using async in setup without using Suspense
     // see https://stackoverflow.com/questions/64117116/how-can-i-use-async-await-in-the-vue-3-0-setup-function-using-typescript
