@@ -1,13 +1,13 @@
 import { Convert as CalendarShowsSerializer } from "@/helpers/serializers/CalendarShowsSerializer";
 import { HttpVerb } from "@/helpers/enums";
 import type { CalendarShow } from "@/helpers/serializers/CalendarShowsSerializer";
+import TraktApiCategory from "@/helpers/trakt_api_requests/TraktApiCategory";
 
-export default class CalendarRequests {
+export default class CalendarRequests extends TraktApiCategory {
     private calendarsGetShowsUrlTemplate = `/calendars/my/shows`;
-    private _apiSession: any;
 
     constructor(apiSession: any) {
-        this._apiSession = apiSession;
+        super(apiSession);
     }
 
     public getMyCalendarShows = async () => {
@@ -22,4 +22,3 @@ export default class CalendarRequests {
         return response;
     };
 }
-
