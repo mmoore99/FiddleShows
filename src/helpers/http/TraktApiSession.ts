@@ -13,7 +13,7 @@ interface DoHttpParams {
 
 interface ApiCallParams {
     request: string;
-    extendedFull: boolean;
+    extendedFull?: boolean;
     pagination?: any;
     filters?: any;
     queryParams?: null | {};
@@ -29,9 +29,9 @@ export default class TraktApiSession {
     private TRAKT_VERSION = 2;
 
     private _commonHeaders: AxiosRequestHeaders = {
+        "Content-Type": "application/json",
         "trakt-api-key": this.CLIENT_ID,
         "trakt-api-version": this.TRAKT_VERSION,
-        "Content-Type": "application/json",
     };
 
     private _authorizationHeader = { Authorization: `Bearer ${this.ACCESS_TOKEN}` };
@@ -111,23 +111,27 @@ export default class TraktApiSession {
             }
             let headers = this._commonHeaders;
             headers = Object.assign(headers, this._authorizationHeader);
-
             let url = this.BASE_URL + request;
             if (this._isUseProxy) url = this.PROXY_URL + url;
             console.log("url:", url);
 
             response = await this._session.get(url, {
                 headers: headers,
+                data: {}, // this is required to prevent axios from removing content-type header
                 params: queryParams,
-                // transformResponse: [
-                //     (data) => {
-                //         return serializer ? serializer(data) : null;
-                //     },
-                // ],
+                transformResponse: [
+                    (data) => {
+                        try {
+                            return serializer ? serializer(data) : null;
+                        } catch (e) {
+                            console.log("Exception during deserialization", e);
+                            return null;
+                        }
+                    },
+                ],
             });
         } catch (e) {
             console.log("Http error:", e);
-            debugger;
         }
         return Promise.resolve(response);
     };

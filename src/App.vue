@@ -103,7 +103,10 @@
     // see https://stackoverflow.com/questions/64117116/how-can-i-use-async-await-in-the-vue-3-0-setup-function-using-typescript
     const shows = ref([]);
     const queryParams = { extended: "full" };
-    const apiResult = _apiSession.Calendar.getMyCalendarShows({ queryParams }).then(
+    // const apiResult = _apiSession.Calendar.getMyCalendarShows({ queryParams }).then(
+    const apiResult = _apiSession.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
+    // const apiResult = _apiSession.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
+    // const apiResult = _apiSession.Calendar.getMyShows().then(
         (response) => {
             console.log(response);
             shows.value = response.data;
