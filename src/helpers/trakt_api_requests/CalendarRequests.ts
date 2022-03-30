@@ -10,12 +10,15 @@ export default class CalendarRequests extends TraktApiCategory {
         super(apiSession);
     }
 
-    public getMyCalendarShows = async () => {
-        const response = await this._apiSession.doHttp({
-            verb: HttpVerb.get,
-            url: this.calendarsGetShowsUrlTemplate,
-            queryParams: null,
-            postData: null,
+    public getMyCalendarShows = async ({startDate = "", numberOfDays = null, extendedFull = false, queryParams = {} } = {}) => {
+        let request = "";
+        if (startDate) request = `/${startDate}`;
+        if (numberOfDays) request = `/${numberOfDays}`;
+        const response = await this._apiSession.authenticatedGetList({
+            request: this.calendarsGetShowsUrlTemplate,
+            extendedFull: extendedFull,
+            pagination: null,
+            queryParams: queryParams,
             serializer: CalendarShowsSerializer.toCalendarShows,
         });
         console.log(response);

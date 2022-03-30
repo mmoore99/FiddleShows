@@ -37,6 +37,11 @@
     import { useRouter, useRoute } from "vue-router";
     import TraktApiSession from "@/helpers/http/TraktApiSession";
     import type { CalendarShow } from "@/helpers/serializers/CalendarShowsSerializer";
+    import {
+        Filters,
+        MovieFilters,
+        RequestPagination
+    } from "@/models/RequestModels";
 
     const router = useRouter();
     const route = useRoute();
@@ -86,21 +91,27 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    const _apiSession = new TraktApiSession(true);
-    
-    
-    
+    const _apiSession = new TraktApiSession(false);
+
+    const filters = new Filters({query: "this is the query", years:"1972", genres:['drama','comedy'], countries:["US","FR"]});
+    console.log("Filters:", filters.toMap());
+
+    const movieFilters = new MovieFilters({query: "batman", years:"1972", genres:['drama','comedy'], countries:["US","FR"]}, {certifications: ["pg-13","r"]});
+    console.log("MovieFilters:", movieFilters.toMap());
+
     // alternative approach to get around problem of using async in setup without using Suspense
     // see https://stackoverflow.com/questions/64117116/how-can-i-use-async-await-in-the-vue-3-0-setup-function-using-typescript
     const shows = ref([]);
-    const apiResult = _apiSession.Calendar.getMyCalendarShows()
-        .then((response) => {
+    const queryParams = { extended: "full" };
+    const apiResult = _apiSession.Calendar.getMyCalendarShows({ queryParams }).then(
+        (response) => {
             console.log(response);
             shows.value = response.data;
-        }, (error) => {
+        },
+        (error) => {
             console.log(error);
-        });
-    
+        }
+    );
 </script>
 
 <template>

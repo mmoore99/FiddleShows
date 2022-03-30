@@ -11,6 +11,15 @@ interface DoHttpParams {
     serializer: (json: string) => any;
 }
 
+interface ApiCallParams {
+    request: string;
+    extendedFull: boolean;
+    pagination?: any;
+    filters?: any;
+    queryParams?: null | {};
+    serializer: any;
+}
+
 export default class TraktApiSession {
     private PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     private BASE_URL = "https://api.trakt.tv";
@@ -19,17 +28,18 @@ export default class TraktApiSession {
     private ACCESS_TOKEN = "908366de1b222a5cabfda200e6e829633a7c51234ce655d18674b3de5d7e8f4c";
     private TRAKT_VERSION = 2;
 
-    private headers: AxiosRequestHeaders = {
-        Authorization: `Bearer ${this.ACCESS_TOKEN}`,
+    private _commonHeaders: AxiosRequestHeaders = {
         "trakt-api-key": this.CLIENT_ID,
         "trakt-api-version": this.TRAKT_VERSION,
         "Content-Type": "application/json",
     };
 
+    private _authorizationHeader = { Authorization: `Bearer ${this.ACCESS_TOKEN}` };
+
     private _session: AxiosInstance;
     private _calendar = new CalendarRequests(this);
     private readonly _isUseProxy: boolean;
-    
+
     public Calendar = this._calendar;
 
     constructor(isUseProxy: boolean) {
@@ -38,7 +48,7 @@ export default class TraktApiSession {
 
         this._session = axios.create();
         this._session.defaults.baseURL = this.BASE_URL;
-        this._session.defaults.headers.common = this.headers;
+        this._session.defaults.headers.common = this._commonHeaders;
     }
 
     doHttp = async ({
@@ -73,6 +83,48 @@ export default class TraktApiSession {
                 default:
                     throw "Invalid Http verb";
             }
+        } catch (e) {
+            console.log("Http error:", e);
+            debugger;
+        }
+        return Promise.resolve(response);
+    };
+
+    authenticatedGetList = async ({
+        request = "",
+        extendedFull = false,
+        pagination = null,
+        filters = null,
+        queryParams = null,
+        serializer = null,
+    }: ApiCallParams) => {
+        let response: AxiosResponse | null = null;
+        try {
+            queryParams = queryParams ?? {};
+
+            queryParams = Object.assign(queryParams, pagination);
+            queryParams = Object.assign(queryParams, filters);
+
+            if (extendedFull) {
+                // @ts-ignore
+                queryParams["extended"] = "full";
+            }
+            let headers = this._commonHeaders;
+            headers = Object.assign(headers, this._authorizationHeader);
+
+            let url = this.BASE_URL + request;
+            if (this._isUseProxy) url = this.PROXY_URL + url;
+            console.log("url:", url);
+
+            response = await this._session.get(url, {
+                headers: headers,
+                params: queryParams,
+                // transformResponse: [
+                //     (data) => {
+                //         return serializer ? serializer(data) : null;
+                //     },
+                // ],
+            });
         } catch (e) {
             console.log("Http error:", e);
             debugger;
