@@ -4,3 +4,8 @@ export enum HttpVerb {
   put,
   delete,
 }
+
+export enum EntityType{
+  show,
+  movie
+}

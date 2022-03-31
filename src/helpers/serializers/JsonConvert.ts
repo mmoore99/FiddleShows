@@ -7,16 +7,25 @@
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-import type { CalendarShow } from "@/models/CalendarModels";
+import type { CalendarShow, CalendarMovie } from "@/models/CalendarModels";
 import type { Show } from "@/models/ShowModels";
 import type { Episode } from "@/models/EpisodeModels";
 import type { Airs, Ids } from "@/models/CommonModels";
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
-export class Convert {
+
+let typeMap: any = null;
+
+export class JsonConvert {
     public static toCalendarShow(json: string): CalendarShow[] {
+        typeMap = typeMapCalendarShows;
         return cast(JSON.parse(json), a(r("CalendarShow")));
+    }
+
+    public static toCalendarMovie(json: string): CalendarMovie[] {
+        typeMap = typeMapMovieShows;
+        return cast(JSON.parse(json), a(r("CalendarMovie")));
     }
 
     public static calendarShowToJson(value: CalendarShow[]): string {
@@ -26,11 +35,7 @@ export class Convert {
 
 function invalidValue(typ: any, val: any, key: any = ""): never {
     if (key) {
-        throw Error(
-            `Invalid value for key "${key}". Expected type ${JSON.stringify(
-                typ
-            )} but got ${JSON.stringify(val)}`
-        );
+        throw Error(`Invalid value for key "${key}". Expected type ${JSON.stringify(typ)} but got ${JSON.stringify(val)}`);
     }
     throw Error(`Invalid value ${JSON.stringify(val)} for type ${JSON.stringify(typ)}`);
 }
@@ -148,7 +153,7 @@ function transform(val: any, typ: any, getProps: any, key: any = ""): any {
 }
 
 function cast<T>(val: any, typ: any): T {
-    return transform(val, typ, jsonToJSProps);
+    return transform(val, typ, jsonToJSProps, "");
 }
 
 function uncast<T>(val: T, typ: any): any {
@@ -181,7 +186,7 @@ function r(name: string) {
     return { ref: name };
 }
 
-const typeMap: any = {
+const typeMapCalendarShows: any = {
     CalendarShow: o(
         [
             {
@@ -437,4 +442,38 @@ const typeMap: any = {
         ],
         false
     ),
+};
+
+const typeMapMovieShows: any = {
+  "CalendarMovie": o([
+    { json: "released", js: "released", typ: u(undefined, Date) },
+    { json: "movie", js: "movie", typ: u(undefined, r("Movie")) },
+  ], false),
+  "Movie": o([
+    { json: "title", js: "title", typ: u(undefined, "") },
+    { json: "year", js: "year", typ: u(undefined, u(0, null)) },
+    { json: "ids", js: "ids", typ: u(undefined, r("Ids")) },
+    { json: "tagline", js: "tagline", typ: u(undefined, "") },
+    { json: "overview", js: "overview", typ: u(undefined, "") },
+    { json: "released", js: "released", typ: u(undefined, Date) },
+    { json: "runtime", js: "runtime", typ: u(undefined, 0) },
+    { json: "country", js: "country", typ: u(undefined, u(null, "")) },
+    { json: "trailer", js: "trailer", typ: u(undefined, u(null, "")) },
+    { json: "homepage", js: "homepage", typ: u(undefined, u(null, "")) },
+    { json: "status", js: "status", typ: u(undefined, "") },
+    { json: "rating", js: "rating", typ: u(undefined, 3.14) },
+    { json: "votes", js: "votes", typ: u(undefined, 0) },
+    { json: "comment_count", js: "commentCount", typ: u(undefined, 0) },
+    { json: "updated_at", js: "updatedAt", typ: u(undefined, Date) },
+    { json: "language", js: "language", typ: u(undefined, "") },
+    { json: "available_translations", js: "availableTranslations", typ: u(undefined, a("")) },
+    { json: "genres", js: "genres", typ: u(undefined, a("")) },
+    { json: "certification", js: "certification", typ: u(undefined, u(null, "")) },
+  ], false),
+  "Ids": o([
+    { json: "trakt", js: "trakt", typ: u(undefined, 0) },
+    { json: "slug", js: "slug", typ: u(undefined, "") },
+    { json: "imdb", js: "imdb", typ: u(undefined, u(null, "")) },
+    { json: "tmdb", js: "tmdb", typ: u(undefined, 0) },
+  ], false),
 };

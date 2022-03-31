@@ -1,19 +1,5 @@
 <script setup lang="ts">
-    import {
-        IonApp,
-        IonGrid,
-        IonRow,
-        IonCol,
-        IonContent,
-        IonIcon,
-        IonItem,
-        IonLabel,
-        IonList,
-        IonMenu,
-        IonMenuToggle,
-        IonRouterOutlet,
-        IonSplitPane,
-    } from "@ionic/vue";
+    import { IonApp, IonGrid, IonRow, IonCol, IonContent, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonRouterOutlet, IonSplitPane } from "@ionic/vue";
 
     import {
         archiveOutline,
@@ -36,12 +22,8 @@
 
     import { useRouter, useRoute } from "vue-router";
     import TraktApiSession from "@/helpers/http/TraktApiSession";
-    import type { CalendarShow } from "@/helpers/serializers/CalendarShowsSerializer";
-    import {
-        Filters,
-        MovieFilters,
-        RequestPagination
-    } from "@/models/RequestModels";
+    import { Filters, MovieFilters, RequestPagination } from "@/models/RequestModels";
+    import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
 
     const router = useRouter();
     const route = useRoute();
@@ -60,9 +42,7 @@
 
     const path = window.location.pathname.split("folder/")[1];
     if (path !== undefined) {
-        selectedIndex.value = appPages.findIndex(
-            (page) => page.title.toLowerCase() === path.toLowerCase()
-        );
+        selectedIndex.value = appPages.findIndex((page) => page.title.toLowerCase() === path.toLowerCase());
     }
 
     const screenWidth = ref(screen.width);
@@ -91,25 +71,36 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    const _apiSession = new TraktApiSession(false);
+    const _traktApi = new TraktApiSession({ isUseProxy: false });
 
-    const filters = new Filters({query: "this is the query", years:"1972", genres:['drama','comedy'], countries:["US","FR"]});
+    const filters = new Filters({ query: "this is the query", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] });
     console.log("Filters:", filters.toMap());
 
-    const movieFilters = new MovieFilters({query: "batman", years:"1972", genres:['drama','comedy'], countries:["US","FR"]}, {certifications: ["pg-13","r"]});
+    const movieFilters = new MovieFilters({ query: "batman", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] }, { certifications: ["pg-13", "r"] });
     console.log("MovieFilters:", movieFilters.toMap());
 
     // alternative approach to get around problem of using async in setup without using Suspense
     // see https://stackoverflow.com/questions/64117116/how-can-i-use-async-await-in-the-vue-3-0-setup-function-using-typescript
-    const shows = ref([]);
+    const shows = ref<CalendarShow[]>([]);
+    const movies = ref<CalendarMovie[]>([]);
     const queryParams = { extended: "full" };
     // const apiResult = _apiSession.Calendar.getMyCalendarShows({ queryParams }).then(
-    const apiResult = _apiSession.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
-    // const apiResult = _apiSession.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
+    // _traktApi.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
+    const apiResult = _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
     // const apiResult = _apiSession.Calendar.getMyShows().then(
         (response) => {
-            console.log(response);
-            shows.value = response.data;
+            console.log("Shows:", response);
+            shows.value = response;
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+
+    _traktApi.Calendar.getAllMovies({ extendedFull: true }).then(
+        (response) => {
+            console.log("Movies:", response);
+            movies.value = response;
         },
         (error) => {
             console.log(error);
@@ -126,11 +117,7 @@
                         <div style="height: 100%; background-color: red">
                             <!-- <h1>1 of 3</h1> -->
                             <ion-list id="inbox-list">
-                                <ion-menu-toggle
-                                    auto-hide="false"
-                                    v-for="(p, i) in appPages"
-                                    :key="i"
-                                >
+                                <ion-menu-toggle auto-hide="false" v-for="(p, i) in appPages" :key="i">
                                     <ion-item
                                         @click="selectedIndex = i"
                                         router-direction="root"

@@ -2,6 +2,7 @@ import axios from "axios";
 import type { AxiosRequestHeaders, AxiosResponse, AxiosInstance } from "axios";
 import CalendarRequests from "@/helpers/trakt_api_requests/CalendarRequests";
 import * as Enums from "@/helpers/enums";
+import type { IDictionary } from "@/models/CommonModels";
 
 interface DoHttpParams {
     verb: Enums.HttpVerb;
@@ -16,7 +17,7 @@ interface ApiCallParams {
     extendedFull?: boolean;
     pagination?: any;
     filters?: any;
-    queryParams?: null | {};
+    queryParams?: null | IDictionary;
     serializer: any;
 }
 
@@ -42,22 +43,15 @@ export default class TraktApiSession {
 
     public Calendar = this._calendar;
 
-    constructor(isUseProxy: boolean) {
+    constructor({ isUseProxy = false }) {
         this._isUseProxy = isUseProxy;
-        const self = this;
 
         this._session = axios.create();
         this._session.defaults.baseURL = this.BASE_URL;
         this._session.defaults.headers.common = this._commonHeaders;
     }
 
-    doHttp = async ({
-        verb,
-        url,
-        queryParams = null,
-        postData = null,
-        serializer,
-    }: DoHttpParams) => {
+    doHttp = async ({ verb, url, queryParams = null, postData = null, serializer }: DoHttpParams) => {
         let response: AxiosResponse | null = null;
         try {
             switch (verb) {
@@ -90,14 +84,7 @@ export default class TraktApiSession {
         return Promise.resolve(response);
     };
 
-    authenticatedGetList = async ({
-        request = "",
-        extendedFull = false,
-        pagination = null,
-        filters = null,
-        queryParams = null,
-        serializer = null,
-    }: ApiCallParams) => {
+    authenticatedGetList = async ({ request = "", extendedFull = false, pagination = null, filters = null, queryParams = null, serializer = null }: ApiCallParams) => {
         let response: AxiosResponse | null = null;
         try {
             queryParams = queryParams ?? {};
@@ -106,14 +93,14 @@ export default class TraktApiSession {
             queryParams = Object.assign(queryParams, filters);
 
             if (extendedFull) {
-                // @ts-ignore
-                queryParams["extended"] = "full";
+                queryParams!["extended"] = "full";
             }
             let headers = this._commonHeaders;
             headers = Object.assign(headers, this._authorizationHeader);
             let url = this.BASE_URL + request;
             if (this._isUseProxy) url = this.PROXY_URL + url;
             console.log("url:", url);
+            console.log("queryParams:", JSON.stringify(queryParams, null, 2));
 
             response = await this._session.get(url, {
                 headers: headers,

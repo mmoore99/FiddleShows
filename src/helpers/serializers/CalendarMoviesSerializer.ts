@@ -2,48 +2,32 @@
 //
 //   import { Convert } from "./file";
 //
-//   const calendarShows = Convert.toCalendarShows(json);
+//   const calendarShow = Convert.toCalendarShow(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export interface CalendarShow {
-  firstAired: Date;
-  episode:    Episode;
-  show:       Show;
-}
+import type { CalendarMovie } from "@/models/CalendarModels";
+// To parse this data:
+//
+//   import { Convert } from "./file";
+//
+//   const calendarMovie = Convert.toCalendarMovie(json);
+//
+// These functions will throw an error if the JSON doesn't
+// match the expected interface, even if the JSON is valid.
 
-export interface Episode {
-  season: number;
-  number: number;
-  title:  string;
-  ids:    Ids;
-}
 
-export interface Ids {
-  trakt:  number;
-  tvdb:   number | null;
-  imdb:   null | string;
-  tmdb:   number;
-  tvrage: number | null;
-  slug?:  string;
-}
-
-export interface Show {
-  title: string;
-  year:  number;
-  ids:   Ids;
-}
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-  public static toCalendarShows(json: string): CalendarShow[] {
-    return cast(JSON.parse(json), a(r("CalendarShows")));
+  public static toCalendarMovie(json: string): CalendarMovie[] {
+    return cast(JSON.parse(json), a(r("CalendarMovie")));
   }
 
-  public static calendarShowsToJson(value: CalendarShow[]): string {
-    return JSON.stringify(uncast(value, a(r("CalendarShows"))), null, 2);
+  public static calendarMovieToJson(value: CalendarMovie[]): string {
+    return JSON.stringify(uncast(value, a(r("CalendarMovie"))), null, 2);
   }
 }
 
@@ -124,7 +108,7 @@ function transform(val: any, typ: any, getProps: any, key: any = ''): any {
     });
     Object.getOwnPropertyNames(val).forEach(key => {
       if (!Object.prototype.hasOwnProperty.call(props, key)) {
-        result[key] = transform(val[key], additional, getProps, key);
+        result[key] = val[key];
       }
     });
     return result;
@@ -180,28 +164,35 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-  "CalendarShows": o([
-    { json: "first_aired", js: "firstAired", typ: Date },
-    { json: "episode", js: "episode", typ: r("Episode") },
-    { json: "show", js: "show", typ: r("Show") },
+  "CalendarMovie": o([
+    { json: "released", js: "released", typ: u(undefined, Date) },
+    { json: "movie", js: "movie", typ: u(undefined, r("Movie")) },
   ], false),
-  "Episode": o([
-    { json: "season", js: "season", typ: 0 },
-    { json: "number", js: "number", typ: 0 },
-    { json: "title", js: "title", typ: "" },
-    { json: "ids", js: "ids", typ: r("Ids") },
+  "Movie": o([
+    { json: "title", js: "title", typ: u(undefined, "") },
+    { json: "year", js: "year", typ: u(undefined, u(0, null)) },
+    { json: "ids", js: "ids", typ: u(undefined, r("Ids")) },
+    { json: "tagline", js: "tagline", typ: u(undefined, "") },
+    { json: "overview", js: "overview", typ: u(undefined, "") },
+    { json: "released", js: "released", typ: u(undefined, Date) },
+    { json: "runtime", js: "runtime", typ: u(undefined, 0) },
+    { json: "country", js: "country", typ: u(undefined, u(null, "")) },
+    { json: "trailer", js: "trailer", typ: u(undefined, u(null, "")) },
+    { json: "homepage", js: "homepage", typ: u(undefined, u(null, "")) },
+    { json: "status", js: "status", typ: u(undefined, "") },
+    { json: "rating", js: "rating", typ: u(undefined, 3.14) },
+    { json: "votes", js: "votes", typ: u(undefined, 0) },
+    { json: "comment_count", js: "commentCount", typ: u(undefined, 0) },
+    { json: "updated_at", js: "updatedAt", typ: u(undefined, Date) },
+    { json: "language", js: "language", typ: u(undefined, "") },
+    { json: "available_translations", js: "availableTranslations", typ: u(undefined, a("")) },
+    { json: "genres", js: "genres", typ: u(undefined, a("")) },
+    { json: "certification", js: "certification", typ: u(undefined, u(null, "")) },
   ], false),
   "Ids": o([
-    { json: "trakt", js: "trakt", typ: 0 },
-    { json: "tvdb", js: "tvdb", typ: u(0, null) },
-    { json: "imdb", js: "imdb", typ: u(null, "") },
-    { json: "tmdb", js: "tmdb", typ: 0 },
-    { json: "tvrage", js: "tvrage", typ: u(0, null) },
+    { json: "trakt", js: "trakt", typ: u(undefined, 0) },
     { json: "slug", js: "slug", typ: u(undefined, "") },
-  ], false),
-  "Show": o([
-    { json: "title", js: "title", typ: "" },
-    { json: "year", js: "year", typ: 0 },
-    { json: "ids", js: "ids", typ: r("Ids") },
+    { json: "imdb", js: "imdb", typ: u(undefined, u(null, "")) },
+    { json: "tmdb", js: "tmdb", typ: u(undefined, 0) },
   ], false),
 };
