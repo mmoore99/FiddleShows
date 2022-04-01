@@ -71,7 +71,7 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    const _traktApi = new TraktApiSession({ isUseProxy: false });
+    const _traktApi = new TraktApiSession({ isUseProxy: true });
 
     const filters = new Filters({ query: "this is the query", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] });
     console.log("Filters:", filters.toMap());
