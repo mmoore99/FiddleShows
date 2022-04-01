@@ -21,7 +21,7 @@ interface ApiCallParams {
     serializer: any;
 }
 
-export default class TraktApiSession {
+export default class TraktClient {
     private PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     private BASE_URL = "https://api.trakt.tv";
     private CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
@@ -108,7 +108,8 @@ export default class TraktApiSession {
                 params: queryParams,
                 transformResponse: [
                     (data) => {
-                        try {
+                    if (!data) return null;     
+                    try {
                             return serializer ? serializer(data) : null;
                         } catch (e) {
                             console.log("Exception during deserialization", e);
@@ -120,6 +121,7 @@ export default class TraktApiSession {
         } catch (e) {
             console.log("Http error:", e);
         }
+        console.log("Exiting authenticatedGetList: response = ", response);
         return Promise.resolve(response);
     };
 }

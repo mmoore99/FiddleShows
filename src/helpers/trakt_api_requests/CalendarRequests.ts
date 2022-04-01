@@ -13,8 +13,8 @@ interface IParams {
 }
 
 export default class CalendarRequests extends TraktApiCategory {
-    constructor(apiSession: any) {
-        super(apiSession);
+    constructor(traktClient: any) {
+        super(traktClient);
     }
 
     public getMyShows = async ({ startDate = null, numberOfDays = null, extendedFull = false, queryParams = {} }: IParams = {}) => {
@@ -81,7 +81,7 @@ export default class CalendarRequests extends TraktApiCategory {
         if (!((startDate && numberOfDays) || (!startDate && !numberOfDays))) throw "Both startDate and numberOfDays need to be given or both be null";
         let request = startDate ? `/${startDate}/${numberOfDays}` : null;
 
-        const response = await this._apiSession.authenticatedGetList({
+        const response = await this._traktClient.authenticatedGetList({
             request: request ? urlTemplate + request : urlTemplate,
             extendedFull: extendedFull,
             pagination: null,

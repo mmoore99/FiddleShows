@@ -21,7 +21,7 @@
     import { computed, defineComponent, onMounted, provide, ref } from "vue";
 
     import { useRouter, useRoute } from "vue-router";
-    import TraktApiSession from "@/helpers/http/TraktApiSession";
+    import TraktClient from "@/trakt/TraktClient";
     import { Filters, MovieFilters, RequestPagination } from "@/models/RequestModels";
     import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
 
@@ -71,7 +71,7 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    const _traktApi = new TraktApiSession({ isUseProxy: true });
+    const _traktApi = new TraktClient({ isUseProxy: true });
 
     const filters = new Filters({ query: "this is the query", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] });
     console.log("Filters:", filters.toMap());

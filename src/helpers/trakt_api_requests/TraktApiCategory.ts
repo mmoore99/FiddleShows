@@ -1,7 +1,9 @@
-export default abstract class TraktApiCategory {
-  protected _apiSession: any;
+import type TraktClient from "@/trakt/TraktClient";
 
-  protected constructor(apiSession: any) {
-    this._apiSession = apiSession;
-  }
+export default abstract class TraktApiCategory {
+    protected _traktClient: any;
+
+    protected constructor(traktClient: TraktClient) {
+        this._traktClient = traktClient;
+    }
 }
