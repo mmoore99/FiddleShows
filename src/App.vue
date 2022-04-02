@@ -24,6 +24,7 @@
     import TraktClient from "@/trakt/TraktClient";
     import { Filters, MovieFilters, RequestPagination } from "@/models/RequestModels";
     import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
+    import { TraktShowFilter } from "@/trakt/parameters/filters/ATraktFilter";
 
     const router = useRouter();
     const route = useRoute();
@@ -73,11 +74,15 @@
 
     const _traktApi = new TraktClient({ isUseProxy: true });
 
-    const filters = new Filters({ query: "this is the query", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] });
-    console.log("Filters:", filters.toMap());
+    // const filters = new Filters({ query: "this is the query", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] });
+    // console.log("Filters:", filters.toMap());
 
-    const movieFilters = new MovieFilters({ query: "batman", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] }, { certifications: ["pg-13", "r"] });
-    console.log("MovieFilters:", movieFilters.toMap());
+    const filters2 = new TraktShowFilter().withQuery("batman").withYear(1972).withGenres("drama, comedy").withCountries(["us", "fr"]);
+    console.log("Filters2:", filters2);
+    console.log("Filters2Map:", filters2.toMap());
+    
+    // const movieFilters = new MovieFilters({ query: "batman", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] }, { certifications: ["pg-13", "r"] });
+    // console.log("MovieFilters:", movieFilters.toMap());
 
     // alternative approach to get around problem of using async in setup without using Suspense
     // see https://stackoverflow.com/questions/64117116/how-can-i-use-async-await-in-the-vue-3-0-setup-function-using-typescript
@@ -87,7 +92,7 @@
     // const apiResult = _apiSession.Calendar.getMyCalendarShows({ queryParams }).then(
     // _traktApi.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
     const apiResult = _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
-    // const apiResult = _apiSession.Calendar.getMyShows().then(
+        // const apiResult = _apiSession.Calendar.getMyShows().then(
         (response) => {
             console.log("Shows:", response);
             shows.value = response;

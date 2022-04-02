@@ -80,3 +80,5 @@ export class MovieFilters extends Filters {
         return map;
     }
 }
+
+

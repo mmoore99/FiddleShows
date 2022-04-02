@@ -14,5 +14,14 @@ export interface Ids {
 }
 
 export interface IDictionary {
-  [index: string]: string;
+  [index: string]: any;
+}
+
+export class Range<T>{
+  begin: T;
+  end: T;
+  constructor(begin: T,  end:T) {
+    this.begin = begin;
+    this.end = end;
+  } 
 }
