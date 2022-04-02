@@ -1,7 +1,8 @@
+import type { AxiosInstance, AxiosRequestHeaders, AxiosResponse } from "axios";
 import axios from "axios";
-import type { AxiosRequestHeaders, AxiosResponse, AxiosInstance } from "axios";
 import CalendarRequests from "@/helpers/trakt_api_requests/CalendarRequests";
 import * as Enums from "@/helpers/enums";
+import { AuthorizationRequirement } from "@/helpers/enums";
 import type { IDictionary } from "@/models/CommonModels";
 
 interface DoHttpParams {
@@ -13,6 +14,7 @@ interface DoHttpParams {
 }
 
 interface ApiCallParams {
+    authorizationRequirement: AuthorizationRequirement;
     request: string;
     extendedFull?: boolean;
     pagination?: any;
@@ -84,7 +86,15 @@ export default class TraktClient {
         return Promise.resolve(response);
     };
 
-    authenticatedGetList = async ({ request = "", extendedFull = false, pagination = null, filters = null, queryParams = null, serializer = null }: ApiCallParams) => {
+    getList = async ({
+        authorizationRequirement = AuthorizationRequirement.NotRequired,
+        request = "",
+        extendedFull = false,
+        pagination = null,
+        filters = null,
+        queryParams = null,
+        serializer = null,
+    }: ApiCallParams) => {
         let response: AxiosResponse | null = null;
         try {
             queryParams = queryParams ?? {};
@@ -96,7 +106,9 @@ export default class TraktClient {
                 queryParams!["extended"] = "full";
             }
             let headers = this._commonHeaders;
-            headers = Object.assign(headers, this._authorizationHeader);
+            if (authorizationRequirement !== AuthorizationRequirement.NotRequired) {
+                headers = Object.assign(headers, this._authorizationHeader);
+            }
             let url = this.BASE_URL + request;
             if (this._isUseProxy) url = this.PROXY_URL + url;
             console.log("url:", url);
@@ -108,8 +120,8 @@ export default class TraktClient {
                 params: queryParams,
                 transformResponse: [
                     (data) => {
-                    if (!data) return null;     
-                    try {
+                        if (!data) return null;
+                        try {
                             return serializer ? serializer(data) : null;
                         } catch (e) {
                             console.log("Exception during deserialization", e);

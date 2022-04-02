@@ -24,7 +24,7 @@
     import TraktClient from "@/trakt/TraktClient";
     import { Filters, MovieFilters, RequestPagination } from "@/models/RequestModels";
     import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
-    import { TraktShowFilter } from "@/trakt/parameters/filters/ATraktFilter";
+    import { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
 
     const router = useRouter();
     const route = useRoute();
@@ -89,9 +89,9 @@
     const shows = ref<CalendarShow[]>([]);
     const movies = ref<CalendarMovie[]>([]);
     const queryParams = { extended: "full" };
-    // const apiResult = _apiSession.Calendar.getMyCalendarShows({ queryParams }).then(
+    const apiResult = _traktApi.Calendar.getMyShows({ queryParams }).then(
     // _traktApi.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
-    const apiResult = _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
+    // const apiResult = _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
         // const apiResult = _apiSession.Calendar.getMyShows().then(
         (response) => {
             console.log("Shows:", response);

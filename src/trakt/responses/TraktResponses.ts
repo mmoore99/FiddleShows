@@ -4,7 +4,6 @@ export class TraktNoContentResponse {
 }
 
 export class TraktResponse<TResponseContentType> extends TraktNoContentResponse {
-    public hasValue: boolean = false;
     public value: TResponseContentType | null = null;
     public sortBy?: string = "";
     public sortHow?: string = "";
@@ -20,6 +19,11 @@ export class TraktResponse<TResponseContentType> extends TraktNoContentResponse 
     public itemType?: string = "";
     public rateLimit?: string = "";
     public upgradeUrl?: string = "";
+
+    public hasValue(){
+        return !!this.value;
+    }
+
 }
 
 export class TraktPagedResponse<TResponseContentType> extends TraktResponse<TResponseContentType> {

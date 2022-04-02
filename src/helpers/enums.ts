@@ -9,3 +9,9 @@ export enum EntityType{
   show,
   movie
 }
+
+export enum AuthorizationRequirement{
+  Required,
+  NotRequired,
+  Optional
+}
