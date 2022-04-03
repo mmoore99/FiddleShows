@@ -8,6 +8,8 @@ import { ResponseHeaderParser } from "@/trakt/handlers/ResponseHeaderParser";
 import type { ATraktFilter } from "@/trakt/parameters/filters/TraktFilters";
 import type { RequestPagination } from "@/models/RequestModels";
 import type { TraktExtendedInfo } from "@/trakt/parameters/traktExtendedInfo";
+import SyncRequests
+    from "@/helpers/trakt_api_requests/SyncRequests";
 
 interface IApiCallParams {
     authorizationRequirement: AuthorizationRequirement;
@@ -34,8 +36,10 @@ export class TraktClient {
     private readonly _authorizationHeader: {} | null = null;
 
     private _calendar = new CalendarRequests(this);
+    private _sync = new SyncRequests(this);
     
     public Calendar = this._calendar;
+    public Sync = this._sync;
     
     constructor({clientId = "", clientSecret = "", accessToken = "",  isUseProxy = false }) {
         this._clientId = clientId;
