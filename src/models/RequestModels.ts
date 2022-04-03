@@ -1,16 +1,20 @@
 export class RequestPagination {
     private _page: number;
-    private _limit: number;
+    private readonly _limit: number;
 
     constructor({ page = 1, limit = 10 }) {
         this._page = page;
         this._limit = limit;
     }
 
+    nextPage() {
+        this._page++;
+    }
+
     toMap() {
         return {
-            page: "$page",
-            limit: "$limit",
+            page: this._page,
+            limit: this._limit,
         };
     }
 }
@@ -33,52 +37,52 @@ interface IDictionary {
 // alternative structure that also works
 //export interface Filters extends IFilters {}
 //export class Filters
-export class Filters implements IFilters{
-    [key: string]: any
-    constructor(props: IFilters) {
-        // create properties for each item in 'props'
-        Object.assign(this, props);
-    }
-
-    toMap() {
-        // any of the following 'index signatures' work
-        // let map: IFilters = {};
-        // let map = {} as IDictionary
-        let map: IDictionary = {};
-        // let map: { [key: string]: string } = {};
-
-        for (const key in this) {
-            const keyString = key.toString();
-            const property = this[keyString];
-            if (property != null) {
-                if (Array.isArray(property)) map[keyString] = property.join(',')
-                else map[keyString] = this[keyString];
-            }
-        }
-
-        return map;
-    }
-}
-
-export interface IMovieFilters{
-    certifications?: string[];
-}
-
-export class MovieFilters extends Filters {
-    certifications:string[] | undefined
-    
-    constructor(props: IFilters, movieFilters?:IMovieFilters) {
-        super(props);
-        this.certifications = movieFilters?.certifications;
-    }
-    
-    toMap(){
-        let map = super.toMap();
-        if (this.certifications != null) {
-            map["certifications"] = this.certifications.join(",");
-        }
-        return map;
-    }
-}
+// export class Filters implements IFilters{
+//     [key: string]: any
+//     constructor(props: IFilters) {
+//         // create properties for each item in 'props'
+//         Object.assign(this, props);
+//     }
+//
+//     toMap() {
+//         // any of the following 'index signatures' work
+//         // let map: IFilters = {};
+//         // let map = {} as IDictionary
+//         let map: IDictionary = {};
+//         // let map: { [key: string]: string } = {};
+//
+//         for (const key in this) {
+//             const keyString = key.toString();
+//             const property = this[keyString];
+//             if (property != null) {
+//                 if (Array.isArray(property)) map[keyString] = property.join(',')
+//                 else map[keyString] = this[keyString];
+//             }
+//         }
+//
+//         return map;
+//     }
+// }
+//
+// export interface IMovieFilters{
+//     certifications?: string[];
+// }
+//
+// export class MovieFilters extends Filters {
+//     certifications:string[] | undefined
+//    
+//     constructor(props: IFilters, movieFilters?:IMovieFilters) {
+//         super(props);
+//         this.certifications = movieFilters?.certifications;
+//     }
+//    
+//     toMap(){
+//         let map = super.toMap();
+//         if (this.certifications != null) {
+//             map["certifications"] = this.certifications.join(",");
+//         }
+//         return map;
+//     }
+// }
 
 

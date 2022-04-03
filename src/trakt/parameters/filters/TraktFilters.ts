@@ -2,6 +2,7 @@ import type { IDictionary } from "@/models/CommonModels";
 import { Range } from "@/models/CommonModels";
 
 export abstract class ATraktFilter {
+    [key: string]: any;
     public query: string | null = null;
     public years: Range<number> | null = null;
     public year: number | null = null;

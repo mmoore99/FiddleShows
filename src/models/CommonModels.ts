@@ -25,3 +25,11 @@ export class Range<T>{
     this.end = end;
   } 
 }
+
+export interface RateLimit{
+  name: string;
+  period: number;
+  limit: number;
+  remaining: number;
+  until: Date;
+}

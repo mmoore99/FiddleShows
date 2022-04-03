@@ -1,116 +1,86 @@
 import type { AxiosInstance, AxiosRequestHeaders, AxiosResponse } from "axios";
+import type { IDictionary } from "@/models/CommonModels";
 import axios from "axios";
 import CalendarRequests from "@/helpers/trakt_api_requests/CalendarRequests";
-import * as Enums from "@/helpers/enums";
 import { AuthorizationRequirement } from "@/helpers/enums";
-import type { IDictionary } from "@/models/CommonModels";
+import { TraktResponse } from "@/trakt/responses/TraktResponses";
+import { ResponseHeaderParser } from "@/trakt/handlers/ResponseHeaderParser";
+import type { ATraktFilter } from "@/trakt/parameters/filters/TraktFilters";
+import type { RequestPagination } from "@/models/RequestModels";
+import type { TraktExtendedInfo } from "@/trakt/parameters/traktExtendedInfo";
 
-interface DoHttpParams {
-    verb: Enums.HttpVerb;
-    url: string;
-    queryParams?: any;
-    postData?: any;
-    serializer: (json: string) => any;
-}
-
-interface ApiCallParams {
+interface IApiCallParams {
     authorizationRequirement: AuthorizationRequirement;
     request: string;
-    extendedFull?: boolean;
-    pagination?: any;
-    filters?: any;
+    extendedInfo?: TraktExtendedInfo | null;
+    requestPagination?: RequestPagination | null;
+    filters?: ATraktFilter | null;
     queryParams?: null | IDictionary;
     serializer: any;
 }
 
-export default class TraktClient {
+export class TraktClient {
     private PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     private BASE_URL = "https://api.trakt.tv";
-    private CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
-    private CLIENT_SECRET = "8c1902d0284fad4ff6b052f0fdbfd50be1075088ba5d6f33b218734067568148";
-    private ACCESS_TOKEN = "908366de1b222a5cabfda200e6e829633a7c51234ce655d18674b3de5d7e8f4c";
     private TRAKT_VERSION = 2;
 
-    private _commonHeaders: AxiosRequestHeaders = {
-        "Content-Type": "application/json",
-        "trakt-api-key": this.CLIENT_ID,
-        "trakt-api-version": this.TRAKT_VERSION,
-    };
-
-    private _authorizationHeader = { Authorization: `Bearer ${this.ACCESS_TOKEN}` };
 
     private _session: AxiosInstance;
-    private _calendar = new CalendarRequests(this);
+    private readonly _clientSecret: string;
+    private readonly _commonHeaders: AxiosRequestHeaders = {};
+    private readonly _clientId: string;
+    private readonly _accessToken: string;
     private readonly _isUseProxy: boolean;
+    private readonly _authorizationHeader: {} | null = null;
 
+    private _calendar = new CalendarRequests(this);
+    
     public Calendar = this._calendar;
-
-    constructor({ isUseProxy = false }) {
+    
+    constructor({clientId = "", clientSecret = "", accessToken = "",  isUseProxy = false }) {
+        this._clientId = clientId;
+        this._clientSecret = clientSecret;
+        this._accessToken = accessToken;
         this._isUseProxy = isUseProxy;
 
         this._session = axios.create();
         this._session.defaults.baseURL = this.BASE_URL;
         this._session.defaults.headers.common = this._commonHeaders;
+
+        this._authorizationHeader = { Authorization: `Bearer ${this._accessToken }` };
+        
+        this._commonHeaders = {
+            "Content-Type": "application/json",
+            "trakt-api-key": this._clientId,
+            "trakt-api-version": this.TRAKT_VERSION,
+        };
     }
 
-    doHttp = async ({ verb, url, queryParams = null, postData = null, serializer }: DoHttpParams) => {
-        let response: AxiosResponse | null = null;
-        try {
-            switch (verb) {
-                case Enums.HttpVerb.get:
-                    if (this._isUseProxy) url = this.PROXY_URL + this.BASE_URL + url;
-                    console.log("url:", url);
-                    response = await this._session.get(url, {
-                        params: queryParams,
-                        // transformResponse: [
-                        //     (data) => {
-                        //         return serializer ? serializer(data) : null;
-                        //     },
-                        // ],
-                    });
-                    break;
-                case Enums.HttpVerb.post:
-                    response = await this._session.post(url, postData);
-                    break;
-                case Enums.HttpVerb.put:
-                    break;
-                case Enums.HttpVerb.delete:
-                    break;
-                default:
-                    throw "Invalid Http verb";
-            }
-        } catch (e) {
-            console.log("Http error:", e);
-            debugger;
-        }
-        return Promise.resolve(response);
-    };
-
-    getList = async ({
+    async getList<T>({
         authorizationRequirement = AuthorizationRequirement.NotRequired,
         request = "",
-        extendedFull = false,
-        pagination = null,
+        extendedInfo = null,
+        requestPagination = null,
         filters = null,
         queryParams = null,
         serializer = null,
-    }: ApiCallParams) => {
+    }: IApiCallParams): Promise<TraktResponse<T[]>> {
+        let result = new TraktResponse<T[]>();
         let response: AxiosResponse | null = null;
         try {
             queryParams = queryParams ?? {};
+            queryParams = Object.assign(queryParams, requestPagination);
+            queryParams = Object.assign(queryParams, filters?.toMap());
+            if (extendedInfo?.hasAnySet()) queryParams["extended"] = extendedInfo.toString();
 
-            queryParams = Object.assign(queryParams, pagination);
-            queryParams = Object.assign(queryParams, filters);
-
-            if (extendedFull) {
-                queryParams!["extended"] = "full";
-            }
             let headers = this._commonHeaders;
             if (authorizationRequirement !== AuthorizationRequirement.NotRequired) {
                 headers = Object.assign(headers, this._authorizationHeader);
             }
+
             let url = this.BASE_URL + request;
             if (this._isUseProxy) url = this.PROXY_URL + url;
+            
             console.log("url:", url);
             console.log("queryParams:", JSON.stringify(queryParams, null, 2));
 
@@ -124,16 +94,27 @@ export default class TraktClient {
                         try {
                             return serializer ? serializer(data) : null;
                         } catch (e) {
-                            console.log("Exception during deserialization", e);
+                            console.error("Exception during deserialization", e);
+                            result.Exception = e;
                             return null;
                         }
                     },
                 ],
             });
         } catch (e) {
-            console.log("Http error:", e);
+            console.error("Http error:", e);
         }
-        console.log("Exiting authenticatedGetList: response = ", response);
-        return Promise.resolve(response);
-    };
+
+        if (response && response.statusText.toLowerCase() === "ok" && response.data !== null) {
+            result.IsSuccess = true;
+            result.content = response.data;
+            result.Exception = null;
+            new ResponseHeaderParser().parseResponseHeaders(response.headers, result);
+        } else {
+            result.IsSuccess = false;
+            result.content = null;
+        }
+        console.log("Exiting authenticatedGetList: response = ", response, "result= ", result);
+        return result;
+    }
 }

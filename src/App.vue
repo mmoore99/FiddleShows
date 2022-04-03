@@ -21,10 +21,15 @@
     import { computed, defineComponent, onMounted, provide, ref } from "vue";
 
     import { useRouter, useRoute } from "vue-router";
-    import TraktClient from "@/trakt/TraktClient";
-    import { Filters, MovieFilters, RequestPagination } from "@/models/RequestModels";
+    import { TraktClient } from "@/trakt/TraktClient";
+    import { RequestPagination } from "@/models/RequestModels";
     import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
     import { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
+
+    const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
+    const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
+    const CLIENT_SECRET = "8c1902d0284fad4ff6b052f0fdbfd50be1075088ba5d6f33b218734067568148";
+    const ACCESS_TOKEN = "908366de1b222a5cabfda200e6e829633a7c51234ce655d18674b3de5d7e8f4c";
 
     const router = useRouter();
     const route = useRoute();
@@ -72,30 +77,32 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    const _traktApi = new TraktClient({ isUseProxy: true });
+    const _traktApi = new TraktClient({clientId: CLIENT_ID, clientSecret:CLIENT_SECRET, accessToken:ACCESS_TOKEN, isUseProxy: true });
 
     // const filters = new Filters({ query: "this is the query", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] });
     // console.log("Filters:", filters.toMap());
 
-    const filters2 = new TraktShowFilter().withQuery("batman").withYear(1972).withGenres("drama, comedy").withCountries(["us", "fr"]);
+    // const filters2 = new TraktShowFilter().withQuery("batman").withYear(1972).withGenres("drama, comedy").withCountries(["us", "fr"]);
+    const filters2 = new TraktShowFilter().withGenres(["drama","comedy","romance"]).withCountries("us");
+    // const filters2 = new TraktShowFilter().withQuery("batman").withYear(1972).withGenres("drama").withCountries("us");
     console.log("Filters2:", filters2);
     console.log("Filters2Map:", filters2.toMap());
-    
+
     // const movieFilters = new MovieFilters({ query: "batman", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] }, { certifications: ["pg-13", "r"] });
     // console.log("MovieFilters:", movieFilters.toMap());
 
     // alternative approach to get around problem of using async in setup without using Suspense
     // see https://stackoverflow.com/questions/64117116/how-can-i-use-async-await-in-the-vue-3-0-setup-function-using-typescript
-    const shows = ref<CalendarShow[]>([]);
-    const movies = ref<CalendarMovie[]>([]);
-    const queryParams = { extended: "full" };
-    const apiResult = _traktApi.Calendar.getMyShows({ queryParams }).then(
-    // _traktApi.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
-    // const apiResult = _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
+    const shows = ref<CalendarShow[]|null>([]);
+    const movies = ref<CalendarMovie[]|null>([]);
+    const queryParams = {};
+    const apiResult = _traktApi.Calendar.getUserShows({ extendedFull: true, filters: filters2 }).then(
+        // _traktApi.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
+        // const apiResult = _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
         // const apiResult = _apiSession.Calendar.getMyShows().then(
-        (response) => {
-            console.log("Shows:", response);
-            shows.value = response;
+        (result) => {
+            shows.value = result.content;
+            console.log("Shows:", shows.value);
         },
         (error) => {
             console.log(error);
@@ -103,9 +110,9 @@
     );
 
     _traktApi.Calendar.getAllMovies({ extendedFull: true }).then(
-        (response) => {
-            console.log("Movies:", response);
-            movies.value = response;
+        (result) => {
+            movies.value = result.content;
+            console.log("Movies:", movies.value);
         },
         (error) => {
             console.log(error);
