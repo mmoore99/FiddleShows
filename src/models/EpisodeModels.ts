@@ -15,3 +15,9 @@ export interface Episode {
     availableTranslations?: string[];
     runtime?: number;
 }
+
+export interface WatchedEpisode {
+    number?:        number;
+    plays?:         number;
+    lastWatchedAt?: Date;
+}

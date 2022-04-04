@@ -25,7 +25,13 @@
     import { RequestPagination } from "@/models/RequestModels";
     import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
     import { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
-    import type { HistoryItem } from "@/models/UsersModels";
+    import type {
+        HistoryItem,
+        WatchedItem
+    } from "@/models/UsersModels";
+    import {
+        ShowMovieType
+    } from "@/helpers/enums";
 
     const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
@@ -98,6 +104,8 @@
     const shows = ref<CalendarShow[] | null>([]);
     const movies = ref<CalendarMovie[] | null>([]);
     const historyItems = ref<HistoryItem[] | null>([]);
+    const watchedShows = ref<WatchedItem[] | null>([]);
+    const watchedMovies = ref<WatchedItem[] | null>([]);
 
     const queryParams = {};
 
@@ -134,6 +142,28 @@
         (result) => {
             historyItems.value = result.content;
             console.log("HistoryItems:", historyItems.value);
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+
+    _traktApi.Sync.getWatched({type: ShowMovieType.show, extendedFull: true 
+    }).then(
+        (result) => {
+            watchedShows.value = result.content;
+            console.log("WatchedShows:", watchedShows.value);
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+
+    _traktApi.Sync.getWatched({type: ShowMovieType.movies, extendedFull: true
+    }).then(
+        (result) => {
+            watchedMovies.value = result.content;
+            console.log("WatchedMovies:", watchedMovies.value);
         },
         (error) => {
             console.log(error);

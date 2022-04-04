@@ -1,14 +1,38 @@
-import TraktApiCategory from "@/helpers/trakt_api_requests/TraktApiCategory";
-import { AuthorizationRequirement } from "@/helpers/enums";
-import { JsonConvert } from "@/helpers/serializers/JsonConvert";
-import type { TraktClient } from "@/trakt/TraktClient";
-import type { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
-import { TraktExtendedInfo } from "@/trakt/parameters/traktExtendedInfo";
-import type { IDictionary } from "@/models/CommonModels";
-import type { RequestPagination } from "@/models/RequestModels";
-import { isDateObject, isString, isValidDateString } from "@/helpers/Utils";
-import type { HistoryItem } from "@/models/UsersModels";
-import { ConvertHistoryItemJson } from "@/helpers/serializers/HistoryItemSerializer";
+import TraktApiCategory
+    from "@/helpers/trakt_api_requests/TraktApiCategory";
+import {
+    AuthorizationRequirement,
+    ShowMovieType
+} from "@/helpers/enums";
+import {
+    JsonConvert
+} from "@/helpers/serializers/JsonConvert";
+import type {
+    TraktClient
+} from "@/trakt/TraktClient";
+import type {
+    TraktShowFilter
+} from "@/trakt/parameters/filters/TraktFilters";
+import {
+    TraktExtendedInfo
+} from "@/trakt/parameters/traktExtendedInfo";
+import type {
+    IDictionary
+} from "@/models/CommonModels";
+import type {
+    RequestPagination
+} from "@/models/RequestModels";
+import {
+    isString,
+    isValidDateString
+} from "@/helpers/Utils";
+import type {
+    HistoryItem,
+    WatchedItem
+} from "@/models/UsersModels";
+import {
+    WatchedItemSerializer
+} from "@/helpers/serializers/WatchedItemSerializer";
 
 interface ISyncGetHistoryParams {
     type?: string | null;
@@ -19,6 +43,12 @@ interface ISyncGetHistoryParams {
     extendedFull?: boolean;
     filters?: TraktShowFilter | null;
     requestPagination?: RequestPagination | null;
+}
+
+interface ISyncGetWatchedParams {
+    type: ShowMovieType;
+    extendedFull?: boolean;
+    filters?: TraktShowFilter | null;
 }
 
 interface ICommonSyncParams {
@@ -65,6 +95,16 @@ export default class SyncRequests extends TraktApiCategory {
             filters: filters,
             serializer: JsonConvert.toHistoryItem,
             // serializer: ConvertHistoryItemJson.toHistoryItem,
+        });
+    };
+
+    public getWatched = async ({ type, extendedFull = false, filters = null }: ISyncGetWatchedParams) => {
+        return await this._traktClient.getList<WatchedItem>({
+            authorizationRequirement: AuthorizationRequirement.Required,
+            request: `/sync/watched/${type === ShowMovieType.movies ? "movies" : "shows"}`,
+            queryParams: {},
+            extendedInfo: extendedFull ? new TraktExtendedInfo().setFull() : null,
+            serializer: JsonConvert.toWatchedItem,
         });
     };
 }

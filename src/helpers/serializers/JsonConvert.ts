@@ -11,7 +11,7 @@ import type { CalendarShow, CalendarMovie } from "@/models/CalendarModels";
 import type { Show } from "@/models/ShowModels";
 import type { Episode } from "@/models/EpisodeModels";
 import type { Airs, Ids } from "@/models/CommonModels";
-import type { HistoryItem } from "@/models/UsersModels";
+import type { HistoryItem, WatchedItem } from "@/models/UsersModels";
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -32,6 +32,11 @@ export class JsonConvert {
     public static toHistoryItem(json: string): HistoryItem[] {
         typeMap = typeMapHistoryItem;
         return cast(JSON.parse(json), a(r("HistoryItem")));
+    }
+
+    public static toWatchedItem(json: string): WatchedItem[] {
+        typeMap = typeMapWatchedItem;
+        return cast(JSON.parse(json), a(r("WatchedItem")));
     }
 
     public static calendarShowToJson(value: CalendarShow[]): string {
@@ -709,4 +714,60 @@ const typeMapHistoryItem: any = {
         ],
         false
     ),
+};
+
+const typeMapWatchedItem: any = {
+    "WatchedItem": o([
+        { json: "plays", js: "plays", typ: u(undefined, 0) },
+        { json: "last_watched_at", js: "lastWatchedAt", typ: u(undefined, Date) },
+        { json: "last_updated_at", js: "lastUpdatedAt", typ: u(undefined, Date) },
+        { json: "reset_at", js: "resetAt", typ: u(undefined, null) },
+        { json: "show", js: "show", typ: u(undefined, r("Show")) },
+        { json: "seasons", js: "seasons", typ: u(undefined, a(r("WatchedSeason"))) },
+    ], false),
+    "WatchedSeason": o([
+        { json: "number", js: "number", typ: u(undefined, 0) },
+        { json: "episodes", js: "episodes", typ: u(undefined, a(r("WatchedEpisode"))) },
+    ], false),
+    "WatchedEpisode": o([
+        { json: "number", js: "number", typ: u(undefined, 0) },
+        { json: "plays", js: "plays", typ: u(undefined, 0) },
+        { json: "last_watched_at", js: "lastWatchedAt", typ: u(undefined, Date) },
+    ], false),
+    "Show": o([
+        { json: "title", js: "title", typ: u(undefined, "") },
+        { json: "year", js: "year", typ: u(undefined, 0) },
+        { json: "ids", js: "ids", typ: u(undefined, r("Ids")) },
+        { json: "overview", js: "overview", typ: u(undefined, "") },
+        { json: "first_aired", js: "firstAired", typ: u(undefined, Date) },
+        { json: "airs", js: "airs", typ: u(undefined, r("Airs")) },
+        { json: "runtime", js: "runtime", typ: u(undefined, 0) },
+        { json: "certification", js: "certification", typ: u(undefined, u(null, "")) },
+        { json: "country", js: "country", typ: u(undefined, "") },
+        { json: "trailer", js: "trailer", typ: u(undefined, u(null, "")) },
+        { json: "homepage", js: "homepage", typ: u(undefined, u(null, "")) },
+        { json: "status", js: "status", typ: u(undefined, "") },
+        { json: "rating", js: "rating", typ: u(undefined, 3.14) },
+        { json: "votes", js: "votes", typ: u(undefined, 0) },
+        { json: "comment_count", js: "commentCount", typ: u(undefined, 0) },
+        { json: "network", js: "network", typ: u(undefined, "") },
+        { json: "updated_at", js: "updatedAt", typ: u(undefined, Date) },
+        { json: "language", js: "language", typ: u(undefined, "") },
+        { json: "available_translations", js: "availableTranslations", typ: u(undefined, a("")) },
+        { json: "genres", js: "genres", typ: u(undefined, a("")) },
+        { json: "aired_episodes", js: "airedEpisodes", typ: u(undefined, 0) },
+    ], false),
+    "Airs": o([
+        { json: "day", js: "day", typ: u(undefined, "") },
+        { json: "time", js: "time", typ: u(undefined, "") },
+        { json: "timezone", js: "timezone", typ: u(undefined, "") },
+    ], false),
+    "Ids": o([
+        { json: "trakt", js: "trakt", typ: u(undefined, 0) },
+        { json: "slug", js: "slug", typ: u(undefined, "") },
+        { json: "tvdb", js: "tvdb", typ: u(undefined, 0) },
+        { json: "imdb", js: "imdb", typ: u(undefined, u(null, "")) },
+        { json: "tmdb", js: "tmdb", typ: u(undefined, 0) },
+        { json: "tvrage", js: "tvrage", typ: u(undefined, u(0, null)) },
+    ], false),
 };

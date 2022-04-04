@@ -15,3 +15,8 @@ export enum AuthorizationRequirement{
   NotRequired,
   Optional
 }
+
+export enum ShowMovieType{
+  show,
+  movies
+}
