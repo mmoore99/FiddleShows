@@ -24,6 +24,8 @@ export class TraktResponse<TResponseContentType> extends TraktNoContentResponse 
     public rateLimit: RateLimit | null = null;
     public upgradeUrl: string = "";
     public isPrivateUser: boolean = false;
+    public runtime: number|null = null;
+    public finalUrl: string|null = null;
 
     public hasValue(){
         return !!this.content;

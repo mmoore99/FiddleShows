@@ -25,6 +25,7 @@
     import { RequestPagination } from "@/models/RequestModels";
     import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
     import { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
+    import type { HistoryItem } from "@/models/UsersModels";
 
     const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
@@ -77,13 +78,13 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    const _traktApi = new TraktClient({clientId: CLIENT_ID, clientSecret:CLIENT_SECRET, accessToken:ACCESS_TOKEN, isUseProxy: true });
+    const _traktApi = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: true });
 
     // const filters = new Filters({ query: "this is the query", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] });
     // console.log("Filters:", filters.toMap());
 
     // const filters2 = new TraktShowFilter().withQuery("batman").withYear(1972).withGenres("drama, comedy").withCountries(["us", "fr"]);
-    const filters2 = new TraktShowFilter().withGenres(["drama","comedy","romance"]).withCountries("us");
+    const filters2 = new TraktShowFilter().withGenres(["drama", "comedy", "romance"]).withCountries("us");
     // const filters2 = new TraktShowFilter().withQuery("batman").withYear(1972).withGenres("drama").withCountries("us");
     console.log("Filters2:", filters2);
     console.log("Filters2Map:", filters2.toMap());
@@ -93,13 +94,17 @@
 
     // alternative approach to get around problem of using async in setup without using Suspense
     // see https://stackoverflow.com/questions/64117116/how-can-i-use-async-await-in-the-vue-3-0-setup-function-using-typescript
-    const shows = ref<CalendarShow[]|null>([]);
-    const movies = ref<CalendarMovie[]|null>([]);
+
+    const shows = ref<CalendarShow[] | null>([]);
+    const movies = ref<CalendarMovie[] | null>([]);
+    const historyItems = ref<HistoryItem[] | null>([]);
+
     const queryParams = {};
-    const apiResult = _traktApi.Calendar.getUserShows({ extendedFull: true, filters: filters2 }).then(
+
+    _traktApi.Calendar.getUserShows({ extendedFull: true, filters: filters2 }).then(
         // _traktApi.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
-        // const apiResult = _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
-        // const apiResult = _apiSession.Calendar.getMyShows().then(
+        // _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
+        // _traktApi.Calendar.getMyShows().then(
         (result) => {
             shows.value = result.content;
             console.log("Shows:", shows.value);
@@ -113,6 +118,22 @@
         (result) => {
             movies.value = result.content;
             console.log("Movies:", movies.value);
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+
+    _traktApi.Sync.getHistory({
+        extendedFull: true,
+        requestPagination: new RequestPagination({
+            page: 1,
+            limit: 100,
+        }),
+    }).then(
+        (result) => {
+            historyItems.value = result.content;
+            console.log("HistoryItems:", historyItems.value);
         },
         (error) => {
             console.log(error);

@@ -3,7 +3,10 @@ import type { IDictionary } from "@/models/CommonModels";
 import axios from "axios";
 import CalendarRequests from "@/helpers/trakt_api_requests/CalendarRequests";
 import { AuthorizationRequirement } from "@/helpers/enums";
-import { TraktResponse } from "@/trakt/responses/TraktResponses";
+import {
+    TraktPagedResponse,
+    TraktResponse
+} from "@/trakt/responses/TraktResponses";
 import { ResponseHeaderParser } from "@/trakt/handlers/ResponseHeaderParser";
 import type { ATraktFilter } from "@/trakt/parameters/filters/TraktFilters";
 import type { RequestPagination } from "@/models/RequestModels";
@@ -68,12 +71,12 @@ export class TraktClient {
         filters = null,
         queryParams = null,
         serializer = null,
-    }: IApiCallParams): Promise<TraktResponse<T[]>> {
-        let result = new TraktResponse<T[]>();
+    }: IApiCallParams): Promise<TraktPagedResponse<T[]>> {
+        let result = new TraktPagedResponse<T[]>();
         let response: AxiosResponse | null = null;
         try {
             queryParams = queryParams ?? {};
-            queryParams = Object.assign(queryParams, requestPagination);
+            queryParams = Object.assign(queryParams, requestPagination?.toMap());
             queryParams = Object.assign(queryParams, filters?.toMap());
             if (extendedInfo?.hasAnySet()) queryParams["extended"] = extendedInfo.toString();
 

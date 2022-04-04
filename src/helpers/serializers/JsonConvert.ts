@@ -11,6 +11,7 @@ import type { CalendarShow, CalendarMovie } from "@/models/CalendarModels";
 import type { Show } from "@/models/ShowModels";
 import type { Episode } from "@/models/EpisodeModels";
 import type { Airs, Ids } from "@/models/CommonModels";
+import type { HistoryItem } from "@/models/UsersModels";
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -26,6 +27,11 @@ export class JsonConvert {
     public static toCalendarMovie(json: string): CalendarMovie[] {
         typeMap = typeMapMovieShows;
         return cast(JSON.parse(json), a(r("CalendarMovie")));
+    }
+
+    public static toHistoryItem(json: string): HistoryItem[] {
+        typeMap = typeMapHistoryItem;
+        return cast(JSON.parse(json), a(r("HistoryItem")));
     }
 
     public static calendarShowToJson(value: CalendarShow[]): string {
@@ -445,35 +451,262 @@ const typeMapCalendarShows: any = {
 };
 
 const typeMapMovieShows: any = {
-  "CalendarMovie": o([
-    { json: "released", js: "released", typ: u(undefined, Date) },
-    { json: "movie", js: "movie", typ: u(undefined, r("Movie")) },
-  ], false),
-  "Movie": o([
-    { json: "title", js: "title", typ: u(undefined, "") },
-    { json: "year", js: "year", typ: u(undefined, u(0, null)) },
-    { json: "ids", js: "ids", typ: u(undefined, r("Ids")) },
-    { json: "tagline", js: "tagline", typ: u(undefined, "") },
-    { json: "overview", js: "overview", typ: u(undefined, "") },
-    { json: "released", js: "released", typ: u(undefined, Date) },
-    { json: "runtime", js: "runtime", typ: u(undefined, 0) },
-    { json: "country", js: "country", typ: u(undefined, u(null, "")) },
-    { json: "trailer", js: "trailer", typ: u(undefined, u(null, "")) },
-    { json: "homepage", js: "homepage", typ: u(undefined, u(null, "")) },
-    { json: "status", js: "status", typ: u(undefined, "") },
-    { json: "rating", js: "rating", typ: u(undefined, 3.14) },
-    { json: "votes", js: "votes", typ: u(undefined, 0) },
-    { json: "comment_count", js: "commentCount", typ: u(undefined, 0) },
-    { json: "updated_at", js: "updatedAt", typ: u(undefined, Date) },
-    { json: "language", js: "language", typ: u(undefined, "") },
-    { json: "available_translations", js: "availableTranslations", typ: u(undefined, a("")) },
-    { json: "genres", js: "genres", typ: u(undefined, a("")) },
-    { json: "certification", js: "certification", typ: u(undefined, u(null, "")) },
-  ], false),
-  "Ids": o([
-    { json: "trakt", js: "trakt", typ: u(undefined, 0) },
-    { json: "slug", js: "slug", typ: u(undefined, "") },
-    { json: "imdb", js: "imdb", typ: u(undefined, u(null, "")) },
-    { json: "tmdb", js: "tmdb", typ: u(undefined, 0) },
-  ], false),
+    CalendarMovie: o(
+        [
+            {
+                json: "released",
+                js: "released",
+                typ: u(undefined, Date),
+            },
+            {
+                json: "movie",
+                js: "movie",
+                typ: u(undefined, r("Movie")),
+            },
+        ],
+        false
+    ),
+    Movie: o(
+        [
+            {
+                json: "title",
+                js: "title",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "year",
+                js: "year",
+                typ: u(undefined, u(0, null)),
+            },
+            {
+                json: "ids",
+                js: "ids",
+                typ: u(undefined, r("Ids")),
+            },
+            {
+                json: "tagline",
+                js: "tagline",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "overview",
+                js: "overview",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "released",
+                js: "released",
+                typ: u(undefined, Date),
+            },
+            {
+                json: "runtime",
+                js: "runtime",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "country",
+                js: "country",
+                typ: u(undefined, u(null, "")),
+            },
+            {
+                json: "trailer",
+                js: "trailer",
+                typ: u(undefined, u(null, "")),
+            },
+            {
+                json: "homepage",
+                js: "homepage",
+                typ: u(undefined, u(null, "")),
+            },
+            {
+                json: "status",
+                js: "status",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "rating",
+                js: "rating",
+                typ: u(undefined, 3.14),
+            },
+            {
+                json: "votes",
+                js: "votes",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "comment_count",
+                js: "commentCount",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "updated_at",
+                js: "updatedAt",
+                typ: u(undefined, Date),
+            },
+            {
+                json: "language",
+                js: "language",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "available_translations",
+                js: "availableTranslations",
+                typ: u(undefined, a("")),
+            },
+            {
+                json: "genres",
+                js: "genres",
+                typ: u(undefined, a("")),
+            },
+            {
+                json: "certification",
+                js: "certification",
+                typ: u(undefined, u(null, "")),
+            },
+        ],
+        false
+    ),
+    Ids: o(
+        [
+            {
+                json: "trakt",
+                js: "trakt",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "slug",
+                js: "slug",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "imdb",
+                js: "imdb",
+                typ: u(undefined, u(null, "")),
+            },
+            {
+                json: "tmdb",
+                js: "tmdb",
+                typ: u(undefined, 0),
+            },
+        ],
+        false
+    ),
+};
+
+const typeMapHistoryItem: any = {
+    HistoryItem: o(
+        [
+            {
+                json: "id",
+                js: "id",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "watched_at",
+                js: "watchedAt",
+                typ: u(undefined, Date),
+            },
+            {
+                json: "action",
+                js: "action",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "type",
+                js: "type",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "episode",
+                js: "episode",
+                typ: u(undefined, r("Episode")),
+            },
+            {
+                json: "show",
+                js: "show",
+                typ: u(undefined, r("Show")),
+            },
+        ],
+        false
+    ),
+    Episode: o(
+        [
+            {
+                json: "season",
+                js: "season",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "number",
+                js: "number",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "title",
+                js: "title",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "ids",
+                js: "ids",
+                typ: u(undefined, r("Ids")),
+            },
+        ],
+        false
+    ),
+    Ids: o(
+        [
+            {
+                json: "trakt",
+                js: "trakt",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "tvdb",
+                js: "tvdb",
+                typ: u(undefined, u(0, null)),
+            },
+            {
+                json: "imdb",
+                js: "imdb",
+                typ: u(undefined, u(null, "")),
+            },
+            {
+                json: "tmdb",
+                js: "tmdb",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "tvrage",
+                js: "tvrage",
+                typ: u(undefined, u(0, null)),
+            },
+            {
+                json: "slug",
+                js: "slug",
+                typ: u(undefined, ""),
+            },
+        ],
+        false
+    ),
+    Show: o(
+        [
+            {
+                json: "title",
+                js: "title",
+                typ: u(undefined, ""),
+            },
+            {
+                json: "year",
+                js: "year",
+                typ: u(undefined, 0),
+            },
+            {
+                json: "ids",
+                js: "ids",
+                typ: u(undefined, r("Ids")),
+            },
+        ],
+        false
+    ),
 };
