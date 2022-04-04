@@ -2,7 +2,8 @@ import TraktApiCategory
     from "@/helpers/trakt_api_requests/TraktApiCategory";
 import {
     AuthorizationRequirement,
-    ShowMovieType
+    ShowMovieType,
+    SyncGetHistoryTypes
 } from "@/helpers/enums";
 import {
     JsonConvert
@@ -35,7 +36,7 @@ import {
 } from "@/helpers/serializers/WatchedItemSerializer";
 
 interface ISyncGetHistoryParams {
-    type?: string | null;
+    type?: SyncGetHistoryTypes | null;
     id?: number | null;
     startAt?: Date | string | null;
     endAt?: Date | string | null;
@@ -73,7 +74,7 @@ export default class SyncRequests extends TraktApiCategory {
         requestPagination = null,
     }: ISyncGetHistoryParams = {}) => {
         const URL_TEMPLATE = `/sync/history`;
-
+        
         let request = "";
         if (type) request += `/${type}`;
         if (type && id) request += `${id}`;
@@ -94,14 +95,13 @@ export default class SyncRequests extends TraktApiCategory {
             requestPagination: requestPagination,
             filters: filters,
             serializer: JsonConvert.toHistoryItem,
-            // serializer: ConvertHistoryItemJson.toHistoryItem,
         });
     };
 
     public getWatched = async ({ type, extendedFull = false, filters = null }: ISyncGetWatchedParams) => {
         return await this._traktClient.getList<WatchedItem>({
             authorizationRequirement: AuthorizationRequirement.Required,
-            request: `/sync/watched/${type === ShowMovieType.movies ? "movies" : "shows"}`,
+            request: `/sync/watched/${type}`,
             queryParams: {},
             extendedInfo: extendedFull ? new TraktExtendedInfo().setFull() : null,
             serializer: JsonConvert.toWatchedItem,

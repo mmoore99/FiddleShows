@@ -148,7 +148,7 @@
         }
     );
 
-    _traktApi.Sync.getWatched({type: ShowMovieType.show, extendedFull: true 
+    _traktApi.Sync.getWatched({type: ShowMovieType.shows, extendedFull: true 
     }).then(
         (result) => {
             watchedShows.value = result.content;

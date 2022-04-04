@@ -17,6 +17,13 @@ export enum AuthorizationRequirement{
 }
 
 export enum ShowMovieType{
-  show,
-  movies
+  shows = "shows",
+  movies = "movies"
+}
+
+export enum SyncGetHistoryTypes{
+  movies = "movies",
+  seasons = "seasons",
+  episodes = "episodes",
+  shows = "shows"
 }
