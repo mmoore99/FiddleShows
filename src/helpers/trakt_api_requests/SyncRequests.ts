@@ -10,7 +10,7 @@ import { isDateObject, isString, isValidDateString } from "@/helpers/Utils";
 import type { HistoryItem } from "@/models/UsersModels";
 import { ConvertHistoryItemJson } from "@/helpers/serializers/HistoryItemSerializer";
 
-interface ISyncWatchedHistoryParams {
+interface ISyncGetHistoryParams {
     type?: string | null;
     id?: number | null;
     startAt?: Date | string | null;
@@ -41,7 +41,7 @@ export default class SyncRequests extends TraktApiCategory {
         extendedFull = false,
         filters = null,
         requestPagination = null,
-    }: ISyncWatchedHistoryParams = {}) => {
+    }: ISyncGetHistoryParams = {}) => {
         const URL_TEMPLATE = `/sync/history`;
 
         let request = "";
