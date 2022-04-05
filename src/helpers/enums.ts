@@ -27,3 +27,17 @@ export enum SyncGetHistoryTypes{
   episodes = "episodes",
   shows = "shows"
 }
+
+export enum SyncGetWatchlistTypes{
+  movies = "movies",
+  seasons = "seasons",
+  episodes = "episodes",
+  shows = "shows"
+}
+
+export enum SyncGetWatchlistSortTypes{
+  rank = "rank",
+  added = "added",
+  released = "released",
+  title = "title"
+}

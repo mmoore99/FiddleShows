@@ -1,7 +1,8 @@
 import type { Episode } from "@/models/EpisodeModels";
 import type { Show } from "@/models/ShowModels";
 import type { Movie } from "@/models/MovieModels";
-import type { WatchedSeason } from "@/models/SeasonModels";
+import type { Season, WatchedSeason } from "@/models/SeasonModels";
+import type { SyncGetWatchlistTypes } from "@/helpers/enums";
 
 export interface HistoryItem {
     id?: number;
@@ -19,4 +20,14 @@ export interface WatchedItem {
     resetAt?: null;
     show?: Show;
     seasons?: WatchedSeason[];
+}
+
+export interface WatchListItem {
+    rank: number;
+    listedAt: Date;
+    type: SyncGetWatchlistTypes;
+    movie?: Movie;
+    episode?: Episode;
+    season?: Season;
+    show?: Show;
 }

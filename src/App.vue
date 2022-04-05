@@ -27,7 +27,8 @@
     import { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
     import type {
         HistoryItem,
-        WatchedItem
+        WatchedItem,
+        WatchListItem
     } from "@/models/UsersModels";
     import {
         ShowMovieType
@@ -106,6 +107,7 @@
     const historyItems = ref<HistoryItem[] | null>([]);
     const watchedShows = ref<WatchedItem[] | null>([]);
     const watchedMovies = ref<WatchedItem[] | null>([]);
+    const watchList = ref<WatchListItem[] | null>([]);
 
     const queryParams = {};
 
@@ -164,6 +166,17 @@
         (result) => {
             watchedMovies.value = result.content;
             console.log("WatchedMovies:", watchedMovies.value);
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+
+    _traktApi.Sync.getWatchList({extendedFull: true
+    }).then(
+        (result) => {
+            watchList.value = result.content;
+            console.log("WatchList:", watchList.value);
         },
         (error) => {
             console.log(error);

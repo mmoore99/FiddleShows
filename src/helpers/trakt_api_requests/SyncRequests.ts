@@ -1,39 +1,19 @@
-import TraktApiCategory
-    from "@/helpers/trakt_api_requests/TraktApiCategory";
-import {
-    AuthorizationRequirement,
-    ShowMovieType,
-    SyncGetHistoryTypes
-} from "@/helpers/enums";
-import {
-    JsonConvert
-} from "@/helpers/serializers/JsonConvert";
-import type {
-    TraktClient
-} from "@/trakt/TraktClient";
-import type {
-    TraktShowFilter
-} from "@/trakt/parameters/filters/TraktFilters";
-import {
-    TraktExtendedInfo
-} from "@/trakt/parameters/traktExtendedInfo";
-import type {
-    IDictionary
-} from "@/models/CommonModels";
-import type {
-    RequestPagination
-} from "@/models/RequestModels";
-import {
-    isString,
-    isValidDateString
-} from "@/helpers/Utils";
+import TraktApiCategory from "@/helpers/trakt_api_requests/TraktApiCategory";
+import { AuthorizationRequirement, ShowMovieType, SyncGetHistoryTypes, SyncGetWatchlistSortTypes, SyncGetWatchlistTypes } from "@/helpers/enums";
+import { JsonConvert } from "@/helpers/serializers/JsonConvert";
+import type { TraktClient } from "@/trakt/TraktClient";
+import type { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
+import { TraktExtendedInfo } from "@/trakt/parameters/traktExtendedInfo";
+import type { IDictionary } from "@/models/CommonModels";
+import type { RequestPagination } from "@/models/RequestModels";
+import { isString, isValidDateString } from "@/helpers/Utils";
 import type {
     HistoryItem,
-    WatchedItem
+    WatchedItem,
+    WatchListItem
 } from "@/models/UsersModels";
-import {
-    WatchedItemSerializer
-} from "@/helpers/serializers/WatchedItemSerializer";
+import { WatchedItemSerializer } from "@/helpers/serializers/WatchedItemSerializer";
+import { WatchListItemSerializer } from "@/helpers/serializers/WatchListItemSerializer";
 
 interface ISyncGetHistoryParams {
     type?: SyncGetHistoryTypes | null;
@@ -50,6 +30,13 @@ interface ISyncGetWatchedParams {
     type: ShowMovieType;
     extendedFull?: boolean;
     filters?: TraktShowFilter | null;
+}
+
+interface ISyncGetWatchListParams {
+    type?: SyncGetWatchlistTypes | null;
+    sort?: SyncGetWatchlistSortTypes | null;
+    extendedFull?: boolean;
+    requestPagination?: RequestPagination | null;
 }
 
 interface ICommonSyncParams {
@@ -74,10 +61,11 @@ export default class SyncRequests extends TraktApiCategory {
         requestPagination = null,
     }: ISyncGetHistoryParams = {}) => {
         const URL_TEMPLATE = `/sync/history`;
-        
+
         let request = "";
         if (type) request += `/${type}`;
         if (type && id) request += `${id}`;
+
         const url = URL_TEMPLATE + request;
 
         if (startAt && isString(startAt) && isValidDateString(startAt as string)) startAt = new Date(startAt);
@@ -98,13 +86,31 @@ export default class SyncRequests extends TraktApiCategory {
         });
     };
 
-    public getWatched = async ({ type, extendedFull = false, filters = null }: ISyncGetWatchedParams) => {
+    public getWatched = async ({ type, extendedFull = false }: ISyncGetWatchedParams) => {
         return await this._traktClient.getList<WatchedItem>({
             authorizationRequirement: AuthorizationRequirement.Required,
             request: `/sync/watched/${type}`,
-            queryParams: {},
             extendedInfo: extendedFull ? new TraktExtendedInfo().setFull() : null,
             serializer: JsonConvert.toWatchedItem,
+        });
+    };
+
+    public getWatchList = async ({ type = null, sort = null, extendedFull = false, requestPagination = null }: ISyncGetWatchListParams = {}) => {
+        const URL_TEMPLATE = `/sync/watchlist`;
+
+        let request = "";
+        if (type) request += `/${type}`;
+        if (type && sort) request += `${sort}`;
+
+        const url = URL_TEMPLATE + request;
+
+        return await this._traktClient.getList<WatchListItem>({
+            authorizationRequirement: AuthorizationRequirement.Required,
+            request: url,
+            extendedInfo: extendedFull ? new TraktExtendedInfo().setFull() : null,
+            requestPagination: requestPagination,
+            serializer: JsonConvert.toWatchListItem,
+            // serializer: WatchListItemSerializer.toWatchListItem,
         });
     };
 }
