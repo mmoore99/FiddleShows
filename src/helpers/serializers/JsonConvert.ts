@@ -912,7 +912,7 @@ const typeMapShowWatchedProgress: any = {
         { json: "tvdb", js: "tvdb", typ: u(undefined, null, 0) },
         { json: "imdb", js: "imdb", typ: u(undefined, null, "") },
         { json: "tmdb", js: "tmdb", typ: u(undefined, null, 0) },
-        { json: "tvrage", js: "tvrage", typ: u(undefined, null) },
+        { json: "tvrage", js: "tvrage", typ: u(undefined, null, 0) },
     ], false),
     "ShowSeasonProgress": o([
         { json: "number", js: "number", typ: u(undefined, null, 0) },
