@@ -33,6 +33,12 @@
     import {
         ShowMovieType
     } from "@/helpers/enums";
+    import type {
+        Movie
+    } from "@/models/MovieModels";
+    import type {
+        Show
+    } from "@/models/ShowModels";
 
     const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
@@ -85,7 +91,7 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    const _traktApi = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: true });
+    const _traktApi = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: false });
 
     // const filters = new Filters({ query: "this is the query", years: "1972", genres: ["drama", "comedy"], countries: ["US", "FR"] });
     // console.log("Filters:", filters.toMap());
@@ -111,20 +117,20 @@
 
     const queryParams = {};
 
-    _traktApi.Calendar.getUserShows({ extendedFull: true, filters: filters2 }).then(
-        // _traktApi.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
-        // _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
-        // _traktApi.Calendar.getMyShows().then(
-        (result) => {
-            shows.value = result.content;
-            console.log("Shows:", shows.value);
-        },
-        (error) => {
-            console.log(error);
-        }
-    );
-
-    _traktApi.Calendar.getAllMovies({ extendedFull: true }).then(
+    // _traktApi.Calendar.getUserShows({ extendedFull: true, filters: filters2 }).then(
+    //     // _traktApi.Calendar.getMyShows({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: false }).then(
+    //     // _traktApi.Calendar.getSeasonPremiers({ startDate: "2022-05-01", numberOfDays: 33, extendedFull: true }).then(
+    //     // _traktApi.Calendar.getMyShows().then(
+    //     (result) => {
+    //         shows.value = result.content;
+    //         console.log("Shows:", shows.value);
+    //     },
+    //     (error) => {
+    //         console.log(error);
+    //     }
+    // );
+    //
+    _traktApi.Calendars.getAllMovies({ extendedFull: true }).then(
         (result) => {
             movies.value = result.content;
             console.log("Movies:", movies.value);
@@ -133,55 +139,80 @@
             console.log(error);
         }
     );
-
-    _traktApi.Sync.getHistory({
-        extendedFull: true,
-        requestPagination: new RequestPagination({
-            page: 1,
-            limit: 100,
-        }),
-    }).then(
-        (result) => {
-            historyItems.value = result.content;
-            console.log("HistoryItems:", historyItems.value);
-        },
-        (error) => {
-            console.log(error);
-        }
-    );
-
-    _traktApi.Sync.getWatched({type: ShowMovieType.shows, extendedFull: true 
-    }).then(
-        (result) => {
-            watchedShows.value = result.content;
-            console.log("WatchedShows:", watchedShows.value);
-        },
-        (error) => {
-            console.log(error);
-        }
-    );
-
-    _traktApi.Sync.getWatched({type: ShowMovieType.movies, extendedFull: true
-    }).then(
-        (result) => {
-            watchedMovies.value = result.content;
-            console.log("WatchedMovies:", watchedMovies.value);
-        },
-        (error) => {
-            console.log(error);
-        }
-    );
+    //
+    // _traktApi.Sync.getHistory({
+    //     extendedFull: true,
+    //     requestPagination: new RequestPagination({
+    //         page: 1,
+    //         limit: 100,
+    //     }),
+    // }).then(
+    //     (result) => {
+    //         historyItems.value = result.content;
+    //         console.log("HistoryItems:", historyItems.value);
+    //     },
+    //     (error) => {
+    //         console.log(error);
+    //     }
+    // );
+    //
+    // _traktApi.Sync.getWatched({type: ShowMovieType.shows, extendedFull: true 
+    // }).then(
+    //     (result) => {
+    //         watchedShows.value = result.content;
+    //         console.log("WatchedShows:", watchedShows.value);
+    //     },
+    //     (error) => {
+    //         console.log(error);
+    //     }
+    // );
+    //
+    // _traktApi.Sync.getWatched({type: ShowMovieType.movies, extendedFull: true
+    // }).then(
+    //     (result) => {
+    //         watchedMovies.value = result.content;
+    //         console.log("WatchedMovies:", watchedMovies.value);
+    //     },
+    //     (error) => {
+    //         console.log(error);
+    //     }
+    // );
 
     _traktApi.Sync.getWatchList({extendedFull: true
     }).then(
         (result) => {
             watchList.value = result.content;
             console.log("WatchList:", watchList.value);
+
+            for (let i = 0; i < watchList!.value!.length; i++) {
+                let entity: Show|Movie|null = null;
+                if (watchList.value![i].movie){ 
+                    entity = watchList!.value![i].movie!
+                    console.log(`Skipping movie: ${entity.title}`);
+                    continue;
+                }
+                entity = watchList!.value![i].show!
+                const entityId = entity.ids!.trakt!;
+                let showProgress = null;
+                console.log(`Processing show: ${entity.title}`);
+                _traktApi.Shows.getShowWatchedProgress({ id: entityId }).then(
+                    (result) => {
+                        showProgress = result.content;
+                        console.log("ShowProgress:", showProgress);
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+            }
         },
         (error) => {
             console.log(error);
         }
     );
+
+    
+    
 </script>
 
 <template>

@@ -5,11 +5,11 @@ export interface Airs {
 }
 
 export interface Ids {
-  trakt?: number;
-  tvdb?: number | null;
+  trakt?: string;
+  tvdb?: string | null;
   imdb?: null | string;
-  tmdb?: number | null;
-  tvrage?: number | null;
+  tmdb?: string | null;
+  tvrage?: string | null;
   slug?: string;
 }
 

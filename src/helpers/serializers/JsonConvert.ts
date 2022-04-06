@@ -8,7 +8,10 @@
 // match the expected interface, even if the JSON is valid.
 
 import type { CalendarShow, CalendarMovie } from "@/models/CalendarModels";
-import type { Show } from "@/models/ShowModels";
+import type {
+    Show,
+    ShowWatchedProgress
+} from "@/models/ShowModels";
 import type { Episode } from "@/models/EpisodeModels";
 import type { Airs, Ids } from "@/models/CommonModels";
 import type {
@@ -46,6 +49,11 @@ export class JsonConvert {
     public static toWatchListItem(json: string): WatchListItem[] {
         typeMap = typeMapWatchListItem;
         return cast(JSON.parse(json), a(r("WatchListItem")));
+    }
+
+    public static toShowWatchedProgress(json: string): ShowWatchedProgress {
+        typeMap = typeMapShowWatchedProgress;
+        return cast(JSON.parse(json), r("ShowWatchedProgress"));
     }
 
     public static calendarShowToJson(value: CalendarShow[]): string {
@@ -880,4 +888,42 @@ const typeMapWatchListItem: any = {
         ],
         false
     ),
+};
+
+const typeMapShowWatchedProgress: any = {
+    "ShowWatchedProgress": o([
+        { json: "aired", js: "aired", typ: u(undefined, 0) },
+        { json: "completed", js: "completed", typ: u(undefined, 0) },
+        { json: "last_watched_at", js: "lastWatchedAt", typ: u(undefined, null) },
+        { json: "reset_at", js: "resetAt", typ: u(undefined, null) },
+        { json: "seasons", js: "seasons", typ: u(undefined, a(r("ShowSeasonProgress"))) },
+        { json: "hidden_seasons", js: "hiddenSeasons", typ: u(undefined, a("any")) },
+        { json: "next_episode", js: "nextEpisode", typ: u(undefined, null, r("Episode")) },
+        { json: "last_episode", js: "lastEpisode", typ: u(undefined, null, r("Episode")),},
+    ], false),
+    "Episode": o([
+        { json: "season", js: "season", typ: u(undefined, null, 0) },
+        { json: "number", js: "number", typ: u(undefined, null, 0) },
+        { json: "title", js: "title", typ: u(undefined, null, "") },
+        { json: "ids", js: "ids", typ: u(undefined, null, r("Ids")) },
+    ], false),
+    "Ids": o([
+        { json: "trakt", js: "trakt", typ: u(undefined, null, 0) },
+        { json: "tvdb", js: "tvdb", typ: u(undefined, null, 0) },
+        { json: "imdb", js: "imdb", typ: u(undefined, null, "") },
+        { json: "tmdb", js: "tmdb", typ: u(undefined, null, 0) },
+        { json: "tvrage", js: "tvrage", typ: u(undefined, null) },
+    ], false),
+    "ShowSeasonProgress": o([
+        { json: "number", js: "number", typ: u(undefined, null, 0) },
+        { json: "title", js: "title", typ: u(undefined, null, "") },
+        { json: "aired", js: "aired", typ: u(undefined, null, 0) },
+        { json: "completed", js: "completed", typ: u(undefined, 0) },
+        { json: "episodes", js: "episodes", typ: u(undefined, null, a(r("ShowEpisodeProgress"))) },
+    ], false),
+    "ShowEpisodeProgress": o([
+        { json: "number", js: "number", typ: u(undefined, 0) },
+        { json: "completed", js: "completed", typ: u(undefined, true) },
+        { json: "last_watched_at", js: "lastWatchedAt", typ: u(undefined, null) },
+    ], false),
 };
