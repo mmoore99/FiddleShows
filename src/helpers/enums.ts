@@ -35,6 +35,14 @@ export enum SyncGetWatchlistTypes{
   shows = "shows"
 }
 
+export enum GetListItemsTypes{
+  movies = "movie",
+  seasons = "season",
+  episodes = "episode",
+  shows = "show",
+  person = "person"
+}
+
 export enum SyncGetWatchlistSortTypes{
   rank = "rank",
   added = "added",

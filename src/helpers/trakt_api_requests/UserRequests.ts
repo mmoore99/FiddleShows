@@ -1,5 +1,12 @@
 import TraktApiCategory from "@/helpers/trakt_api_requests/TraktApiCategory";
-import { AuthorizationRequirement, ShowMovieType, SyncGetHistoryTypes, SyncGetWatchlistSortTypes, SyncGetWatchlistTypes } from "@/helpers/enums";
+import {
+    AuthorizationRequirement,
+    GetListItemsTypes,
+    ShowMovieType,
+    SyncGetHistoryTypes,
+    SyncGetWatchlistSortTypes,
+    SyncGetWatchlistTypes
+} from "@/helpers/enums";
 import { JsonConvert } from "@/helpers/serializers/JsonConvert";
 import type { TraktClient } from "@/trakt/TraktClient";
 import type { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
@@ -12,6 +19,9 @@ import { WatchedItemSerializer } from "@/helpers/serializers/WatchedItemSerializ
 import { WatchListItemSerializer } from "@/helpers/serializers/WatchListItemSerializer";
 import type { ShowWatchedProgress } from "@/models/ShowModels";
 import { ShowWatchedProgressSerializer } from "@/helpers/serializers/ShowWatchedProgressSerializer";
+import type {
+    TraktList
+} from "@/models/ListModels";
 
 interface IShowWatchedProgressParams {
     id: string;
@@ -40,25 +50,45 @@ interface IShowWatchedProgressParams {
 //     requestPagination?: RequestPagination | null;
 // }
 
-export default class ShowRequests extends TraktApiCategory {
+interface IGetListItemsParams {
+    id: string
+    listId: string
+    type?: GetListItemsTypes | null;
+    extendedFull?: boolean;
+    requestPagination?: RequestPagination | null;
+}
+
+export default class UserRequests extends TraktApiCategory {
     constructor(traktClient: TraktClient) {
         super(traktClient);
     }
 
-    public getShowWatchedProgress = async ({ id, hidden = false, specials = false, countSpecials = false }: IShowWatchedProgressParams) => {
-        const url = `/shows/${id}/progress/watched`;
+    public getCustomLists = async (id: string) => {
+        const url = `/users/${id}/lists`;
 
-        const queryParams: IDictionary = {};
-        queryParams["hidden"] = hidden;
-        queryParams["specials"] = hidden;
-        queryParams["count_specials"] = hidden;
-
-        return await this._traktClient.get<ShowWatchedProgress>({
+        return await this._traktClient.getList<TraktList>({
             authorizationRequirement: AuthorizationRequirement.Required,
             request: url,
-            queryParams: queryParams,
             // serializer: ShowWatchedProgressSerializer.toShowWatchedProgress,
-            serializer: JsonConvert.toShowWatchedProgress,
+            serializer: JsonConvert.toTraktList,
+        });
+    };
+
+    public getListItems = async ({id, listId, type = null, extendedFull = false, requestPagination = null }: IGetListItemsParams) => {
+        const URL_TEMPLATE = `/users/${id}/lists/${listId}`;
+
+        let request = "";
+        if (type) request += `/${type}`;
+
+        const url = URL_TEMPLATE + request;
+
+        return await this._traktClient.getList<WatchListItem>({
+            authorizationRequirement: AuthorizationRequirement.Required,
+            request: url,
+            extendedInfo: extendedFull ? new TraktExtendedInfo().setFull() : null,
+            requestPagination: requestPagination,
+            serializer: JsonConvert.toWatchListItem,
+            // serializer: WatchListItemSerializer.toWatchListItem,
         });
     };
 }

@@ -10,6 +10,8 @@ import type { RequestPagination } from "@/models/RequestModels";
 import type { TraktExtendedInfo } from "@/trakt/parameters/traktExtendedInfo";
 import SyncRequests from "@/helpers/trakt_api_requests/SyncRequests";
 import ShowRequests from "@/helpers/trakt_api_requests/ShowRequests";
+import UserRequests
+    from "@/helpers/trakt_api_requests/UserRequests";
 
 interface IApiCallParams {
     authorizationRequirement: AuthorizationRequirement;
@@ -37,10 +39,12 @@ export class TraktClient {
     private _calendars = new CalendarRequests(this);
     private _sync = new SyncRequests(this);
     private _shows = new ShowRequests(this);
+    private _users = new UserRequests(this);
 
     public Calendars = this._calendars;
     public Sync = this._sync;
     public Shows = this._shows;
+    public Users = this._users;
 
     constructor({ clientId = "", clientSecret = "", accessToken = "", isUseProxy = false }) {
         this._clientId = clientId;

@@ -11,7 +11,7 @@ import type {
     HistoryItem,
     WatchedItem,
     WatchListItem
-} from "@/models/UsersModels";
+} from "@/models/UserModels";
 import { WatchedItemSerializer } from "@/helpers/serializers/WatchedItemSerializer";
 import { WatchListItemSerializer } from "@/helpers/serializers/WatchListItemSerializer";
 

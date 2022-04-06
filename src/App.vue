@@ -29,7 +29,7 @@
         HistoryItem,
         WatchedItem,
         WatchListItem
-    } from "@/models/UsersModels";
+    } from "@/models/UserModels";
     import {
         ShowMovieType
     } from "@/helpers/enums";
@@ -39,6 +39,9 @@
     import type {
         Show
     } from "@/models/ShowModels";
+    import type {
+        TraktList
+    } from "@/models/ListModels";
 
     const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
@@ -114,6 +117,7 @@
     const watchedShows = ref<WatchedItem[] | null>([]);
     const watchedMovies = ref<WatchedItem[] | null>([]);
     const watchList = ref<WatchListItem[] | null>([]);
+    const customLists = ref<TraktList[] | null>([]);
 
     const queryParams = {};
 
@@ -130,15 +134,15 @@
     //     }
     // );
     //
-    _traktApi.Calendars.getAllMovies({ extendedFull: true }).then(
-        (result) => {
-            movies.value = result.content;
-            console.log("Movies:", movies.value);
-        },
-        (error) => {
-            console.log(error);
-        }
-    );
+    // _traktApi.Calendars.getAllMovies({ extendedFull: true }).then(
+    //     (result) => {
+    //         movies.value = result.content;
+    //         console.log("Movies:", movies.value);
+    //     },
+    //     (error) => {
+    //         console.log(error);
+    //     }
+    // );
     //
     // _traktApi.Sync.getHistory({
     //     extendedFull: true,
@@ -178,33 +182,43 @@
     //     }
     // );
 
-    _traktApi.Sync.getWatchList({extendedFull: true
-    }).then(
-        (result) => {
-            watchList.value = result.content;
-            console.log("WatchList:", watchList.value);
+    // _traktApi.Sync.getWatchList({extendedFull: true
+    // }).then(
+    //     (result) => {
+    //         watchList.value = result.content;
+    //         console.log("WatchList:", watchList.value);
+    //
+    //         for (let i = 0; i < watchList!.value!.length; i++) {
+    //             let entity: Show|Movie|null = null;
+    //             if (watchList.value![i].movie){ 
+    //                 entity = watchList!.value![i].movie!
+    //                 console.log(`Skipping movie: ${entity.title}`);
+    //                 continue;
+    //             }
+    //             entity = watchList!.value![i].show!
+    //             const entityId = entity.ids!.trakt!;
+    //             let showProgress = null;
+    //             console.log(`Processing show: ${entity.title}`);
+    //             _traktApi.Shows.getShowWatchedProgress({ id: entityId }).then(
+    //                 (result) => {
+    //                     showProgress = result.content;
+    //                     console.log("ShowProgress:", showProgress);
+    //                 },
+    //                 (error) => {
+    //                     console.log(error);
+    //                 }
+    //             );
+    //         }
+    //     },
+    //     (error) => {
+    //         console.log(error);
+    //     }
+    // );
 
-            for (let i = 0; i < watchList!.value!.length; i++) {
-                let entity: Show|Movie|null = null;
-                if (watchList.value![i].movie){ 
-                    entity = watchList!.value![i].movie!
-                    console.log(`Skipping movie: ${entity.title}`);
-                    continue;
-                }
-                entity = watchList!.value![i].show!
-                const entityId = entity.ids!.trakt!;
-                let showProgress = null;
-                console.log(`Processing show: ${entity.title}`);
-                _traktApi.Shows.getShowWatchedProgress({ id: entityId }).then(
-                    (result) => {
-                        showProgress = result.content;
-                        console.log("ShowProgress:", showProgress);
-                    },
-                    (error) => {
-                        console.log(error);
-                    }
-                );
-            }
+    _traktApi.Users.getCustomLists("me").then(
+        (result) => {
+            customLists.value = result.content;
+            console.log("CustomLists:", customLists.value);
         },
         (error) => {
             console.log(error);

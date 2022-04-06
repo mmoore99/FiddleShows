@@ -18,7 +18,10 @@ import type {
     HistoryItem,
     WatchedItem,
     WatchListItem
-} from "@/models/UsersModels";
+} from "@/models/UserModels";
+import type {
+    TraktList
+} from "@/models/ListModels";
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -49,6 +52,11 @@ export class JsonConvert {
     public static toWatchListItem(json: string): WatchListItem[] {
         typeMap = typeMapWatchListItem;
         return cast(JSON.parse(json), a(r("WatchListItem")));
+    }
+
+    public static toTraktList(json: string): TraktList[] {
+        typeMap = typeMapTraktList;
+        return cast(JSON.parse(json), a(r("TraktList")));
     }
 
     public static toShowWatchedProgress(json: string): ShowWatchedProgress {
@@ -927,3 +935,38 @@ const typeMapShowWatchedProgress: any = {
         { json: "last_watched_at", js: "lastWatchedAt", typ: u(undefined, null) },
     ], false),
 };
+
+const typeMapTraktList: any = {
+    "TraktList": o([
+        { json: "name", js: "name", typ: u(undefined, "") },
+        { json: "description", js: "description", typ: u(undefined, "") },
+        { json: "privacy", js: "privacy", typ: u(undefined, "") },
+        { json: "display_numbers", js: "displayNumbers", typ: u(undefined, true) },
+        { json: "allow_comments", js: "allowComments", typ: u(undefined, true) },
+        { json: "sort_by", js: "sortBy", typ: u(undefined, "") },
+        { json: "sort_how", js: "sortHow", typ: u(undefined, "") },
+        { json: "created_at", js: "createdAt", typ: u(undefined, Date) },
+        { json: "updated_at", js: "updatedAt", typ: u(undefined, Date) },
+        { json: "item_count", js: "itemCount", typ: u(undefined, 0) },
+        { json: "comment_count", js: "commentCount", typ: u(undefined, 0) },
+        { json: "likes", js: "likes", typ: u(undefined, 0) },
+        { json: "ids", js: "ids", typ: u(undefined, r("TraktListids")) },
+        { json: "user", js: "user", typ: u(undefined, r("User")) },
+    ], false),
+    "TraktListids": o([
+        { json: "trakt", js: "trakt", typ: u(undefined, 0) },
+        { json: "slug", js: "slug", typ: u(undefined, "") },
+    ], false),
+    "User": o([
+        { json: "username", js: "username", typ: u(undefined, "") },
+        { json: "private", js: "private", typ: u(undefined, true) },
+        { json: "name", js: "name", typ: u(undefined, "") },
+        { json: "vip", js: "vip", typ: u(undefined, true) },
+        { json: "vip_ep", js: "vipEp", typ: u(undefined, true) },
+        { json: "ids", js: "ids", typ: u(undefined, r("Userids")) },
+    ], false),
+    "Userids": o([
+        { json: "slug", js: "slug", typ: u(undefined, "") },
+    ], false),
+};
+
