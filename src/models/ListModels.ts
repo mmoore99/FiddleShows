@@ -1,22 +1,10 @@
 import type { User } from "@/models/UserModels";
-import {
-    SyncGetWatchlistTypes
-} from "@/helpers/enums";
-import {
-    Movie
-} from "@/models/MovieModels";
-import {
-    Episode
-} from "@/models/EpisodeModels";
-import {
-    Season
-} from "@/models/SeasonModels";
-import {
-    Show
-} from "@/models/ShowModels";
-import type {
-    Person
-} from "@/models/PeopleModels";
+import type { SyncGetWatchlistTypes } from "@/helpers/enums";
+import type { Movie } from "@/models/MovieModels";
+import type { Episode } from "@/models/EpisodeModels";
+import type { Season } from "@/models/SeasonModels";
+import type { Show } from "@/models/ShowModels";
+import type { Person } from "@/models/PeopleModels";
 
 export interface TraktList {
     name?: string;

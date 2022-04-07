@@ -20,7 +20,8 @@ import type {
     WatchListItem
 } from "@/models/UserModels";
 import type {
-    TraktList
+    TraktList,
+    TraktListItem
 } from "@/models/ListModels";
 
 // Converts JSON strings to/from your types
@@ -57,6 +58,11 @@ export class JsonConvert {
     public static toTraktList(json: string): TraktList[] {
         typeMap = typeMapTraktList;
         return cast(JSON.parse(json), a(r("TraktList")));
+    }
+
+    public static toTraktListItem(json: string): TraktListItem[] {
+        typeMap = typeMapTraktListItem;
+        return cast(JSON.parse(json), a(r("TraktListItem")));
     }
 
     public static toShowWatchedProgress(json: string): ShowWatchedProgress {
@@ -969,4 +975,81 @@ const typeMapTraktList: any = {
         { json: "slug", js: "slug", typ: u(undefined, "") },
     ], false),
 };
+
+const typeMapTraktListItem: any = {
+    "TraktListItem": o([
+        { json: "rank", js: "rank", typ: u(undefined, 0) },
+        { json: "id", js: "id", typ: u(undefined, 0) },
+        { json: "listed_at", js: "listedAt", typ: u(undefined, Date) },
+        { json: "notes", js: "notes", typ: u(undefined, null) },
+        { json: "type", js: "type", typ: u(undefined, "") },
+        { json: "show", js: "show", typ: u(undefined, r("Show")) },
+        { json: "movie", js: "movie", typ: u(undefined, r("Movie")) },
+    ], false),
+    "Movie": o([
+        { json: "title", js: "title", typ: u(undefined, "") },
+        { json: "year", js: "year", typ: u(undefined, 0) },
+        { json: "ids", js: "ids", typ: u(undefined, r("Movieids")) },
+        { json: "tagline", js: "tagline", typ: u(undefined, "") },
+        { json: "overview", js: "overview", typ: u(undefined, "") },
+        { json: "released", js: "released", typ: u(undefined, Date) },
+        { json: "runtime", js: "runtime", typ: u(undefined, 0) },
+        { json: "country", js: "country", typ: u(undefined, "") },
+        { json: "trailer", js: "trailer", typ: u(undefined, "") },
+        { json: "homepage", js: "homepage", typ: u(undefined, "") },
+        { json: "status", js: "status", typ: u(undefined, "") },
+        { json: "rating", js: "rating", typ: u(undefined, 3.14) },
+        { json: "votes", js: "votes", typ: u(undefined, 0) },
+        { json: "comment_count", js: "commentCount", typ: u(undefined, 0) },
+        { json: "updated_at", js: "updatedAt", typ: u(undefined, Date) },
+        { json: "language", js: "language", typ: u(undefined, "") },
+        { json: "available_translations", js: "availableTranslations", typ: u(undefined, a("")) },
+        { json: "genres", js: "genres", typ: u(undefined, a("")) },
+        { json: "certification", js: "certification", typ: u(undefined, "") },
+    ], false),
+    "Movieids": o([
+        { json: "trakt", js: "trakt", typ: u(undefined, 0) },
+        { json: "slug", js: "slug", typ: u(undefined, "") },
+        { json: "imdb", js: "imdb", typ: u(undefined, "") },
+        { json: "tmdb", js: "tmdb", typ: u(undefined, 0) },
+    ], false),
+    "Show": o([
+        { json: "title", js: "title", typ: u(undefined, "") },
+        { json: "year", js: "year", typ: u(undefined, 0) },
+        { json: "ids", js: "ids", typ: u(undefined, r("Showids")) },
+        { json: "overview", js: "overview", typ: u(undefined, "") },
+        { json: "first_aired", js: "firstAired", typ: u(undefined, Date) },
+        { json: "airs", js: "airs", typ: u(undefined, r("Airs")) },
+        { json: "runtime", js: "runtime", typ: u(undefined, 0) },
+        { json: "certification", js: "certification", typ: u(undefined, u(null, "")) },
+        { json: "country", js: "country", typ: u(undefined, "") },
+        { json: "trailer", js: "trailer", typ: u(undefined, u(null, "")) },
+        { json: "homepage", js: "homepage", typ: u(undefined, "") },
+        { json: "status", js: "status", typ: u(undefined, "") },
+        { json: "rating", js: "rating", typ: u(undefined, 3.14) },
+        { json: "votes", js: "votes", typ: u(undefined, 0) },
+        { json: "comment_count", js: "commentCount", typ: u(undefined, 0) },
+        { json: "network", js: "network", typ: u(undefined, "") },
+        { json: "updated_at", js: "updatedAt", typ: u(undefined, Date) },
+        { json: "language", js: "language", typ: u(undefined, "") },
+        { json: "available_translations", js: "availableTranslations", typ: u(undefined, a("")) },
+        { json: "genres", js: "genres", typ: u(undefined, a("")) },
+        { json: "aired_episodes", js: "airedEpisodes", typ: u(undefined, 0) },
+    ], false),
+    "Airs": o([
+        { json: "day", js: "day", typ: u(undefined, "") },
+        { json: "time", js: "time", typ: u(undefined, "") },
+        { json: "timezone", js: "timezone", typ: u(undefined, "") },
+    ], false),
+    "Showids": o([
+        { json: "trakt", js: "trakt", typ: u(undefined, 0) },
+        { json: "slug", js: "slug", typ: u(undefined, "") },
+        { json: "tvdb", js: "tvdb", typ: u(undefined, 0) },
+        { json: "imdb", js: "imdb", typ: u(undefined, "") },
+        { json: "tmdb", js: "tmdb", typ: u(undefined, 0) },
+        { json: "tvrage", js: "tvrage", typ: u(undefined, u(0, null)) },
+    ], false),
+};
+
+
 

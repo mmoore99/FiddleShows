@@ -20,7 +20,8 @@ import { WatchListItemSerializer } from "@/helpers/serializers/WatchListItemSeri
 import type { ShowWatchedProgress } from "@/models/ShowModels";
 import { ShowWatchedProgressSerializer } from "@/helpers/serializers/ShowWatchedProgressSerializer";
 import type {
-    TraktList
+    TraktList,
+    TraktListItem
 } from "@/models/ListModels";
 
 interface IShowWatchedProgressParams {
@@ -52,7 +53,7 @@ interface IShowWatchedProgressParams {
 
 interface IGetListItemsParams {
     id: string
-    listId: string
+    listId: string | number
     type?: GetListItemsTypes | null;
     extendedFull?: boolean;
     requestPagination?: RequestPagination | null;
@@ -74,20 +75,20 @@ export default class UserRequests extends TraktApiCategory {
         });
     };
 
-    public getListItems = async ({id, listId, type = null, extendedFull = false, requestPagination = null }: IGetListItemsParams) => {
-        const URL_TEMPLATE = `/users/${id}/lists/${listId}`;
+    public getCustomListItems = async ({id, listId, type = null, extendedFull = false, requestPagination = null }: IGetListItemsParams) => {
+        const URL_TEMPLATE = `/users/${id}/lists/${listId}/items`;
 
         let request = "";
         if (type) request += `/${type}`;
 
         const url = URL_TEMPLATE + request;
 
-        return await this._traktClient.getList<WatchListItem>({
+        return await this._traktClient.getList<TraktListItem>({
             authorizationRequirement: AuthorizationRequirement.Required,
             request: url,
             extendedInfo: extendedFull ? new TraktExtendedInfo().setFull() : null,
             requestPagination: requestPagination,
-            serializer: JsonConvert.toWatchListItem,
+            serializer: JsonConvert.toTraktListItem,
             // serializer: WatchListItemSerializer.toWatchListItem,
         });
     };
