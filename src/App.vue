@@ -30,14 +30,15 @@
     import type { Movie } from "@/models/MovieModels";
     import type { Show } from "@/models/ShowModels";
     import type { TraktList, TraktListItem } from "@/models/ListModels";
-    import {
-        TraktApiTests
-    } from "@/tests/TraktApiTests";
+    import { TraktApiTests } from "@/tests/TraktApiTests";
+    import { useProgramStore } from "@/stores/ProgramStore";
 
     const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
     const CLIENT_SECRET = "8c1902d0284fad4ff6b052f0fdbfd50be1075088ba5d6f33b218734067568148";
     const ACCESS_TOKEN = "908366de1b222a5cabfda200e6e829633a7c51234ce655d18674b3de5d7e8f4c";
+
+    const programStore = useProgramStore();
 
     const router = useRouter();
     const route = useRoute();
@@ -85,9 +86,9 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    const _traktApi = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: false });
-    new TraktApiTests(_traktApi).execute();
-
+    programStore.traktClient = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: false });
+    const _traktClient = programStore.traktClient as TraktClient;
+    new TraktApiTests(_traktClient).execute();
 </script>
 
 <template>
