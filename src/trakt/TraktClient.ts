@@ -10,8 +10,8 @@ import type { RequestPagination } from "@/models/RequestModels";
 import type { TraktExtendedInfo } from "@/trakt/parameters/traktExtendedInfo";
 import SyncRequests from "@/helpers/trakt_api_requests/SyncRequests";
 import ShowRequests from "@/helpers/trakt_api_requests/ShowRequests";
-import UserRequests
-    from "@/helpers/trakt_api_requests/UserRequests";
+import UserRequests from "@/helpers/trakt_api_requests/UserRequests";
+import SeasonRequests from "@/helpers/trakt_api_requests/SeasonRequests";
 
 interface IApiCallParams {
     authorizationRequirement: AuthorizationRequirement;
@@ -40,11 +40,13 @@ export class TraktClient {
     private _sync = new SyncRequests(this);
     private _shows = new ShowRequests(this);
     private _users = new UserRequests(this);
+    private _seasons = new SeasonRequests(this);
 
     public Calendars = this._calendars;
     public Sync = this._sync;
     public Shows = this._shows;
     public Users = this._users;
+    public Seasons = new SeasonRequests(this);
 
     constructor({ clientId = "", clientSecret = "", accessToken = "", isUseProxy = false }) {
         this._clientId = clientId;
@@ -173,8 +175,9 @@ export class TraktClient {
             console.error("Http error:", e);
         }
 
-        if (response && response.statusText.toLowerCase() === "ok" && response.data !== null) {
+        if (response && (response.statusText.toLowerCase() === "ok" || response.status === 200|| response.status === 201 || response.status === 204) && response.data !== null) {
             result.IsSuccess = true;
+            response.statusText = "ok";
             result.content = response.data;
             result.Exception = null;
             new ResponseHeaderParser().parseResponseHeaders(response.headers, result);

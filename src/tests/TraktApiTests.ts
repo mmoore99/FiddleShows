@@ -140,16 +140,24 @@ export class TraktApiTests {
         //     }
         // );
 
-        const result = await this._traktClient.Users.getCustomLists("me");
-        customLists.value = result.content;
-        console.log("CustomLists:", customLists.value);
-        const listTraktId: number = customLists.value![0].ids!.trakt!;
-        const listSlug = customLists.value![0].ids!.slug;
-        const getListItemsResult = await this._traktClient.Users.getCustomListItems({
-            id: "me",
-            listId: listTraktId,
-        });
-        mikesList.value = getListItemsResult.content;
-        console.log("MikesList:", mikesList.value);
+        // const result = await this._traktClient.Users.getCustomLists("me");
+        // customLists.value = result.content;
+        // console.log("CustomLists:", customLists.value);
+        // const listTraktId: number = customLists.value![0].ids!.trakt!;
+        // const listSlug = customLists.value![0].ids!.slug;
+        // const getListItemsResult = await this._traktClient.Users.getCustomListItems({
+        //     id: "me",
+        //     listId: listTraktId,
+        // });
+        // mikesList.value = getListItemsResult.content;
+        // console.log("MikesList:", mikesList.value);
+
+        const getAllSeasonsResult = await this._traktClient.Seasons.getAllSeasons({showId: "137178", extendedFull: true, extendedEpisodes:true});
+        const seasons = getAllSeasonsResult.content;
+        console.log("Seasons:", seasons);
+
+        const getSeasonEpisodesResult = await this._traktClient.Seasons.getSeasonEpisodes({showId: "137178", seasonNumber:1, extendedFull: true});
+        const episodes = getSeasonEpisodesResult.content;
+        console.log("Episodes:", episodes);
     }
 }

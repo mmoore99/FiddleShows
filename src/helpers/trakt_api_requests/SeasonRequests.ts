@@ -23,46 +23,48 @@ import type {
     TraktList,
     TraktListItem
 } from "@/models/ListModels";
+import type {
+    Season
+} from "@/models/SeasonModels";
 
-interface IGetListItemsParams {
-    id: string
-    listId: string | number
-    type?: GetListItemsTypes | null;
+interface IGetAllSeasonsParams {
+    showId: string
     extendedFull?: boolean;
-    requestPagination?: RequestPagination | null;
+    extendedEpisodes?: boolean;
 }
 
-export default class UserRequests extends TraktApiCategory {
+interface IGetSeasonEpisodesParams {
+    showId: string
+    seasonNumber: number
+    extendedFull?: boolean;
+}
+
+export default class SeasonRequests extends TraktApiCategory {
     constructor(traktClient: TraktClient) {
         super(traktClient);
     }
 
-    public getCustomLists = async (id: string) => {
-        const url = `/users/${id}/lists`;
+    public getAllSeasons = async ({showId, extendedFull = false, extendedEpisodes = false}:IGetAllSeasonsParams) => {
+        const url = `/shows/${showId}/seasons`;
+        
+        const extendedInfo = new TraktExtendedInfo();
+        if (extendedFull) extendedInfo.setFull();
+        if (extendedEpisodes) extendedInfo.setEpisodes();
 
-        return await this._traktClient.getList<TraktList>({
+        return await this._traktClient.getList<Season>({
             authorizationRequirement: AuthorizationRequirement.Required,
             request: url,
-            // serializer: ShowWatchedProgressSerializer.toShowWatchedProgress,
-            serializer: JsonConvert.toTraktList,
+            extendedInfo: extendedInfo.hasAnySet() ? extendedInfo : null,
+            serializer: JsonConvert.toSeasons,
         });
     };
 
-    public getCustomListItems = async ({id, listId, type = null, extendedFull = false, requestPagination = null }: IGetListItemsParams) => {
-        const URL_TEMPLATE = `/users/${id}/lists/${listId}/items`;
-
-        let request = "";
-        if (type) request += `/${type}`;
-
-        const url = URL_TEMPLATE + request;
-
+    public getSeasonEpisodes = async ({showId, seasonNumber, extendedFull = false }: IGetSeasonEpisodesParams) => {
         return await this._traktClient.getList<TraktListItem>({
             authorizationRequirement: AuthorizationRequirement.Required,
-            request: url,
+            request: `/shows/${showId}/seasons/${seasonNumber}`,
             extendedInfo: extendedFull ? new TraktExtendedInfo().setFull() : null,
-            requestPagination: requestPagination,
-            serializer: JsonConvert.toTraktListItem,
-            // serializer: WatchListItemSerializer.toWatchListItem,
+            serializer: JsonConvert.toEpisodes,
         });
     };
 }

@@ -1,10 +1,6 @@
 import type { Airs, Ids } from "@/models/CommonModels";
-import type {
-    Season
-} from "@/models/SeasonModels";
-import type {
-    Episode
-} from "@/models/EpisodeModels";
+import type { Season } from "@/models/SeasonModels";
+import type { Episode } from "@/models/EpisodeModels";
 
 export interface Show {
     title?: string;
@@ -28,29 +24,29 @@ export interface Show {
     availableTranslations?: string[];
     genres?: string[];
     airedEpisodes?: number;
+    seasons: Season[];
 }
 
 export interface ShowWatchedProgress {
-    aired:number
-    completed:number
-    resetAt?: Date
-    lastWatchedAt?:Date
-    hiddenSeasons?: ShowSeasonProgress[]
-    nextEpisode?: Episode
-    lastEpisode?: Episode
+    aired: number;
+    completed: number;
+    resetAt?: Date;
+    lastWatchedAt?: Date;
+    hiddenSeasons?: ShowSeasonProgress[];
+    nextEpisode?: Episode;
+    lastEpisode?: Episode;
 }
 
 export interface ShowSeasonProgress {
-    number:number
-    aired:number
-    completed:number
-    title:string
-    episodes: ShowEpisodeProgress[]
-    
+    number: number;
+    aired: number;
+    completed: number;
+    title: string;
+    episodes: ShowEpisodeProgress[];
 }
 
 export interface ShowEpisodeProgress {
-    number:number
-    completed:boolean
-    lastWatchedAt?: Date |null
+    number: number;
+    completed: boolean;
+    lastWatchedAt?: Date | null;
 }
