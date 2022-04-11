@@ -29,6 +29,7 @@ interface ISyncGetHistoryParams {
 interface ISyncGetWatchedParams {
     type: ShowMovieType;
     extendedFull?: boolean;
+    extendedNoSeasons?: boolean;
     filters?: TraktShowFilter | null;
 }
 
@@ -86,11 +87,18 @@ export default class SyncRequests extends TraktApiCategory {
         });
     };
 
-    public getWatched = async ({ type, extendedFull = false }: ISyncGetWatchedParams) => {
+    public getWatched = async ({ type, extendedFull = false, extendedNoSeasons = false }: ISyncGetWatchedParams) => {
+        let extendedInfo = null;
+        if (extendedFull || extendedNoSeasons){
+            extendedInfo = new TraktExtendedInfo();
+            if (extendedFull) extendedInfo.setFull();
+            if (extendedNoSeasons) extendedInfo.setNoSeasons();
+        }
+        
         return await this._traktClient.getList<WatchedItem>({
             authorizationRequirement: AuthorizationRequirement.Required,
             request: `/sync/watched/${type}`,
-            extendedInfo: extendedFull ? new TraktExtendedInfo().setFull() : null,
+            extendedInfo: extendedInfo ?? null,
             serializer: JsonConvert.toWatchedItem,
         });
     };
