@@ -11,7 +11,7 @@
 
     <ion-content :fullscreen="true">
       <div id="container">
-        <strong class="capitalize">SPEAKERS</strong>
+        <strong class="capitalize">HISTORY</strong>
       </div>
     </ion-content>
   </ion-page>
@@ -19,10 +19,11 @@
 
 <script lang="ts">
 import { defineComponent, ref, reactive } from "vue";
-import { useRouter, useRoute } from 'vue-router';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { useRouter, useRoute } from 'vue-router';
 
 export default defineComponent({
+
   name: 'Folder',
   components: {
     IonButtons,
@@ -37,16 +38,13 @@ export default defineComponent({
   setup(props, context) {
     const router = useRouter();
     const route = useRoute();
-    const capacity = 4;
 
     return {
       router,
-      route,
-      capacity
+      route
     };
   },
 })
-
 </script>
 
 <style scoped>

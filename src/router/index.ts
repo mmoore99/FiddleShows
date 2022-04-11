@@ -24,12 +24,24 @@ const routes = [
                 redirect: "/tabs/speakers",
             },
             {
-                path: "/tabs/speakers",
-                component: () => import("../views/tabs/Speakers.vue"),
+                path: "/tabs/my-shows",
+                component: () => import("../views/tabs/MyShows.vue"),
             },
             {
-                path: "/tabs/schedule",
-                component: () => import("../views/tabs/Schedule.vue"),
+                path: "/tabs/lists",
+                component: () => import("../views/tabs/Lists.vue"),
+            },
+            {
+                path: "/tabs/calendar",
+                component: () => import("../views/tabs/Calendar.vue"),
+            },
+            {
+                path: "/tabs/history",
+                component: () => import("../views/tabs/History.vue"),
+            },
+            {
+                path: "/tabs/search",
+                component: () => import("../views/tabs/Search.vue"),
             },
         ],
     },

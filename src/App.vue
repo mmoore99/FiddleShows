@@ -60,7 +60,7 @@
         selectedIndex.value = appPages.findIndex((page) => page.title.toLowerCase() === path.toLowerCase());
     }
 
-    const screenWidth = ref(screen.width);
+    const screenWidth = ref(window.innerWidth);
 
     onMounted(async () => {
         window.onresize = () => {
@@ -89,6 +89,8 @@
     programStore.traktClient = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: false });
     const _traktClient = programStore.traktClient as TraktClient;
     new TraktApiTests(_traktClient).execute();
+    console.log(`screenWidth=${screenWidth.value}`);
+    console.log(`isWideScreen=${isWideScreen.value}`);
 </script>
 
 <template>

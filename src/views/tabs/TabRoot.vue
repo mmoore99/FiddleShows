@@ -18,7 +18,7 @@
         IonRouterOutlet,
     } from "@ionic/vue";
 
-    import { calendar, personCircle } from "ionicons/icons";
+    import { calendar, personCircle, tv, timerOutline, search, list } from "ionicons/icons";
 
     const isWideScreen = inject("isWideScreen");
     const screenWidth = inject("screenWidth");
@@ -51,16 +51,32 @@
         >
             <ion-router-outlet></ion-router-outlet>
             <ion-tab-bar v-if="!isWideScreen" slot="bottom">
-                <ion-tab-button tab="schedule" href="/tabs/schedule">
-                    <ion-icon :icon="calendar"></ion-icon>
-                    <ion-label> Schedule </ion-label>
-                    <ion-badge> 6 </ion-badge>
+                <ion-tab-button tab="my-shows" href="/tabs/my-shows">
+                    <ion-icon :icon="tv"></ion-icon>
+                    <ion-label> My Shows </ion-label>
                 </ion-tab-button>
 
-                <ion-tab-button tab="speakers" href="/tabs/speakers">
-                    <ion-icon :icon="personCircle"></ion-icon>
-                    <ion-label> Speakers </ion-label>
+                <ion-tab-button tab="calendar" href="/tabs/calendar">
+                    <ion-icon :icon="calendar"></ion-icon>
+                    <ion-label> Calendar </ion-label>
                 </ion-tab-button>
+
+                <ion-tab-button tab="history" href="/tabs/history">
+                    <ion-icon :icon="timerOutline"></ion-icon>
+                    <ion-label> History </ion-label>
+                </ion-tab-button>
+
+                <ion-tab-button tab="lists" href="/tabs/lists">
+                    <ion-icon :icon="list"></ion-icon>
+                    <ion-label> Lists </ion-label>
+                </ion-tab-button>
+
+                <ion-tab-button tab="search" href="/tabs/search">
+                    <ion-icon :icon="search"></ion-icon>
+                    <ion-label> Search </ion-label>
+                </ion-tab-button>
+
+                
             </ion-tab-bar>
         </ion-tabs>
     </ion-page>

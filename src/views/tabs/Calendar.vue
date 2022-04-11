@@ -11,7 +11,7 @@
 
     <ion-content :fullscreen="true">
       <div id="container">
-        <strong class="capitalize">SCHEDULE</strong>
+        <strong class="capitalize">CALENDAR</strong>
       </div>
     </ion-content>
   </ion-page>
