@@ -33,6 +33,7 @@ export interface ShowWatchedProgress {
     resetAt?: Date;
     lastWatchedAt?: Date;
     hiddenSeasons?: ShowSeasonProgress[];
+    Seasons?: ShowSeasonProgress[];
     nextEpisode?: Episode;
     lastEpisode?: Episode;
 }

@@ -32,6 +32,7 @@ export interface WatchedItem {
     lastUpdatedAt?: Date;
     resetAt?: null;
     show?: Show;
+    movie?: Movie;
     seasons?: WatchedSeason[];
 }
 

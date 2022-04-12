@@ -32,6 +32,10 @@
     import type { TraktList, TraktListItem } from "@/models/ListModels";
     import { TraktApiTests } from "@/tests/TraktApiTests";
     import { useProgramStore } from "@/stores/ProgramStore";
+    import { useShowStore } from "@/stores/ShowStore";
+    import {
+        MyShowsOptions
+    } from "@/models/MyShowsOptions";
 
     const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
@@ -39,6 +43,7 @@
     const ACCESS_TOKEN = "908366de1b222a5cabfda200e6e829633a7c51234ce655d18674b3de5d7e8f4c";
 
     const programStore = useProgramStore();
+    const showStore = useShowStore();
 
     const router = useRouter();
     const route = useRoute();
@@ -88,7 +93,12 @@
 
     programStore.traktClient = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: false });
     const _traktClient = programStore.traktClient as TraktClient;
-    new TraktApiTests(_traktClient).execute();
+    
+    const myShowsOptions= new MyShowsOptions();
+    myShowsOptions.showSources.isWatchedShows = true;
+    myShowsOptions.showSources.isWatchList = true;
+    showStore.myShowsOptions = myShowsOptions;
+    //new TraktApiTests(_traktClient).execute();
     console.log(`screenWidth=${screenWidth.value}`);
     console.log(`isWideScreen=${isWideScreen.value}`);
 </script>

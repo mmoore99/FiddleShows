@@ -1,17 +1,25 @@
 <script setup lang="ts">
-    import { ref, reactive } from "vue";
+    import { ref, reactive, onMounted } from "vue";
     import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from "@ionic/vue";
     import { useRouter, useRoute } from "vue-router";
     import { useProgramStore } from "@/stores/ProgramStore";
     import { useShowStore } from "@/stores/ShowStore";
+    import { ShowsService } from "@/services/ShowsService";
+    import type { TraktClient } from "@/trakt/TraktClient";
 
     const programStore = useProgramStore();
     const showStore = useShowStore();
 
+    const traktClient = programStore.traktClient as TraktClient;
+
     const router = useRouter();
     const route = useRoute();
-    
-    
+
+    onMounted(async () => {
+        const showsService = new ShowsService(traktClient);
+        const showContexts = showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
+        
+    });
 </script>
 
 <template>

@@ -63,7 +63,7 @@ export class TraktApiTests {
         //     }
         // );
         //
-        this._traktClient.Sync.getWatched({type: ShowMovieType.shows, extendedFull: false, extendedNoSeasons: true
+        this._traktClient.Sync.getWatched({type: ShowMovieType.movies, extendedFull: false, extendedNoSeasons: true
         }).then(
             (result) => {
                 watchedShows.value = result.content;

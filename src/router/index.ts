@@ -21,7 +21,7 @@ const routes = [
         children: [
             {
                 path: "",
-                redirect: "/tabs/speakers",
+                redirect: "/tabs/my-shows",
             },
             {
                 path: "/tabs/my-shows",
