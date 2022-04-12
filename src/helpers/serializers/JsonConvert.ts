@@ -919,10 +919,10 @@ const typeMapWatchListItem: any = {
 
 const typeMapShowWatchedProgress: any = {
     "ShowWatchedProgress": o([
-        { json: "aired", js: "aired", typ: u(undefined, 0) },
-        { json: "completed", js: "completed", typ: u(undefined, 0) },
-        { json: "last_watched_at", js: "lastWatchedAt", typ: u(undefined, null) },
-        { json: "reset_at", js: "resetAt", typ: u(undefined, null) },
+        { json: "aired", js: "aired", typ: u(undefined, null, 0) },
+        { json: "completed", js: "completed", typ: u(undefined, null, 0) },
+        { json: "last_watched_at", js: "lastWatchedAt", typ: u(undefined, null, Date) },
+        { json: "reset_at", js: "resetAt", typ: u(undefined, null, Date) },
         { json: "seasons", js: "seasons", typ: u(undefined, a(r("ShowSeasonProgress"))) },
         { json: "hidden_seasons", js: "hiddenSeasons", typ: u(undefined, a("any")) },
         { json: "next_episode", js: "nextEpisode", typ: u(undefined, null, r("Episode")) },
@@ -951,7 +951,7 @@ const typeMapShowWatchedProgress: any = {
     "ShowEpisodeProgress": o([
         { json: "number", js: "number", typ: u(undefined, 0) },
         { json: "completed", js: "completed", typ: u(undefined, true) },
-        { json: "last_watched_at", js: "lastWatchedAt", typ: u(undefined, null) },
+        { json: "last_watched_at", js: "lastWatchedAt", typ: u(undefined, null, Date) },
     ], false),
 };
 
