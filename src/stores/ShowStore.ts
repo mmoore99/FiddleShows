@@ -1,11 +1,13 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import type { MyShowsOptions } from "@/models/MyShowsOptions";
+import type { ShowContext } from "@/models/ShowContext";
 // import { useLocalStorage } from "@vueuse/core";
 
 export const useShowStore = defineStore("ShowStore", {
     state: () => {
         return {
             myShowsOptions: null as MyShowsOptions | null,
+            showContexts: null as ShowContext[] | null,
         };
     },
     getters: {

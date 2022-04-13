@@ -1,11 +1,12 @@
 <script setup lang="ts">
-    import { ref, reactive, onMounted } from "vue";
+    import { ref, reactive, onMounted, computed } from "vue";
     import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from "@ionic/vue";
     import { useRouter, useRoute } from "vue-router";
     import { useProgramStore } from "@/stores/ProgramStore";
     import { useShowStore } from "@/stores/ShowStore";
     import { ShowsService } from "@/services/ShowsService";
     import type { TraktClient } from "@/trakt/TraktClient";
+    import type { ShowContext } from "@/models/ShowContext";
 
     const programStore = useProgramStore();
     const showStore = useShowStore();
@@ -15,10 +16,59 @@
     const router = useRouter();
     const route = useRoute();
 
+    let showContexts = ref<ShowContext[]>([]);
+    const showsService = new ShowsService(traktClient);
+    
+    // Optional approaches to allow using async.await in top level of Vue component with script setup
+    // Other alternative is to use in onMounted lifecycle hook
+    // showsService.getShowContextsForSelectedSources(showStore.myShowsOptions).then(
+    //     (result) => {
+    //         showContexts.value = result;
+    //     },
+    //     (error) => {
+    //         console.log(error);
+    //     }
+    // );
+
+    // (async () => {
+    //     try {
+    //         showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
+    //     } catch (e) {
+    //         // Deal with the fact the chain failed
+    //     }
+    //     // `text` is not available here
+    // })();
+
+    const loadData = async () => {
+        try {
+            showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
+            showStore.showContexts = showContexts.value;
+        } catch (e) {
+            // Deal with the fact the chain failed
+        }
+        // `text` is not available here
+    };
+    loadData();
+
     onMounted(async () => {
-        const showsService = new ShowsService(traktClient);
-        const showContexts = showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
-        
+        // const showsService = new ShowsService(traktClient);
+        // showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
+    });
+
+    const showsWatchingEpisodesAvailable = computed(() => {
+        return showContexts.value.filter((showContext) => showContext.isSomeWatched());
+    });
+
+    const caughtUpNewEpisodesScheduled = computed(() => {
+        return showContexts.value.filter((showContext) => showContext.isAllWatched() && showContext!.progress!.nextEpisode !== null);
+    });
+
+    const caughtUpNoNewEpisodesScheduled = computed(() => {
+        return showContexts.value.filter((showContext) => showContext.isAllWatched() && showContext!.progress!.nextEpisode === null);
+    });
+
+    const showsNotStartedWatching = computed(() => {
+        return showContexts.value.filter((showContext) => showContext.isNoneWatched());
     });
 </script>
 
@@ -35,35 +85,50 @@
 
         <ion-content :fullscreen="true">
             <div id="container">
-                <strong class="capitalize">MY SHOWS</strong>
+                <h1>Currently Watching, New Episodes Available</h1>
+                <div v-for="showContext in showsWatchingEpisodesAvailable">
+                    <span>{{ showContext.show.title }} - {{showContext.show.ids.trakt}}</span>
+                </div>
+                <h1>Caught Up, New Episodes Scheduled</h1>
+                <div v-for="showContext in caughtUpNewEpisodesScheduled">
+                    <span>{{ showContext.show.title }} - {{showContext.show.ids.trakt}}</span>
+                </div>
+                <h1>Caught Up, No New Episodes Scheduled</h1>
+                <div v-for="showContext in caughtUpNoNewEpisodesScheduled">
+                    <span>{{ showContext.show.title }} - {{showContext.show.ids.trakt}}</span>
+                </div>
+                <h1>Not Started Watching</h1>
+                <div v-for="showContext in showsNotStartedWatching">
+                    <span>{{ showContext.show.title }} - {{showContext.show.ids.trakt}}</span>
+                </div>
             </div>
         </ion-content>
     </ion-page>
 </template>
 
 <style scoped>
-    #container {
-        text-align: center;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-    }
+    /*#container {*/
+    /*    text-align: center;*/
+    /*    position: absolute;*/
+    /*    left: 0;*/
+    /*    right: 0;*/
+    /*    top: 50%;*/
+    /*    transform: translateY(-50%);*/
+    /*}*/
 
-    #container strong {
-        font-size: 20px;
-        line-height: 26px;
-    }
+    /*#container strong {*/
+    /*    font-size: 20px;*/
+    /*    line-height: 26px;*/
+    /*}*/
 
-    #container p {
-        font-size: 16px;
-        line-height: 22px;
-        color: #8c8c8c;
-        margin: 0;
-    }
+    /*#container p {*/
+    /*    font-size: 16px;*/
+    /*    line-height: 22px;*/
+    /*    color: #8c8c8c;*/
+    /*    margin: 0;*/
+    /*}*/
 
-    #container a {
-        text-decoration: none;
-    }
+    /*#container a {*/
+    /*    text-decoration: none;*/
+    /*}*/
 </style>

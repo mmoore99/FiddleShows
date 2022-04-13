@@ -49,3 +49,13 @@ export enum SyncGetWatchlistSortTypes{
   released = "released",
   title = "title"
 }
+
+export enum ShowDisplayCategories{
+  episodesAvailable,
+  notStarted,
+  allEpisodesWatched,
+  ended,
+  hidden
+  
+
+}

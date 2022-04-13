@@ -113,7 +113,7 @@ export class TraktClient {
             console.error("Http error:", e);
         }
 
-        if (response && response.statusText.toLowerCase() === "ok" && response.data !== null) {
+        if (response && (response.statusText.toLowerCase() === "ok" || response.status === 200|| response.status === 201 || response.status === 204) && response.data !== null) {
             result.IsSuccess = true;
             result.content = response.data;
             result.Exception = null;
@@ -122,7 +122,7 @@ export class TraktClient {
             result.IsSuccess = false;
             result.content = null;
         }
-        console.log("Exiting authenticatedGetList: response = ", response, "result= ", result);
+        console.log("Exiting Get: response = ", response, "result= ", result);
         return result;
     }
 
@@ -185,7 +185,7 @@ export class TraktClient {
             result.IsSuccess = false;
             result.content = null;
         }
-        console.log("Exiting authenticatedGetList: response = ", response, "result= ", result);
+        console.log("Exiting GetList: response = ", response, "result= ", result);
         return result;
     }
 }

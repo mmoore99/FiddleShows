@@ -53,12 +53,19 @@ export default class ShowRequests extends TraktApiCategory {
         queryParams["specials"] = hidden;
         queryParams["count_specials"] = hidden;
 
-        return await this._traktClient.get<ShowWatchedProgress>({
+        const response = await this._traktClient.get<ShowWatchedProgress>({
             authorizationRequirement: AuthorizationRequirement.Required,
             request: url,
             queryParams: queryParams,
             // serializer: ShowWatchedProgressSerializer.toShowWatchedProgress,
             serializer: JsonConvert.toShowWatchedProgress,
         });
+
+        try {
+            if (response.content) response!.content!.traktId! = id;
+        } catch (e) {
+            debugger;
+        }
+        return response;
     };
 }

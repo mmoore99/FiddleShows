@@ -63,16 +63,16 @@ export class TraktApiTests {
         //     }
         // );
         //
-        this._traktClient.Sync.getWatched({type: ShowMovieType.movies, extendedFull: false, extendedNoSeasons: true
-        }).then(
-            (result) => {
-                watchedShows.value = result.content;
-                console.log("WatchedShows:", watchedShows.value);
-            },
-            (error) => {
-                console.log(error);
-            }
-        );
+        // this._traktClient.Sync.getWatched({type: ShowMovieType.movies, extendedFull: false, extendedNoSeasons: true
+        // }).then(
+        //     (result) => {
+        //         watchedShows.value = result.content;
+        //         console.log("WatchedShows:", watchedShows.value);
+        //     },
+        //     (error) => {
+        //         console.log(error);
+        //     }
+        // );
         //
         // _traktApi.Sync.getWatched({type: ShowMovieType.movies, extendedFull: true
         // }).then(
@@ -155,12 +155,12 @@ export class TraktApiTests {
         // mikesList.value = getListItemsResult.content;
         // console.log("MikesList:", mikesList.value);
 
-        // const getAllSeasonsResult = await this._traktClient.Seasons.getAllSeasons({showId: "137178", extendedFull: true, extendedEpisodes:true});
+        // const getAllSeasonsResult = await this._traktClient.Seasons.getAllSeasons({showId: "32551", extendedFull: true, extendedEpisodes:true});
         // const seasons = getAllSeasonsResult.content;
         // console.log("Seasons:", seasons);
-        //
-        // const getSeasonEpisodesResult = await this._traktClient.Seasons.getSeasonEpisodes({showId: "137178", seasonNumber:1, extendedFull: true});
-        // const episodes = getSeasonEpisodesResult.content;
-        // console.log("Episodes:", episodes);
+
+        const getSeasonEpisodesResult = await this._traktClient.Seasons.getSeasonEpisodes({showId: "32551", seasonNumber:12, extendedFull: true});
+        const episodes = getSeasonEpisodesResult.content;
+        console.log("Episodes:", episodes);
     }
 }

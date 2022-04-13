@@ -98,7 +98,7 @@
     myShowsOptions.showSources.isWatchedShows = true;
     myShowsOptions.showSources.isWatchList = true;
     showStore.myShowsOptions = myShowsOptions;
-    //new TraktApiTests(_traktClient).execute();
+    // new TraktApiTests(_traktClient).execute();
     console.log(`screenWidth=${screenWidth.value}`);
     console.log(`isWideScreen=${isWideScreen.value}`);
 </script>

@@ -28,14 +28,15 @@ export interface Show {
 }
 
 export interface ShowWatchedProgress {
+    traktId: string;
     aired: number;
     completed: number;
     resetAt?: Date;
     lastWatchedAt?: Date;
     hiddenSeasons?: ShowSeasonProgress[];
     Seasons?: ShowSeasonProgress[];
-    nextEpisode?: Episode;
-    lastEpisode?: Episode;
+    nextEpisode?: Episode | null;
+    lastEpisode?: Episode | null;
 }
 
 export interface ShowSeasonProgress {
