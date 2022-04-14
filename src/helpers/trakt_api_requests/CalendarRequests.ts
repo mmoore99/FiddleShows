@@ -1,11 +1,16 @@
 import TraktApiCategory from "@/helpers/trakt_api_requests/TraktApiCategory";
-import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
 import * as Enums from "@/helpers/enums";
 import { AuthorizationRequirement, EntityType } from "@/helpers/enums";
 import { JsonConvert } from "@/helpers/serializers/JsonConvert";
 import type { TraktClient } from "@/trakt/TraktClient";
 import type { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
 import { TraktExtendedInfo } from "@/trakt/parameters/traktExtendedInfo";
+import type {
+    CalendarShow
+} from "@/models/CalendarShow";
+import type {
+    CalendarMovie
+} from "@/models/CalendarMovie";
 
 interface ICalendarRequestParams {
     startDate?: string | null;

@@ -1,4 +1,6 @@
-import type { Ids } from "@/models/CommonModels";
+import type {
+    Ids
+} from "@/models/Ids";
 
 export interface Episode {
     season?: number;
@@ -15,11 +17,3 @@ export interface Episode {
     availableTranslations?: string[];
     runtime?: number;
 }
-
-export interface WatchedEpisode {
-    number?:        number;
-    plays?:         number;
-    lastWatchedAt?: Date;
-}
-
-

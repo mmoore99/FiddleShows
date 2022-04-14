@@ -1,11 +1,29 @@
 import type { TraktClient } from "@/trakt/TraktClient";
 import { ref } from "vue";
-import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
-import type { HistoryItem, WatchedItem, WatchListItem } from "@/models/UserModels";
-import type { TraktList, TraktListItem } from "@/models/ListModels";
 import {
     ShowMovieType
 } from "@/helpers/enums";
+import type {
+    WatchListItem
+} from "@/models/WatchListItem";
+import type {
+    WatchedItem
+} from "@/models/WatchedItem";
+import type {
+    HistoryItem
+} from "@/models/HistoryItem";
+import type {
+    CalendarShow
+} from "@/models/CalendarShow";
+import type {
+    CalendarMovie
+} from "@/models/CalendarMovie";
+import type {
+    TraktListItem
+} from "@/models/TraktListItem";
+import type {
+    TraktList
+} from "@/models/TraktList";
 
 export class TraktApiTests {
     private _traktClient: TraktClient;

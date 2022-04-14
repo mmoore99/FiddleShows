@@ -7,10 +7,19 @@
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-import type { CalendarShow } from "@/models/CalendarModels";
-import type { Show } from "@/models/ShowModels";
-import type { Episode } from "@/models/EpisodeModels";
-import type { Airs, Ids } from "@/models/CommonModels";
+import type { Airs} from "@/models/CommonModels";
+import type {
+    Show
+} from "@/models/Show";
+import type {
+    CalendarShow
+} from "@/models/CalendarShow";
+import type {
+    Episode
+} from "@/models/Episode";
+import type {
+    Ids
+} from "@/models/Ids";
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime

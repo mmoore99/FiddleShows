@@ -15,7 +15,6 @@ export class ShowsService {
         if (options?.showSources.isWatchedShows) await this.getWatchedShows();
         if (options?.showSources.isWatchedShows) await this.getWatchListShows();
         await this.GetShowProgresses();
-        console.log("ShowContexts:", this._showContexts);
         return this._showContexts;
     }
 
@@ -49,7 +48,7 @@ export class ShowsService {
             .filter((item) => !item.isInWatchList)
             .map((showContext) => this._traktClient.Shows.getShowWatchedProgress({ id: showContext.show?.ids?.trakt! }));
         const results = await Promise.all(promises);
-        console.log("Results:", results);
+        console.log("ShowProgressResults:", results);
         for (let i = 0; i < results.length; i++) {
             if (!results[i].content) {
                 console.log(`No progress content for: index=${i}, title=${this._showContexts[i].show?.title}`);

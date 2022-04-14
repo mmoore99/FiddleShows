@@ -8,11 +8,11 @@
 // match the expected interface, even if the JSON is valid.
 
 import type {
-    WatchedSeason
-} from "@/models/SeasonModels";
-import type {
     Show
-} from "@/models/ShowModels";
+} from "@/models/Show";
+import type {
+    WatchedSeason
+} from "@/models/WatchedSeason";
 
 export interface WatchedItem {
     plays?:         number;

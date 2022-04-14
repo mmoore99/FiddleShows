@@ -1,5 +1,9 @@
-import type { Airs, Ids } from "@/models/CommonModels";
-import type { Episode, WatchedEpisode } from "@/models/EpisodeModels";
+import type {
+    Episode
+} from "@/models/Episode";
+import type {
+    Ids
+} from "@/models/Ids";
 
 export interface Season {
     // Extended: metadata (minimum data provided)
@@ -17,9 +21,4 @@ export interface Season {
     firstAired?: Date;
     updatedAt?: Date;
     episodes?: Episode[];
-}
-
-export interface WatchedSeason {
-    number?: number;
-    episodes?: WatchedEpisode[];
 }

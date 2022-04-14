@@ -14,18 +14,30 @@ import { TraktExtendedInfo } from "@/trakt/parameters/traktExtendedInfo";
 import type { IDictionary } from "@/models/CommonModels";
 import type { RequestPagination } from "@/models/RequestModels";
 import { isString, isValidDateString } from "@/helpers/Utils";
-import type { HistoryItem, WatchedItem, WatchListItem } from "@/models/UserModels";
 import { WatchedItemSerializer } from "@/helpers/serializers/WatchedItemSerializer";
 import { WatchListItemSerializer } from "@/helpers/serializers/WatchListItemSerializer";
-import type { ShowWatchedProgress } from "@/models/ShowModels";
 import { ShowWatchedProgressSerializer } from "@/helpers/serializers/ShowWatchedProgressSerializer";
 import type {
-    TraktList,
-    TraktListItem
-} from "@/models/ListModels";
+    ShowWatchedProgress
+} from "@/models/ShowWatchedProgress";
 import type {
     Season
-} from "@/models/SeasonModels";
+} from "@/models/Season";
+import type {
+    WatchListItem
+} from "@/models/WatchListItem";
+import type {
+    WatchedItem
+} from "@/models/WatchedItem";
+import type {
+    HistoryItem
+} from "@/models/HistoryItem";
+import type {
+    TraktListItem
+} from "@/models/TraktListItem";
+import type {
+    TraktList
+} from "@/models/TraktList";
 
 interface IGetAllSeasonsParams {
     showId: string

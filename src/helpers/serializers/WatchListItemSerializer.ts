@@ -9,7 +9,9 @@
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
-import type { WatchListItem } from "@/models/UserModels";
+import type {
+    WatchListItem
+} from "@/models/WatchListItem";
 
 export class WatchListItemSerializer {
     public static toWatchListItem(json: string): WatchListItem[] {

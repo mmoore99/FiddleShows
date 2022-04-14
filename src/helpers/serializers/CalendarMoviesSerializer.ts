@@ -7,7 +7,9 @@
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-import type { CalendarMovie } from "@/models/CalendarModels";
+import type {
+    CalendarMovie
+} from "@/models/CalendarMovie";
 // To parse this data:
 //
 //   import { Convert } from "./file";

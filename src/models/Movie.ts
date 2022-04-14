@@ -1,4 +1,6 @@
-import type { Ids } from "@/models/CommonModels";
+import type {
+    Ids
+} from "@/models/Ids";
 
 export interface Movie {
     title?: string;

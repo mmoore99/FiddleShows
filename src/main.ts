@@ -4,6 +4,7 @@ import router from "./router";
 import { createPinia } from "pinia";
 
 import { IonicVue } from "@ionic/vue";
+import { useLocalStorage, useMouse, usePreferredDark } from '@vueuse/core'
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/vue/css/core.css";

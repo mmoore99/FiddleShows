@@ -7,6 +7,8 @@
     import { ShowsService } from "@/services/ShowsService";
     import type { TraktClient } from "@/trakt/TraktClient";
     import type { ShowContext } from "@/models/ShowContext";
+    import { useLocalStorage } from "@vueuse/core";
+    import MyShowsItem from "@/components/MyShowsItem.vue";
 
     const programStore = useProgramStore();
     const showStore = useShowStore();
@@ -18,7 +20,7 @@
 
     let showContexts = ref<ShowContext[]>([]);
     const showsService = new ShowsService(traktClient);
-    
+
     // Optional approaches to allow using async.await in top level of Vue component with script setup
     // Other alternative is to use in onMounted lifecycle hook
     // showsService.getShowContextsForSelectedSources(showStore.myShowsOptions).then(
@@ -38,17 +40,26 @@
     //     }
     //     // `text` is not available here
     // })();
+    const localShowContexts = useLocalStorage("show-contexts", [] as ShowContext[]);
+    console.log("localShowContexts before loadData: ", localShowContexts.value);
 
     const loadData = async () => {
         try {
+            console.log("Loading data from api");
             showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
             showStore.showContexts = showContexts.value;
+            localShowContexts.value = showContexts.value;
+            console.log("localShowContexts after loadData: ", localShowContexts.value);
         } catch (e) {
             // Deal with the fact the chain failed
         }
         // `text` is not available here
     };
-    loadData();
+    if (localShowContexts.value.length > 0) {
+        console.log("Loading data from local storage");
+        showContexts.value = localShowContexts.value
+        showStore.showContexts = showContexts.value;
+    }else loadData();
 
     onMounted(async () => {
         // const showsService = new ShowsService(traktClient);
@@ -85,28 +96,30 @@
 
         <ion-content :fullscreen="true">
             <div id="container">
-                <h1>Currently Watching, New Episodes Available</h1>
-                <div v-for="showContext in showsWatchingEpisodesAvailable">
-                    <span>{{ showContext.show.title }} - {{showContext.show.ids.trakt}}</span>
-                </div>
-                <h1>Caught Up, New Episodes Scheduled</h1>
-                <div v-for="showContext in caughtUpNewEpisodesScheduled">
-                    <span>{{ showContext.show.title }} - {{showContext.show.ids.trakt}}</span>
-                </div>
-                <h1>Caught Up, No New Episodes Scheduled</h1>
-                <div v-for="showContext in caughtUpNoNewEpisodesScheduled">
-                    <span>{{ showContext.show.title }} - {{showContext.show.ids.trakt}}</span>
-                </div>
-                <h1>Not Started Watching</h1>
-                <div v-for="showContext in showsNotStartedWatching">
-                    <span>{{ showContext.show.title }} - {{showContext.show.ids.trakt}}</span>
-                </div>
+                <ion-list>
+                    <ion-item-divider sticky>Watching, New Episodes Available</ion-item-divider>
+                    <MyShowsItem v-for="showContext in showsWatchingEpisodesAvailable" :show-context="showContext"></MyShowsItem>
+
+                    <ion-item-divider sticky>Caught Up, New Episodes Scheduled</ion-item-divider>
+                    <MyShowsItem v-for="showContext in caughtUpNewEpisodesScheduled" :show-context="showContext"></MyShowsItem> 
+
+                    <ion-item-divider sticky>Caught Up, No New Episodes Scheduled</ion-item-divider>
+                    <MyShowsItem v-for="showContext in caughtUpNoNewEpisodesScheduled" :show-context="showContext"> </MyShowsItem>
+                    
+                    <ion-item-divider sticky>Not Started Watching</ion-item-divider>
+                    <MyShowsItem v-for="showContext in showsNotStartedWatching" :show-context="showContext"></MyShowsItem>
+                </ion-list>
             </div>
         </ion-content>
     </ion-page>
 </template>
 
 <style scoped>
+    ion-item-divider {
+        background-color: #9e6d6d;
+        color: white;
+        font-weight: 600;
+    }
     /*#container {*/
     /*    text-align: center;*/
     /*    position: absolute;*/

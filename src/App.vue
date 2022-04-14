@@ -23,19 +23,21 @@
     import { useRouter, useRoute } from "vue-router";
     import { TraktClient } from "@/trakt/TraktClient";
     import { RequestPagination } from "@/models/RequestModels";
-    import type { CalendarMovie, CalendarShow } from "@/models/CalendarModels";
     import { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
-    import type { HistoryItem, WatchedItem, WatchListItem } from "@/models/UserModels";
     import { ShowMovieType } from "@/helpers/enums";
-    import type { Movie } from "@/models/MovieModels";
-    import type { Show } from "@/models/ShowModels";
-    import type { TraktList, TraktListItem } from "@/models/ListModels";
     import { TraktApiTests } from "@/tests/TraktApiTests";
     import { useProgramStore } from "@/stores/ProgramStore";
     import { useShowStore } from "@/stores/ShowStore";
-    import {
-        MyShowsOptions
-    } from "@/models/MyShowsOptions";
+    import { MyShowsOptions } from "@/models/MyShowsOptions";
+    import type { Show } from "@/models/Show";
+    import type { WatchListItem } from "@/models/WatchListItem";
+    import type { WatchedItem } from "@/models/WatchedItem";
+    import type { HistoryItem } from "@/models/HistoryItem";
+    import type { CalendarShow } from "@/models/CalendarShow";
+    import type { CalendarMovie } from "@/models/CalendarMovie";
+    import type { Movie } from "@/models/Movie";
+    import type { TraktListItem } from "@/models/TraktListItem";
+    import type { TraktList } from "@/models/TraktList";
 
     const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
     const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
@@ -93,8 +95,8 @@
 
     programStore.traktClient = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: false });
     const _traktClient = programStore.traktClient as TraktClient;
-    
-    const myShowsOptions= new MyShowsOptions();
+
+    const myShowsOptions = new MyShowsOptions();
     myShowsOptions.showSources.isWatchedShows = true;
     myShowsOptions.showSources.isWatchList = true;
     showStore.myShowsOptions = myShowsOptions;
