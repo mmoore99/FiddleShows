@@ -1,17 +1,16 @@
-import type { Airs} from "@/models/CommonModels";
-import type {
-    Season
-} from "@/models/Season";
-import type {
-    Ids
-} from "@/models/Ids";
-
-export interface Show {
+import type { Airs } from "@/models/CommonModels";
+import type { Season } from "@/models/Season";
+import type { Ids } from "@/models/Ids";
+import { Type } from "class-transformer";
+export class Show {
     title?: string;
     year?: number;
     ids?: Ids;
     overview?: null | string;
+
+    @Type(() => Date)
     firstAired?: Date;
+
     airs?: Airs;
     runtime?: number;
     certification?: null | string;
@@ -23,10 +22,13 @@ export interface Show {
     rating?: number;
     votes?: number;
     commentCount?: number;
+    
+    @Type(() => Date)
     updatedAt?: Date;
+    
     language?: null | string;
     availableTranslations?: string[];
     genres?: string[];
     airedEpisodes?: number;
-    seasons: Season[];
+    seasons?: Season[];
 }

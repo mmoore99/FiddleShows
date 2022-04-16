@@ -18,6 +18,9 @@ import type {
 import type {
     HistoryItem
 } from "@/models/HistoryItem";
+import type {
+    LastActivities
+} from "@/models/LastActivitiesModels";
 
 interface ISyncGetHistoryParams {
     type?: SyncGetHistoryTypes | null;
@@ -55,6 +58,14 @@ export default class SyncRequests extends TraktApiCategory {
     constructor(traktClient: TraktClient) {
         super(traktClient);
     }
+
+    public getLastActivities = async () => {
+        return await this._traktClient.get<LastActivities>({
+            authorizationRequirement: AuthorizationRequirement.Required,
+            request: `/sync/last_activities`,
+            serializer: JsonConvert.toLastActivities,
+        });
+    };
 
     public getHistory = async ({
         type = null,
@@ -98,7 +109,7 @@ export default class SyncRequests extends TraktApiCategory {
             if (extendedFull) extendedInfo.setFull();
             if (extendedNoSeasons) extendedInfo.setNoSeasons();
         }
-        
+
         return await this._traktClient.getList<WatchedItem>({
             authorizationRequirement: AuthorizationRequirement.Required,
             request: `/sync/watched/${type}`,

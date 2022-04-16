@@ -177,8 +177,13 @@ export class TraktApiTests {
         // const seasons = getAllSeasonsResult.content;
         // console.log("Seasons:", seasons);
 
-        const getSeasonEpisodesResult = await this._traktClient.Seasons.getSeasonEpisodes({showId: "32551", seasonNumber:12, extendedFull: true});
-        const episodes = getSeasonEpisodesResult.content;
-        console.log("Episodes:", episodes);
+        // const getSeasonEpisodesResult = await this._traktClient.Seasons.getSeasonEpisodes({showId: "32551", seasonNumber:12, extendedFull: true});
+        // const episodes = getSeasonEpisodesResult.content;
+        // console.log("Episodes:", episodes);
+
+        const getLastActivitiesResult = await this._traktClient.Sync.getLastActivities();
+        const lastActivities = getLastActivitiesResult.content;
+        console.log("LastActivities:", lastActivities);
+        console.log("LastActivities:", JSON.stringify(lastActivities, null, 4));
     }
 }

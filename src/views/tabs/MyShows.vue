@@ -6,9 +6,10 @@
     import { useShowStore } from "@/stores/ShowStore";
     import { ShowsService } from "@/services/ShowsService";
     import type { TraktClient } from "@/trakt/TraktClient";
-    import type { ShowContext } from "@/models/ShowContext";
+    import { ShowContext } from "@/models/ShowContext";
     import { useLocalStorage } from "@vueuse/core";
     import MyShowsItem from "@/components/MyShowsItem.vue";
+    import { plainToInstance, Type } from "class-transformer";
 
     const programStore = useProgramStore();
     const showStore = useShowStore();
@@ -41,25 +42,28 @@
     //     // `text` is not available here
     // })();
     const localShowContexts = useLocalStorage("show-contexts", [] as ShowContext[]);
-    console.log("localShowContexts before loadData: ", localShowContexts.value);
 
     const loadData = async () => {
         try {
-            console.log("Loading data from api");
-            showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
+            if (localShowContexts.value.length > 0) {
+                console.log("Loading data from local storage");
+                showContexts.value = plainToInstance<ShowContext, any>(ShowContext, localShowContexts.value);
+            } else {
+                console.log("Loading data from api");
+                showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
+                localShowContexts.value = showContexts.value;
+                //console.log("localShowContexts after loadData: ", localShowContexts.value);
+            }
+
             showStore.showContexts = showContexts.value;
-            localShowContexts.value = showContexts.value;
-            console.log("localShowContexts after loadData: ", localShowContexts.value);
+            console.log("ShowContexts:", showContexts.value);
+
         } catch (e) {
             // Deal with the fact the chain failed
         }
         // `text` is not available here
     };
-    if (localShowContexts.value.length > 0) {
-        console.log("Loading data from local storage");
-        showContexts.value = localShowContexts.value
-        showStore.showContexts = showContexts.value;
-    }else loadData();
+    loadData();
 
     onMounted(async () => {
         // const showsService = new ShowsService(traktClient);
@@ -97,16 +101,16 @@
         <ion-content :fullscreen="true">
             <div id="container">
                 <ion-list>
-                    <ion-item-divider sticky>Watching, New Episodes Available</ion-item-divider>
+                    <ion-item-divider sticky>In Progress, New Episodes Available ({{showsWatchingEpisodesAvailable.length}})</ion-item-divider>
                     <MyShowsItem v-for="showContext in showsWatchingEpisodesAvailable" :show-context="showContext"></MyShowsItem>
 
-                    <ion-item-divider sticky>Caught Up, New Episodes Scheduled</ion-item-divider>
-                    <MyShowsItem v-for="showContext in caughtUpNewEpisodesScheduled" :show-context="showContext"></MyShowsItem> 
+                    <ion-item-divider sticky>Caught Up, New Episodes Scheduled ({{caughtUpNewEpisodesScheduled.length}})</ion-item-divider>
+                    <MyShowsItem v-for="showContext in caughtUpNewEpisodesScheduled" :show-context="showContext"></MyShowsItem>
 
-                    <ion-item-divider sticky>Caught Up, No New Episodes Scheduled</ion-item-divider>
+                    <ion-item-divider sticky>Caught Up, No New Episodes Scheduled ({{caughtUpNoNewEpisodesScheduled.length}})</ion-item-divider>
                     <MyShowsItem v-for="showContext in caughtUpNoNewEpisodesScheduled" :show-context="showContext"> </MyShowsItem>
-                    
-                    <ion-item-divider sticky>Not Started Watching</ion-item-divider>
+
+                    <ion-item-divider sticky>Not Started Watching ({{showsNotStartedWatching.length}})</ion-item-divider>
                     <MyShowsItem v-for="showContext in showsNotStartedWatching" :show-context="showContext"></MyShowsItem>
                 </ion-list>
             </div>

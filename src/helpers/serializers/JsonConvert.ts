@@ -7,43 +7,20 @@
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-import type { Airs} from "@/models/CommonModels";
-import type {
-    ShowWatchedProgress
-} from "@/models/ShowWatchedProgress";
-import type {
-    Show
-} from "@/models/Show";
-import type {
-    Season
-} from "@/models/Season";
-import type {
-    WatchListItem
-} from "@/models/WatchListItem";
-import type {
-    WatchedItem
-} from "@/models/WatchedItem";
-import type {
-    HistoryItem
-} from "@/models/HistoryItem";
-import type {
-    CalendarShow
-} from "@/models/CalendarShow";
-import type {
-    CalendarMovie
-} from "@/models/CalendarMovie";
-import type {
-    Episode
-} from "@/models/Episode";
-import type {
-    TraktListItem
-} from "@/models/TraktListItem";
-import type {
-    TraktList
-} from "@/models/TraktList";
-import type {
-    Ids
-} from "@/models/Ids";
+import type { Airs } from "@/models/CommonModels";
+import type { ShowWatchedProgress } from "@/models/ShowWatchedProgress";
+import type { Show } from "@/models/Show";
+import type { Season } from "@/models/Season";
+import type { WatchListItem } from "@/models/WatchListItem";
+import type { WatchedItem } from "@/models/WatchedItem";
+import type { HistoryItem } from "@/models/HistoryItem";
+import type { CalendarShow } from "@/models/CalendarShow";
+import type { CalendarMovie } from "@/models/CalendarMovie";
+import type { Episode } from "@/models/Episode";
+import type { TraktListItem } from "@/models/TraktListItem";
+import type { TraktList } from "@/models/TraktList";
+import type { Ids } from "@/models/Ids";
+import type { LastActivities } from "@/models/LastActivitiesModels";
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -100,6 +77,22 @@ export class JsonConvert {
     public static toShowWatchedProgress(json: string): ShowWatchedProgress {
         typeMap = typeMapShowWatchedProgress;
         return cast(JSON.parse(json), r("ShowWatchedProgress"));
+    }
+
+    public static toLastActivities(json: string): LastActivities {
+        typeMap = typeMapLastActivities;
+        return cast(JSON.parse(json), r("LastActivities"));
+    }
+
+    public static toLastActivitiesFromLocalStorage(json: string): LastActivities {
+        console.log("json:", json);
+        // debugger;
+        typeMap = typeMapLastActivitiesLocalStorage;
+        // return cast(JSON.parse(json), r("LastActivities"));
+
+        const result = cast(JSON.parse(json), r("LastActivities")) as LastActivities;
+        console.log("Result:", result);
+        return result;
     }
 
     public static calendarShowToJson(value: CalendarShow[]): string {
@@ -1219,3 +1212,154 @@ const typeMapEpisodes: any = {
         false
     ),
 };
+
+const typeMapLastActivities: any = {
+    LastActivities: o(
+        [
+            { json: "all", js: "all", typ: u(undefined, Date) },
+            { json: "movies", js: "movies", typ: u(undefined, r("Movies")) },
+            { json: "episodes", js: "episodes", typ: u(undefined, r("Episodes")) },
+            { json: "shows", js: "shows", typ: u(undefined, r("Shows")) },
+            { json: "seasons", js: "seasons", typ: u(undefined, r("Seasons")) },
+            { json: "comments", js: "comments", typ: u(undefined, r("Comments")) },
+            { json: "lists", js: "lists", typ: u(undefined, r("Lists")) },
+            { json: "watchlist", js: "watchlist", typ: u(undefined, r("Recommendations")) },
+            { json: "recommendations", js: "recommendations", typ: u(undefined, r("Recommendations")) },
+            { json: "account", js: "account", typ: u(undefined, r("Account")) },
+        ],
+        false
+    ),
+    Account: o(
+        [
+            { json: "settings_at", js: "settingsAt", typ: u(undefined, Date) },
+            { json: "followed_at", js: "followedAt", typ: u(undefined, Date) },
+            { json: "following_at", js: "followingAt", typ: u(undefined, Date) },
+            { json: "pending_at", js: "pendingAt", typ: u(undefined, Date) },
+        ],
+        false
+    ),
+    Comments: o(
+        [
+            { json: "liked_at", js: "likedAt", typ: u(undefined, Date) },
+            { json: "blocked_at", js: "blockedAt", typ: u(undefined, Date) },
+        ],
+        false
+    ),
+    Episodes: o(
+        [
+            { json: "watched_at", js: "watchedAt", typ: u(undefined, Date) },
+            { json: "collected_at", js: "collectedAt", typ: u(undefined, Date) },
+            { json: "rated_at", js: "ratedAt", typ: u(undefined, Date) },
+            { json: "watchlisted_at", js: "watchlistedAt", typ: u(undefined, Date) },
+            { json: "commented_at", js: "commentedAt", typ: u(undefined, Date) },
+            { json: "paused_at", js: "pausedAt", typ: u(undefined, Date) },
+        ],
+        false
+    ),
+    Lists: o(
+        [
+            { json: "liked_at", js: "likedAt", typ: u(undefined, Date) },
+            { json: "updated_at", js: "updatedAt", typ: u(undefined, Date) },
+            { json: "commented_at", js: "commentedAt", typ: u(undefined, Date) },
+        ],
+        false
+    ),
+    Movies: o(
+        [
+            { json: "watched_at", js: "watchedAt", typ: u(undefined, Date) },
+            { json: "collected_at", js: "collectedAt", typ: u(undefined, Date) },
+            { json: "rated_at", js: "ratedAt", typ: u(undefined, Date) },
+            { json: "watchlisted_at", js: "watchlistedAt", typ: u(undefined, Date) },
+            { json: "recommendations_at", js: "recommendationsAt", typ: u(undefined, Date) },
+            { json: "commented_at", js: "commentedAt", typ: u(undefined, Date) },
+            { json: "paused_at", js: "pausedAt", typ: u(undefined, Date) },
+            { json: "hidden_at", js: "hiddenAt", typ: u(undefined, Date) },
+        ],
+        false
+    ),
+    Recommendations: o([{ json: "updated_at", js: "updatedAt", typ: u(undefined, Date) }], false),
+    Seasons: o(
+        [
+            { json: "rated_at", js: "ratedAt", typ: u(undefined, Date) },
+            { json: "watchlisted_at", js: "watchlistedAt", typ: u(undefined, Date) },
+            { json: "commented_at", js: "commentedAt", typ: u(undefined, Date) },
+            { json: "hidden_at", js: "hiddenAt", typ: u(undefined, Date) },
+        ],
+        false
+    ),
+    Shows: o(
+        [
+            { json: "rated_at", js: "ratedAt", typ: u(undefined, Date) },
+            { json: "watchlisted_at", js: "watchlistedAt", typ: u(undefined, Date) },
+            { json: "recommendations_at", js: "recommendationsAt", typ: u(undefined, Date) },
+            { json: "commented_at", js: "commentedAt", typ: u(undefined, Date) },
+            { json: "hidden_at", js: "hiddenAt", typ: u(undefined, Date) },
+        ],
+        false
+    ),
+};
+
+const typeMapLastActivitiesLocalStorage: any = {
+    "LastActivities": o([
+        { json: "all", js: "all", typ: u(undefined, Date) },
+        { json: "movies", js: "movies", typ: u(undefined, r("Movies")) },
+        { json: "episodes", js: "episodes", typ: u(undefined, r("Episodes")) },
+        { json: "shows", js: "shows", typ: u(undefined, r("Shows")) },
+        { json: "seasons", js: "seasons", typ: u(undefined, r("Seasons")) },
+        { json: "comments", js: "comments", typ: u(undefined, r("Comments")) },
+        { json: "lists", js: "lists", typ: u(undefined, r("Lists")) },
+        { json: "watchlist", js: "watchlist", typ: u(undefined, r("Recommendations")) },
+        { json: "recommendations", js: "recommendations", typ: u(undefined, r("Recommendations")) },
+        { json: "account", js: "account", typ: u(undefined, r("Account")) },
+    ], false),
+    "Account": o([
+        { json: "settingsAt", js: "settingsAt", typ: u(undefined, Date) },
+        { json: "followedAt", js: "followedAt", typ: u(undefined, Date) },
+        { json: "followingAt", js: "followingAt", typ: u(undefined, Date) },
+        { json: "pendingAt", js: "pendingAt", typ: u(undefined, Date) },
+    ], false),
+    "Comments": o([
+        { json: "likedAt", js: "likedAt", typ: u(undefined, Date) },
+        { json: "blockedAt", js: "blockedAt", typ: u(undefined, Date) },
+    ], false),
+    "Episodes": o([
+        { json: "watchedAt", js: "watchedAt", typ: u(undefined, Date) },
+        { json: "collectedAt", js: "collectedAt", typ: u(undefined, Date) },
+        { json: "ratedAt", js: "ratedAt", typ: u(undefined, Date) },
+        { json: "watchlistedAt", js: "watchlistedAt", typ: u(undefined, Date) },
+        { json: "commentedAt", js: "commentedAt", typ: u(undefined, Date) },
+        { json: "pausedAt", js: "pausedAt", typ: u(undefined, Date) },
+    ], false),
+    "Lists": o([
+        { json: "likedAt", js: "likedAt", typ: u(undefined, Date) },
+        { json: "updatedAt", js: "updatedAt", typ: u(undefined, Date) },
+        { json: "commentedAt", js: "commentedAt", typ: u(undefined, Date) },
+    ], false),
+    "Movies": o([
+        { json: "watchedAt", js: "watchedAt", typ: u(undefined, Date) },
+        { json: "collectedAt", js: "collectedAt", typ: u(undefined, Date) },
+        { json: "ratedAt", js: "ratedAt", typ: u(undefined, Date) },
+        { json: "watchlistedAt", js: "watchlistedAt", typ: u(undefined, Date) },
+        { json: "recommendationsAt", js: "recommendationsAt", typ: u(undefined, Date) },
+        { json: "commentedAt", js: "commentedAt", typ: u(undefined, Date) },
+        { json: "pausedAt", js: "pausedAt", typ: u(undefined, Date) },
+        { json: "hiddenAt", js: "hiddenAt", typ: u(undefined, Date) },
+    ], false),
+    "Recommendations": o([
+        { json: "updatedAt", js: "updatedAt", typ: u(undefined, Date) },
+    ], false),
+    "Seasons": o([
+        { json: "ratedAt", js: "ratedAt", typ: u(undefined, Date) },
+        { json: "watchlistedAt", js: "watchlistedAt", typ: u(undefined, Date) },
+        { json: "commentedAt", js: "commentedAt", typ: u(undefined, Date) },
+        { json: "hiddenAt", js: "hiddenAt", typ: u(undefined, Date) },
+    ], false),
+    "Shows": o([
+        { json: "ratedAt", js: "ratedAt", typ: u(undefined, Date) },
+        { json: "watchlistedAt", js: "watchlistedAt", typ: u(undefined, Date) },
+        { json: "recommendationsAt", js: "recommendationsAt", typ: u(undefined, Date) },
+        { json: "commentedAt", js: "commentedAt", typ: u(undefined, Date) },
+        { json: "hiddenAt", js: "hiddenAt", typ: u(undefined, Date) },
+    ], false),
+};
+
