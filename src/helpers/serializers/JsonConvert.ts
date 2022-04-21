@@ -85,13 +85,13 @@ export class JsonConvert {
     }
 
     public static toLastActivitiesFromLocalStorage(json: string): LastActivities {
-        console.log("json:", json);
+        //console.log("json:", json);
         // debugger;
         typeMap = typeMapLastActivitiesLocalStorage;
         // return cast(JSON.parse(json), r("LastActivities"));
 
         const result = cast(JSON.parse(json), r("LastActivities")) as LastActivities;
-        console.log("Result:", result);
+        //console.log("Result:", result);
         return result;
     }
 
