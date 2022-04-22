@@ -1,5 +1,11 @@
 <script setup lang="ts">
-    import { ref, reactive, onMounted, computed } from "vue";
+    import {
+        ref,
+        reactive,
+        onMounted,
+        computed,
+        toRaw
+    } from "vue";
     import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from "@ionic/vue";
     import { useRouter, useRoute } from "vue-router";
     import { useProgramStore } from "@/stores/ProgramStore";
@@ -10,17 +16,23 @@
     import { useLocalStorage } from "@vueuse/core";
     import MyShowsItem from "@/components/MyShowsItem.vue";
     import { plainToInstance, Type } from "class-transformer";
+    import type { Storage } from '@ionic/storage';
+    import {
+        LastActivitiesComparer
+    } from "@/helpers/LastActivitiesComparer";
 
+    console.log("in MyShows.vue");
     const programStore = useProgramStore();
     const showStore = useShowStore();
 
-    const traktClient = programStore.traktClient as TraktClient;
+    const _traktClient = programStore.traktClient as TraktClient;
+    const _localStorage = programStore.localStorage as Storage
 
     const router = useRouter();
     const route = useRoute();
 
     let showContexts = ref<ShowContext[]>([]);
-    const showsService = new ShowsService(traktClient);
+    const showsService = new ShowsService(_traktClient);
 
     // Optional approaches to allow using async.await in top level of Vue component with script setup
     // Other alternative is to use in onMounted lifecycle hook
@@ -41,31 +53,55 @@
     //     }
     //     // `text` is not available here
     // })();
-    const localShowContexts = useLocalStorage("show-contexts", [] as ShowContext[]);
+    
+    const localShowContexts = ref<ShowContext[]>([]);
 
     const loadData = async () => {
         try {
-            if (localShowContexts.value.length > 0) {
+            console.log("in MyShows.vue loadData");
+            
+            localShowContexts.value = await _localStorage.get(programStore.localStorageKeys.showContexts);
+            if (localShowContexts.value && localShowContexts.value.length > 0) {
                 console.log("Loading data from local storage");
                 showContexts.value = plainToInstance<ShowContext, any>(ShowContext, localShowContexts.value);
-            } else {
+            }
+            
+            if (await hasDataBeenUpdated()) {
                 console.log("Loading data from api");
                 showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
-                localShowContexts.value = showContexts.value;
-                //console.log("localShowContexts after loadData: ", localShowContexts.value);
+                await _localStorage.set(programStore.localStorageKeys.showContexts, toRaw(showContexts.value));
             }
+            //console.log("localShowContexts after loadData: ", localShowContexts.value);
 
             showStore.showContexts = showContexts.value;
             console.log("ShowContexts:", showContexts.value);
-
+            console.log("Finished - MyShows.vue loadData");
         } catch (e) {
             // Deal with the fact the chain failed
         }
         // `text` is not available here
     };
+
+    const hasDataBeenUpdated = async () => {
+        const savedLastActivities = await _localStorage.get(programStore.localStorageKeys.lastActivities);
+        console.log(`savedLastActivities=`, savedLastActivities);
+        const currentLastActivitiesResult = await _traktClient.Sync.getLastActivities();
+        const currentLastActivities = currentLastActivitiesResult.content;
+        console.log(`currentLastActivities=`, currentLastActivities);
+
+        const compareResult = new LastActivitiesComparer(savedLastActivities, currentLastActivities!).compare();
+        console.log(`compareResult=${compareResult}`);
+        const result = compareResult.length > 0;
+        console.log(`isRefresh=${result}`);
+        
+        await _localStorage.set(programStore.localStorageKeys.lastActivities, currentLastActivities);
+        return result
+    }
+    
     loadData();
 
     onMounted(async () => {
+        console.log("in MyShows.vue onMounted");
         // const showsService = new ShowsService(traktClient);
         // showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
     });
@@ -85,6 +121,7 @@
     const showsNotStartedWatching = computed(() => {
         return showContexts.value.filter((showContext) => showContext.isNoneWatched());
     });
+    console.log("Finished - MyShows.vue");
 </script>
 
 <template>
@@ -101,16 +138,16 @@
         <ion-content :fullscreen="true">
             <div id="container">
                 <ion-list>
-                    <ion-item-divider sticky>In Progress, New Episodes Available ({{showsWatchingEpisodesAvailable.length}})</ion-item-divider>
+                    <ion-item-divider sticky>In Progress, New Episodes Available ({{ showsWatchingEpisodesAvailable.length }})</ion-item-divider>
                     <MyShowsItem v-for="showContext in showsWatchingEpisodesAvailable" :show-context="showContext"></MyShowsItem>
 
-                    <ion-item-divider sticky>Caught Up, New Episodes Scheduled ({{caughtUpNewEpisodesScheduled.length}})</ion-item-divider>
+                    <ion-item-divider sticky>Caught Up, New Episodes Scheduled ({{ caughtUpNewEpisodesScheduled.length }})</ion-item-divider>
                     <MyShowsItem v-for="showContext in caughtUpNewEpisodesScheduled" :show-context="showContext"></MyShowsItem>
 
-                    <ion-item-divider sticky>Caught Up, No New Episodes Scheduled ({{caughtUpNoNewEpisodesScheduled.length}})</ion-item-divider>
+                    <ion-item-divider sticky>Caught Up, No New Episodes Scheduled ({{ caughtUpNoNewEpisodesScheduled.length }})</ion-item-divider>
                     <MyShowsItem v-for="showContext in caughtUpNoNewEpisodesScheduled" :show-context="showContext"> </MyShowsItem>
 
-                    <ion-item-divider sticky>Not Started Watching ({{showsNotStartedWatching.length}})</ion-item-divider>
+                    <ion-item-divider sticky>Not Started Watching ({{ showsNotStartedWatching.length }})</ion-item-divider>
                     <MyShowsItem v-for="showContext in showsNotStartedWatching" :show-context="showContext"></MyShowsItem>
                 </ion-list>
             </div>

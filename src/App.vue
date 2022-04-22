@@ -18,7 +18,7 @@
         warningSharp,
     } from "ionicons/icons";
 
-    import { computed, defineComponent, onMounted, provide, ref } from "vue";
+    import { computed, defineComponent, onMounted, provide, ref, toRaw } from "vue";
 
     import { useRouter, useRoute } from "vue-router";
     import { TraktClient } from "@/trakt/TraktClient";
@@ -39,24 +39,12 @@
     import type { TraktListItem } from "@/models/TraktListItem";
     import type { TraktList } from "@/models/TraktList";
     import { useLocalStorage } from "@vueuse/core";
+    import type { Storage } from "@ionic/storage";
     import type { ShowContext } from "@/models/ShowContext";
-    import type {
-        LastActivities
-    } from "@/models/LastActivitiesModels";
-    import {
-        LastActivitiesComparer
-    } from "@/helpers/LastActivitiesComparer";
-    import {
-        plainToInstance
-    } from "class-transformer";
-    import {
-        JsonConvert
-    } from "@/helpers/serializers/JsonConvert";
-
-    const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
-    const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
-    const CLIENT_SECRET = "8c1902d0284fad4ff6b052f0fdbfd50be1075088ba5d6f33b218734067568148";
-    const ACCESS_TOKEN = "908366de1b222a5cabfda200e6e829633a7c51234ce655d18674b3de5d7e8f4c";
+    import type { LastActivities } from "@/models/LastActivitiesModels";
+    import { LastActivitiesComparer } from "@/helpers/LastActivitiesComparer";
+    import { plainToInstance } from "class-transformer";
+    import { JsonConvert } from "@/helpers/serializers/JsonConvert";
 
     const programStore = useProgramStore();
     const showStore = useShowStore();
@@ -75,6 +63,7 @@
             url: "/other",
         },
     ];
+    console.log("in App.vue");
 
     const path = window.location.pathname.split("folder/")[1];
     if (path !== undefined) {
@@ -84,6 +73,7 @@
     const screenWidth = ref(window.innerWidth);
 
     onMounted(async () => {
+        console.log("in App.vue onMounted");
         window.onresize = () => {
             screenWidth.value = window.innerWidth;
             console.log(`screenWidth=${screenWidth.value}`);
@@ -107,41 +97,53 @@
     provide("isWideScreen", isWideScreen);
     provide("screenWidth", screenWidth);
 
-    programStore.traktClient = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: false });
     const _traktClient = programStore.traktClient as TraktClient;
+    const _localStorage = programStore.localStorage as Storage;
 
     const loadData = async () => {
         try {
-            
-
+            console.log("in App.vue loadData");
+            // const savedLastActivities = await _localStorage.get(programStore.localStorageKeys.lastActivities);
+            // console.log(`savedLastActivities=`, savedLastActivities);
+            // const currentLastActivitiesResult = await _traktClient.Sync.getLastActivities();
+            // const currentLastActivities = currentLastActivitiesResult.content;
+            //
+            // const compareResult = new LastActivitiesComparer(savedLastActivities, currentLastActivities!).compare();
+            // console.log(`compareResult=${compareResult}`);
+            // const isRefresh = compareResult.length > 0;
+            // console.log(`isRefresh=${isRefresh}`);
+            // await _localStorage.set(programStore.localStorageKeys.lastActivities, currentLastActivities);
+            console.log("Finished - App.vue loadData");
         } catch (e) {
             // Deal with the fact the chain failed
         }
         // `text` is not available here
     };
-    loadData();
-    
-    const myShowsOptions = new MyShowsOptions();
-    myShowsOptions.showSources.isWatchedShows = true;
-    myShowsOptions.showSources.isWatchList = true;
-    showStore.myShowsOptions = myShowsOptions;
 
-    const localLastActivities = useLocalStorage("last-activities", {} as LastActivities, {
-        serializer: {
-            read: (v: any) => v ? JsonConvert.toLastActivitiesFromLocalStorage(v) : null,
-            write: (v: any) => JSON.stringify(v),
-        },   
-    });
-    console.log("LocalLastActivities:", localLastActivities.value);
-    const currentLastActivitiesResult = await _traktClient.Sync.getLastActivities();
-    const currentLastActivities = currentLastActivitiesResult.content;
-    const compareResult = new LastActivitiesComparer(localLastActivities.value, currentLastActivities!).compare()
-    localLastActivities.value = currentLastActivitiesResult.content;
-    debugger;
+    // const isRefreshNeeded = (savedLastActivities: LastActivities, currentLastActivities:LastActivities) => {
+    //     let result = false;
+    //         if (!savedLastActivities){
+    //             console.log(`savedLastActivities=${savedLastActivities}`);
+    //             result = true
+    //         }else {
+    //             console.log(`savedLastActivities.all=${savedLastActivities!.all}currentLastActivities.all=${currentLastActivities!.all}`);
+    //             if (savedLastActivities.all?.toISOString() === currentLastActivities.all?.toISOString()) {
+    //                 console.log("'All' values are the same, no refresh needed");
+    //                 return false;
+    //             }
+    //
+    //             const compareResult = new LastActivitiesComparer(savedLastActivities, currentLastActivities!).compare()
+    //             console.log(`compareResult=${compareResult}`);
+    //             return compareResult.length > 0;
+    //         }
+    // };
+    loadData();
+
 
     // new TraktApiTests(_traktClient).execute();
     console.log(`screenWidth=${screenWidth.value}`);
     console.log(`isWideScreen=${isWideScreen.value}`);
+    console.log("Finished - App.vue");
 </script>
 
 <template>

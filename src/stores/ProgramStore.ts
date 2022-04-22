@@ -1,12 +1,17 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import type  { TraktClient } from "@/trakt/TraktClient";
-
+import type { Storage } from '@ionic/storage';
 // import { useLocalStorage } from "@vueuse/core";
 
 export const useProgramStore = defineStore("ProgramStore", {
     state: () => {
         return {
             traktClient: null as TraktClient|null,
+            localStorage: null as Storage|null,
+            localStorageKeys: {
+                lastActivities: "last-activities",
+                showContexts: "show-contexts"
+            }
         };
     },
     getters: {

@@ -15,6 +15,15 @@ export class LastActivitiesComparer {
     }
     
     compare(){
+        let result:any = [];
+        if (!this._oldLastActivities){
+            console.log(`oldLastActivities=${this._oldLastActivities}`);
+            return [".all"];
+        }
+        if (this._oldLastActivities.all?.toISOString() === this._newLastActivities.all?.toISOString()) {
+            console.log("'All' values are the same, no refresh needed");
+            return result;
+        }
         return this.iterate(this._oldLastActivities, this._newLastActivities);
     }
 
