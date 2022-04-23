@@ -21,6 +21,7 @@ interface IApiCallParams {
     filters?: ATraktFilter | null;
     queryParams?: null | IDictionary;
     serializer: any;
+    isNoCache?: boolean
 }
 
 export class TraktClient {
@@ -31,6 +32,11 @@ export class TraktClient {
     private _session: AxiosInstance;
     private readonly _clientSecret: string;
     private readonly _commonHeaders: AxiosRequestHeaders = {};
+    private readonly _noCacheHeaders: AxiosRequestHeaders = {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Expires': '0',    
+    };
     private readonly _clientId: string;
     private readonly _accessToken: string;
     private readonly _isUseProxy: boolean;
@@ -73,23 +79,26 @@ export class TraktClient {
         extendedInfo = null,
         queryParams = null,
         serializer = null,
+        isNoCache = true
     }: IApiCallParams): Promise<TraktPagedResponse<T>> {
         let result = new TraktResponse<T>();
         let response: AxiosResponse | null = null;
         try {
             queryParams = queryParams ?? {};
             if (extendedInfo?.hasAnySet()) queryParams["extended"] = extendedInfo.toString();
+            if (isNoCache) queryParams["cache-buster"] = new Date().getTime();
+
 
             let headers = this._commonHeaders;
-            if (authorizationRequirement !== AuthorizationRequirement.NotRequired) {
-                headers = Object.assign(headers, this._authorizationHeader);
-            }
+            if (authorizationRequirement !== AuthorizationRequirement.NotRequired) headers = Object.assign(headers, this._authorizationHeader);
+            // if (isNoCache) headers = Object.assign(headers, this._noCacheHeaders);
 
             let url = this.BASE_URL + request;
             if (this._isUseProxy) url = this.PROXY_URL + url;
 
             console.log("url:", url);
             console.log("queryParams:", JSON.stringify(queryParams, null, 2));
+            console.log("http headers=", headers);
 
             response = await this._session.get(url, {
                 headers: headers,
@@ -134,6 +143,7 @@ export class TraktClient {
         filters = null,
         queryParams = null,
         serializer = null,
+        isNoCache = true
     }: IApiCallParams): Promise<TraktPagedResponse<T[]>> {
         let result = new TraktPagedResponse<T[]>();
         let response: AxiosResponse | null = null;
@@ -142,6 +152,7 @@ export class TraktClient {
             queryParams = Object.assign(queryParams, requestPagination?.toMap());
             queryParams = Object.assign(queryParams, filters?.toMap());
             if (extendedInfo?.hasAnySet()) queryParams["extended"] = extendedInfo.toString();
+            if (isNoCache) queryParams["cache-buster"] = new Date().getTime();
 
             let headers = this._commonHeaders;
             if (authorizationRequirement !== AuthorizationRequirement.NotRequired) {
@@ -153,6 +164,7 @@ export class TraktClient {
 
             console.log("url:", url);
             console.log("queryParams:", JSON.stringify(queryParams, null, 2));
+            console.log("http headers=", headers);
 
             response = await this._session.get(url, {
                 headers: headers,
