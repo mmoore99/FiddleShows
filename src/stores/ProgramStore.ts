@@ -10,7 +10,8 @@ export const useProgramStore = defineStore("ProgramStore", {
             localStorage: null as Storage|null,
             localStorageKeys: {
                 lastActivities: "last-activities",
-                showContexts: "show-contexts"
+                showContexts: "show-contexts",
+                groupDisplayStatuses: "group-display-statuses"
             }
         };
     },

@@ -40,13 +40,15 @@ export class ShowContext {
     }
 
     nextEpisodeDisplay() {
-        if (!this.progress || !this.progress.nextEpisode) return "Next episode unknown";
+        if (this.isNoneWatched()) return "S01E01";
+        if (!this.progress!.nextEpisode) return "Next episode unknown";
         return `Up Next: S${this.progress!.nextEpisode!.season!.toString().padStart(2, "0")}E${this.progress!.nextEpisode!.number!.toString().padStart(2, "0")}`;
     }
 
     episodesLeftDisplay() {
-        if (!this.progress || !this.progress.nextEpisode) return "";
-        const episodesLeft = this.progress.aired - this.progress.completed;
+        if (this.isNoneWatched()) return `${this.show?.airedEpisodes} ${this.show?.airedEpisodes === 1 ? "episode" : "episodes"} left`;
+        if (!this.progress!.nextEpisode) return "";
+        const episodesLeft = this.progress!.aired - this.progress!.completed;
         if (episodesLeft > 0) return `${episodesLeft} ${episodesLeft === 1 ? "episode" : "episodes"} left`;
         return "";
         // if (this.progress.nextEpisode)
