@@ -1,5 +1,7 @@
 <script setup>
     import { ShowContext } from "@/models/ShowContext.ts";
+    import { IonItem, IonThumbnail, IonLabel } from "@ionic/vue";
+    import { ellipsisHorizontalOutline } from "ionicons/icons";
 
     const props = defineProps({
         showContext: {
@@ -19,6 +21,7 @@
             <h4>{{ showContext.nextEpisodeDisplay() }}</h4>
             <h4>{{ showContext.episodesLeftDisplay() }}</h4>
         </ion-label>
+        <ion-icon class="chevron" slot="end" :icon="ellipsisHorizontalOutline"  @click=""></ion-icon>
     </ion-item>
 
 </template>
