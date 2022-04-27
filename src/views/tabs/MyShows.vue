@@ -31,6 +31,8 @@
     const router = useRouter();
     const route = useRoute();
 
+    const showsListRef = ref<HTMLIonListElement|null>(null);
+
     let showContexts = ref<ShowContext[]>([]);
     const groupDisplayStatuses = reactive<GroupDisplayStatuses> ({
         isDisplayGroup1: true,
@@ -109,6 +111,13 @@
         return result;
     };
 
+    const onShowItemSwiped = () => {
+        debugger;
+        // according to docs the command below with $el should be required, but for some reason here it is not
+        // showsListRef!.value!.$el.closeSlidingItems()
+        showsListRef!.value!.closeSlidingItems()
+    };
+
     const saveGroupDisplayStatuses = () => {
         _localStorage.set(_programStore.localStorageKeys.groupDisplayStatuses, toRaw(groupDisplayStatuses)).then();
     };
@@ -145,13 +154,13 @@
 
         <ion-content :fullscreen="true">
             <div id="container">
-                <ion-list style="padding-top: 0">
+                <ion-list style="padding-top: 0" ref="showsListRef">
                     <ion-item-divider sticky>
                         <ion-label> In Progress, New Episodes Available ({{ showsWatchingEpisodesAvailable.length }}) </ion-label>
                         <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup1" @click="toggleDisplayGroup(1)"></ion-icon>
                         <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup1" @click="toggleDisplayGroup(1)"></ion-icon>
                     </ion-item-divider>
-                    <MyShowsItem v-show="groupDisplayStatuses.isDisplayGroup1" v-for="showContext in showsWatchingEpisodesAvailable" :show-context="showContext"></MyShowsItem>
+                    <MyShowsItem v-show="groupDisplayStatuses.isDisplayGroup1" v-for="showContext in showsWatchingEpisodesAvailable" :show-context="showContext" @show-item-swiped="onShowItemSwiped"></MyShowsItem>
 
                     <ion-item-divider sticky>
                         <ion-label> Caught Up, New Episodes Scheduled ({{ caughtUpNewEpisodesScheduled.length }}) </ion-label>
