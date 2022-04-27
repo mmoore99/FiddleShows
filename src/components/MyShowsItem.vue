@@ -3,6 +3,10 @@
     import { IonItem, IonItemSliding, IonThumbnail, IonLabel, IonItemOptions, IonItemOption } from "@ionic/vue";
     import { ellipsisHorizontalOutline } from "ionicons/icons";
     import { ref } from "vue";
+    import { useRoute, useRouter } from "vue-router";
+
+    const router = useRouter();
+    const route = useRoute();
 
     const props = defineProps({
         showContext: {
@@ -13,6 +17,11 @@
     const ionSlidingItem = ref(null);
 
     const emit = defineEmits(['showItemSwiped'])
+
+    const onShowSelected = (showContext) => {
+        router.push(`/tabs/my-shows/${showContext.show.ids.trakt}/detail`)
+        
+    };
 
     const onItemSwipe = (event, showContext) => {
         console.log("in onItemSwipe", event, showContext, showContext.show.title);
@@ -28,7 +37,7 @@
             <ion-thumbnail slot="start" style="height: 75px">
                 <img src="https://image.tmdb.org/t/p/w154//cXUqtadGsIcZDWUTrfnbDjAy8eN.jpg" alt="" />
             </ion-thumbnail>
-            <ion-label>
+            <ion-label @click="onShowSelected(showContext)">
                 <h3 style="font-size: 15px; font-weight: 600">
                     {{ showContext.show.title }}
                 </h3>
