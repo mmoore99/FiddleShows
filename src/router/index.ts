@@ -25,7 +25,7 @@ const routes = [
             },
             {
                 path: "/tabs/my-shows",
-                component: () => import("../views/tabs/MyShowsRoot.vue"),
+                component: () => import("../views/tabs/MyShowsTabRoot.vue"),
                 children: [
                     {
                         path: "",
