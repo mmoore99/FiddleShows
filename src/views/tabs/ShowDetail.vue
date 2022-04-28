@@ -5,6 +5,10 @@
     import { Swiper, SwiperSlide, useSwiper } from "swiper/vue";
     import "swiper/css";
     import "@ionic/vue/css/ionic-swiper.css";
+    import ShowInfo from "@/components/ShowInfo.vue";
+    import ShowEpisodes from "@/components/ShowEpisodes.vue";
+    import ShowComments from "@/components/ShowComments.vue";
+    import ShowNews from "@/components/ShowNews.vue";
     const router = useRouter();
     const route = useRoute();
     let swiperInstance: any = null;
@@ -57,14 +61,18 @@
                 </ion-segment-button>
             </ion-segment>
 
-            <div id="container">
-                <swiper :modules="modules" @swiper="onSwiper" @slideChange="onSlideChange">
-                    <swiper-slide>Episodes Slide</swiper-slide>
-                    <swiper-slide>Show Info Slide</swiper-slide>
-                    <swiper-slide>Comments Slide</swiper-slide>
-                    <swiper-slide>News Slide</swiper-slide>
-                </swiper>
-            </div>
+            <swiper :modules="modules" @swiper="onSwiper" @slideChange="onSlideChange" style="height: 100vh">
+                <swiper-slide><ShowEpisodes></ShowEpisodes></swiper-slide>
+                <swiper-slide>
+                    <ShowInfo></ShowInfo>
+                </swiper-slide>
+                <swiper-slide>
+                    <ShowComments></ShowComments>
+                </swiper-slide>
+                <swiper-slide>
+                    <ShowNews></ShowNews>
+                </swiper-slide>
+            </swiper>
         </ion-content>
     </ion-page>
 </template>

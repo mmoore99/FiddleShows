@@ -21,7 +21,7 @@
     import { computed, defineComponent, onMounted, provide, ref, toRaw } from "vue";
 
     import { useRouter, useRoute } from "vue-router";
-    import { TraktClient } from "@/trakt/TraktClient";
+    import type { TraktClient } from "@/trakt/TraktClient";
     import { RequestPagination } from "@/models/RequestModels";
     import { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
     import { ShowMovieType } from "@/helpers/enums";
