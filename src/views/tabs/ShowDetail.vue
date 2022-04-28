@@ -1,22 +1,41 @@
 <script setup lang="ts">
     import { defineComponent, ref, reactive } from "vue";
-    import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonSegment, IonSegmentButton } from "@ionic/vue";
+    import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonSegment, IonSegmentButton, IonicSlides } from "@ionic/vue";
     import { useRouter, useRoute } from "vue-router";
+    import { Swiper, SwiperSlide, useSwiper } from "swiper/vue";
+    import "swiper/css";
+    import "@ionic/vue/css/ionic-swiper.css";
     const router = useRouter();
     const route = useRoute();
-    const segmentRef = ref(null)
-    let selectedSegment = ref("episodes")
+    let swiperInstance: any = null;
+    const segmentRef: any = ref(null);
+    const modules = [IonicSlides];
+    const segments = ["episodes", "info", "comments", "news"];
+    const segmentTitles = ["episodes", "show info", "comments", "news"];
+    const slideTitles = ["Episodes Slide", "Show Info Slide", "Comments Slide", "News Slide"];
+    let selectedSegment = ref("episodes");
 
     const onSegmentChanged = (ev: CustomEvent) => {
         console.log("Segment changed", ev);
-        console.log("selectedSegment=", selectedSegment.value);
-        // debugger;
+        changeSlideTo(segments.findIndex((item) => item === ev.detail.value));
     };
 
-    const onChangeToNews = () => {
-        console.log("segmentRef=", segmentRef);
-        selectedSegment.value = "news"
-        segmentRef.value.$el.value = "news"
+    const changeSegmentTo = (newSegmentIndex: number) => {
+        segmentRef!.value!.$el!.value = segments[newSegmentIndex];
+    };
+
+    const changeSlideTo = (newSlideIndex: number) => {
+        swiperInstance.slideTo(newSlideIndex);
+    };
+
+    const onSwiper = (swiper: any) => {
+        console.log("onSwiper", swiper);
+        swiperInstance = swiper;
+    };
+
+    const onSlideChange = (swiper: any) => {
+        console.log("onSlideChange");
+        changeSegmentTo(swiper.realIndex);
     };
 </script>
 
@@ -33,23 +52,18 @@
 
         <ion-content :fullscreen="true">
             <ion-segment @ionChange="onSegmentChanged($event)" :value="selectedSegment" ref="segmentRef">
-                <ion-segment-button value="episodes">
-                    <ion-label>Episodes</ion-label>
-                </ion-segment-button>
-                <ion-segment-button value="info">
-                    <ion-label>Show Info</ion-label>
-                </ion-segment-button>
-                <ion-segment-button value="comments">
-                    <ion-label>Comments</ion-label>
-                </ion-segment-button>
-                <ion-segment-button value="news">
-                    <ion-label>News</ion-label>
+                <ion-segment-button v-for="(segment, index) in segments" :value="segment">
+                    <ion-label> {{ segmentTitles[index] }}</ion-label>
                 </ion-segment-button>
             </ion-segment>
 
             <div id="container">
-                <strong class="capitalize">SHOW DETAIL - {{ $route.params.id }}</strong>
-                <ion-button @click="onChangeToNews" >Click Here for News</ion-button>
+                <swiper :modules="modules" @swiper="onSwiper" @slideChange="onSlideChange">
+                    <swiper-slide>Episodes Slide</swiper-slide>
+                    <swiper-slide>Show Info Slide</swiper-slide>
+                    <swiper-slide>Comments Slide</swiper-slide>
+                    <swiper-slide>News Slide</swiper-slide>
+                </swiper>
             </div>
         </ion-content>
     </ion-page>
