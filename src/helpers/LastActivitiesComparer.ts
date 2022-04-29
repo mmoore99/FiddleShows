@@ -28,6 +28,14 @@ export class LastActivitiesComparer {
     }
 
     private iterate(oldObj: any, newObj: any, objectName: string = "") {
+        console.log("***************************************");
+        console.log("objectName=", objectName);
+        console.log("oldObj=", oldObj);
+        console.log("newObj=", newObj);
+        // if (objectName === "account"){
+        //     console.log("Exiting:objectName=", objectName);
+        //     return [];
+        // }
         let result:any = [];
         let dateName = "";
         Object.entries(oldObj).forEach(([key, value]) => {
@@ -37,6 +45,18 @@ export class LastActivitiesComparer {
             }
             if (!key) return;
             dateName = key;
+            console.log("dateName=", dateName);
+            
+            // check to make sure that a date string got through JsonConvert without being converted to date object
+            if (!isDateObject(oldObj[key])){
+                console.log(`Converting old ${oldObj[key]} to date...`);
+                oldObj[key] = new Date(oldObj[key])
+            }
+            if (!isDateObject(newObj[key])){
+                console.log(`Converting new ${newObj[key]} to date...`);
+                newObj[key] = new Date(newObj[key])
+            }
+            
             const oldDate = oldObj[key].toISOString()
             const newDate = newObj[key].toISOString()
             if (oldDate !== newDate){
@@ -44,6 +64,7 @@ export class LastActivitiesComparer {
                 result.push(`${objectName}.${dateName}`)
             }
         });
+        console.log("Exiting:objectName=", objectName);
         return result;
     }
 }

@@ -1235,6 +1235,7 @@ const typeMapLastActivities: any = {
             { json: "followed_at", js: "followedAt", typ: u(undefined, Date) },
             { json: "following_at", js: "followingAt", typ: u(undefined, Date) },
             { json: "pending_at", js: "pendingAt", typ: u(undefined, Date) },
+            { json: "requested_at", js: "requestedAt", typ: u(undefined, Date) },
         ],
         false
     ),
