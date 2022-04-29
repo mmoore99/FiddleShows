@@ -1,6 +1,6 @@
 <script setup>
     import { ShowContext } from "@/models/ShowContext.ts";
-    import { IonItem, IonItemSliding, IonThumbnail, IonLabel, IonItemOptions, IonItemOption } from "@ionic/vue";
+    import { IonItem, IonItemSliding, IonThumbnail, IonLabel, IonItemOptions, IonItemOption, IonIcon } from "@ionic/vue";
     import { ellipsisHorizontalOutline } from "ionicons/icons";
     import { ref } from "vue";
     import { useRoute, useRouter } from "vue-router";

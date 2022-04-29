@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { defineComponent, ref, reactive } from "vue";
-    import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonSegment, IonSegmentButton, IonicSlides } from "@ionic/vue";
+    import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonSegment, IonSegmentButton, IonLabel, IonicSlides } from "@ionic/vue";
     import { useRouter, useRoute } from "vue-router";
     import { Swiper, SwiperSlide, useSwiper } from "swiper/vue";
     import "swiper/css";
@@ -9,6 +9,8 @@
     import ShowEpisodes from "@/components/ShowEpisodes.vue";
     import ShowComments from "@/components/ShowComments.vue";
     import ShowNews from "@/components/ShowNews.vue";
+    import { useProgramStore } from "@/stores/ProgramStore";
+    import { useShowStore } from "@/stores/ShowStore";
     const router = useRouter();
     const route = useRoute();
     let swiperInstance: any = null;
@@ -18,7 +20,16 @@
     const segmentTitles = ["episodes", "show info", "comments", "news"];
     const slideTitles = ["Episodes Slide", "Show Info Slide", "Comments Slide", "News Slide"];
     let selectedSegment = ref("episodes");
+    const programStore = useProgramStore();
+    const showStore = useShowStore();
 
+    const props = defineProps({
+        id: {
+            type: String,
+            required: true,
+        },
+    });
+    console.log("id=", props.id);
     const onSegmentChanged = (ev: CustomEvent) => {
         console.log("Segment changed", ev);
         changeSlideTo(segments.findIndex((item) => item === ev.detail.value));

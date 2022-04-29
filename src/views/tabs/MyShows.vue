@@ -7,7 +7,7 @@
     }
 
     import { ref, reactive, onMounted, computed, toRaw } from "vue";
-    import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from "@ionic/vue";
+    import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonList, IonItemDivider, IonIcon, IonLabel } from "@ionic/vue";
     import { chevronUp, chevronDown, calendar, personCircle, tv, timerOutline, search, list } from "ionicons/icons";
     import { useRouter, useRoute } from "vue-router";
     import { useProgramStore } from "@/stores/ProgramStore";

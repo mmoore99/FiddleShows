@@ -34,6 +34,7 @@ const routes = [
                     {
                         path: ":id/detail",
                         component: () => import("../views/tabs/ShowDetail.vue"),
+                        props: true
                     },
                 ],
             },
