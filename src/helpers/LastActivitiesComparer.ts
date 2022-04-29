@@ -24,30 +24,27 @@ export class LastActivitiesComparer {
             console.log("'All' values are the same, no refresh needed");
             return result;
         }
-        return this.iterate(this._oldLastActivities, this._newLastActivities);
+        return this.iterateThruObjects(this._oldLastActivities, this._newLastActivities);
     }
 
-    private iterate(oldObj: any, newObj: any, objectName: string = "") {
+    private iterateThruObjects(oldObj: any, newObj: any, objectName: string = "") {
         console.log("***************************************");
         console.log("objectName=", objectName);
         console.log("oldObj=", oldObj);
         console.log("newObj=", newObj);
-        // if (objectName === "account"){
-        //     console.log("Exiting:objectName=", objectName);
-        //     return [];
-        // }
+
         let result:any = [];
         let dateName = "";
         Object.entries(oldObj).forEach(([key, value]) => {
             if (typeof oldObj[key] === "object" && oldObj[key] !== null && !isDateObject(oldObj[key])) {
-                this.iterate(oldObj[key], newObj[key], key).forEach((x:string) => result.push(x));
+                this.iterateThruObjects(oldObj[key], newObj[key], key).forEach((x:string) => result.push(x));
                 return
             }
             if (!key) return;
             dateName = key;
             console.log("dateName=", dateName);
             
-            // check to make sure that a date string got through JsonConvert without being converted to date object
+            // check to make sure that a date string didn't get through JsonConvert without being converted to date object
             if (!isDateObject(oldObj[key])){
                 console.log(`Converting old ${oldObj[key]} to date...`);
                 oldObj[key] = new Date(oldObj[key])
