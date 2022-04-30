@@ -8,7 +8,7 @@
 
     import { ref, reactive, onMounted, computed, toRaw } from "vue";
     import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonList, IonItemDivider, IonIcon, IonLabel } from "@ionic/vue";
-    import { chevronUp, chevronDown, calendar, personCircle, tv, timerOutline, search, list } from "ionicons/icons";
+    import { chevronUp, chevronDown, filterCircleOutline, calendar, personCircle, tv, timerOutline, search, list, funnel, heart } from "ionicons/icons";
     import { useRouter, useRoute } from "vue-router";
     import { useProgramStore } from "@/stores/ProgramStore";
     import { useShowStore } from "@/stores/ShowStore";
@@ -144,12 +144,23 @@
 <template>
     <ion-page>
         <ion-header :translucent="true">
-            <ion-toolbar>
+            <ion-toolbar mode ="ios">
                 <ion-buttons slot="start">
-                    <ion-menu-button color="primary"></ion-menu-button>
+                    <ion-button>
+                        <ion-menu-button auto-hide="false"></ion-menu-button>
+                    </ion-button>
                 </ion-buttons>
-                <ion-title>{{ $route.path }}</ion-title>
+                <ion-segment value="episodes">
+                    <ion-segment-button value="episodes">Episodes</ion-segment-button>
+                    <ion-segment-button value="movies">Movies</ion-segment-button>
+                </ion-segment>
+                <ion-buttons slot="end">
+                    <ion-button>
+                        <ion-icon :icon="filterCircleOutline"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
             </ion-toolbar>
+            
         </ion-header>
 
         <ion-content :fullscreen="true">

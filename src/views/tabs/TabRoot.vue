@@ -36,16 +36,7 @@
 
 <template>
     <ion-page>
-        <!-- <ion-header :translucent="true">
-          <ion-toolbar>
-            <ion-buttons slot="start">
-              <ion-menu-button color="primary"></ion-menu-button>
-            </ion-buttons>
-            <ion-title>default title</ion-title>
-          </ion-toolbar>
-        </ion-header>-->
         <ion-tabs
-            class="only-on-narrow-screen"
             @ionTabsWillChange="beforeTabChange"
             @ionTabsDidChange="afterTabChange"
         >

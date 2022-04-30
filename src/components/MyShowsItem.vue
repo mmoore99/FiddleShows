@@ -35,7 +35,7 @@
     <ion-item-sliding @ionSwipe="onItemSwipe($event, showContext)" ref="ionSlidingItem">
         <ion-item>
             <ion-thumbnail slot="start" style="height: 75px">
-                <img src="https://image.tmdb.org/t/p/w154//cXUqtadGsIcZDWUTrfnbDjAy8eN.jpg" alt="" />
+                <img src="https://via.placeholder.com/56x75" alt="" />
             </ion-thumbnail>
             <ion-label @click="onShowSelected(showContext)">
                 <h3 style="font-size: 15px; font-weight: 600">

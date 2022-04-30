@@ -1,6 +1,12 @@
 <script setup lang="ts">
-    import { defineComponent, ref, reactive } from "vue";
+    import {
+        defineComponent,
+        ref,
+        reactive,
+        onMounted
+    } from "vue";
     import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonSegment, IonSegmentButton, IonLabel, IonicSlides } from "@ionic/vue";
+    import { arrowBackOutline, ellipsisVerticalCircle  } from "ionicons/icons";
     import { useRouter, useRoute } from "vue-router";
     import { Swiper, SwiperSlide, useSwiper } from "swiper/vue";
     import "swiper/css";
@@ -11,6 +17,7 @@
     import ShowNews from "@/components/ShowNews.vue";
     import { useProgramStore } from "@/stores/ProgramStore";
     import { useShowStore } from "@/stores/ShowStore";
+    
     const router = useRouter();
     const route = useRoute();
     let swiperInstance: any = null;
@@ -18,7 +25,6 @@
     const modules = [IonicSlides];
     const segments = ["episodes", "info", "comments", "news"];
     const segmentTitles = ["episodes", "show info", "comments", "news"];
-    const slideTitles = ["Episodes Slide", "Show Info Slide", "Comments Slide", "News Slide"];
     let selectedSegment = ref("episodes");
     const programStore = useProgramStore();
     const showStore = useShowStore();
@@ -29,6 +35,16 @@
             required: true,
         },
     });
+
+    onMounted(async () => {
+    });
+
+    const initialize = () => {
+        
+    };
+    
+    initialize();
+    
     console.log("id=", props.id);
     const onSegmentChanged = (ev: CustomEvent) => {
         console.log("Segment changed", ev);
@@ -57,16 +73,23 @@
 <template>
     <ion-page>
         <ion-header :translucent="true">
-            <ion-toolbar>
+            <ion-toolbar mode ="ios">
                 <ion-buttons slot="start">
-                    <ion-menu-button color="primary"></ion-menu-button>
+                    <ion-button @click="router.back()">
+                        <ion-icon :icon="arrowBackOutline" ></ion-icon>
+                    </ion-button>
                 </ion-buttons>
-                <ion-title>route ={{ $route.path }}</ion-title>
+                <ion-title>ShowTitle</ion-title>
+                <ion-buttons slot="end">
+                    <ion-button>
+                        <ion-icon :icon="ellipsisVerticalCircle"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
             </ion-toolbar>
         </ion-header>
 
         <ion-content :fullscreen="true">
-            <ion-segment @ionChange="onSegmentChanged($event)" :value="selectedSegment" ref="segmentRef">
+            <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" :value="selectedSegment" ref="segmentRef">
                 <ion-segment-button v-for="(segment, index) in segments" :value="segment">
                     <ion-label> {{ segmentTitles[index] }}</ion-label>
                 </ion-segment-button>
