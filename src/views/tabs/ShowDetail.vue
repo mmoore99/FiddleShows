@@ -34,6 +34,7 @@
     const segmentTitles = ["episodes", "show info", "comments", "news"];
     let selectedSegment = ref("episodes");
     let selectedShowContext = ref<ShowContext | null>(null);
+    const isDisplayBackButton = _showStore && _showStore.showContexts
 
     const props = defineProps({
         id: {
@@ -97,7 +98,7 @@
         <ion-header :translucent="true">
             <ion-toolbar mode="ios">
                 <ion-buttons slot="start">
-                    <ion-button @click="router.back()">
+                    <ion-button v-show="isDisplayBackButton" @click="router.back()">
                         <ion-icon :icon="arrowBackOutline"></ion-icon>
                     </ion-button>
                 </ion-buttons>
