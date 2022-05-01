@@ -1,15 +1,13 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import type { MyShowsOptions } from "@/models/MyShowsOptions";
 import type { ShowContext } from "@/models/ShowContext";
-import type {
-    LastActivities
-} from "@/models/LastActivitiesModels";
+import type { LastActivities } from "@/models/LastActivitiesModels";
 // import { useLocalStorage, useMouse, usePreferredDark } from '@vueuse/core'
 
 export const useShowStore = defineStore("ShowStore", {
     state: () => {
         return {
-            lastActivities: null as LastActivities | null, 
+            lastActivities: null as LastActivities | null,
             myShowsOptions: null as MyShowsOptions | null,
             showContexts: null as ShowContext[] | null,
         };

@@ -1,12 +1,7 @@
 <script setup lang="ts">
-    import {
-        defineComponent,
-        ref,
-        reactive,
-        onMounted
-    } from "vue";
+    import { defineComponent, ref, reactive, onMounted, computed } from "vue";
     import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonSegment, IonSegmentButton, IonLabel, IonicSlides } from "@ionic/vue";
-    import { arrowBackOutline, ellipsisVerticalCircle  } from "ionicons/icons";
+    import { arrowBackOutline, ellipsisVerticalCircle } from "ionicons/icons";
     import { useRouter, useRoute } from "vue-router";
     import { Swiper, SwiperSlide, useSwiper } from "swiper/vue";
     import "swiper/css";
@@ -17,17 +12,28 @@
     import ShowNews from "@/components/ShowNews.vue";
     import { useProgramStore } from "@/stores/ProgramStore";
     import { useShowStore } from "@/stores/ShowStore";
-    
+    import type { TraktClient } from "@/trakt/TraktClient";
+    import type { Storage } from "@ionic/storage";
+    import { LocalStorageService } from "@/services/LocalStorageService";
+    import { ShowsService } from "@/services/ShowsService";
+    import type { ShowContext } from "@/models/ShowContext";
+
     const router = useRouter();
     const route = useRoute();
+    const _programStore = useProgramStore();
+    const _showStore = useShowStore();
+    const _traktClient = _programStore.traktClient as TraktClient;
+    const _localStorage = _programStore.localStorage as Storage;
+    const _localStorageService = new LocalStorageService();
+    const _showsService = new ShowsService(_traktClient, _localStorageService);
+
     let swiperInstance: any = null;
     const segmentRef: any = ref(null);
     const modules = [IonicSlides];
     const segments = ["episodes", "info", "comments", "news"];
     const segmentTitles = ["episodes", "show info", "comments", "news"];
     let selectedSegment = ref("episodes");
-    const programStore = useProgramStore();
-    const showStore = useShowStore();
+    let selectedShowContext = ref<ShowContext | null>(null);
 
     const props = defineProps({
         id: {
@@ -36,15 +42,29 @@
         },
     });
 
-    onMounted(async () => {
+    onMounted(async () => {});
+
+    const initialize = async () => {
+        if (!_showStore.showContexts) {
+            await _showsService.loadShowContexts();
+        }
+
+        selectedShowContext.value = getSelectedShowContext(props.id);
+    };
+
+    const getSelectedShowContext = (showId: string): ShowContext | null => {
+        const searchId = parseInt(showId);
+        const index = _showStore.showContexts!.findIndex((showContext) => {
+            // console.log(showContext!.show!.ids!.trakt);
+            return showContext!.traktId === searchId;
+        });
+        return index !== -1 ? _showStore.showContexts![index] : null;
+    };
+
+    const headerTitleDisplay = computed(() => {
+        return selectedShowContext.value ? selectedShowContext.value.show!.title! : "";
     });
 
-    const initialize = () => {
-        
-    };
-    
-    initialize();
-    
     console.log("id=", props.id);
     const onSegmentChanged = (ev: CustomEvent) => {
         console.log("Segment changed", ev);
@@ -68,18 +88,20 @@
         console.log("onSlideChange");
         changeSegmentTo(swiper.realIndex);
     };
+    initialize();
+
 </script>
 
 <template>
     <ion-page>
         <ion-header :translucent="true">
-            <ion-toolbar mode ="ios">
+            <ion-toolbar mode="ios">
                 <ion-buttons slot="start">
                     <ion-button @click="router.back()">
-                        <ion-icon :icon="arrowBackOutline" ></ion-icon>
+                        <ion-icon :icon="arrowBackOutline"></ion-icon>
                     </ion-button>
                 </ion-buttons>
-                <ion-title>ShowTitle</ion-title>
+                <ion-title> {{ headerTitleDisplay }}</ion-title>
                 <ion-buttons slot="end">
                     <ion-button>
                         <ion-icon :icon="ellipsisVerticalCircle"></ion-icon>

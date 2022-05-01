@@ -5,7 +5,7 @@ import { Type } from "class-transformer";
 import { ShowWatchedProgressSerializer } from "@/helpers/serializers/ShowWatchedProgressSerializer";
 
 export class ShowContext {
-    traktId: string = "";
+    traktId: number|null = null;
     title: string = "";
     rank: number | null = null;
 

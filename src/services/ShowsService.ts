@@ -2,14 +2,60 @@ import type { TraktClient } from "@/trakt/TraktClient";
 import type { MyShowsOptions } from "@/models/MyShowsOptions";
 import { ShowMovieType, SyncGetWatchlistTypes } from "@/helpers/enums";
 import { ShowContext } from "@/models/ShowContext";
+import { LastActivitiesComparer } from "@/helpers/LastActivitiesComparer";
+import type { LocalStorageService } from "@/services/LocalStorageService";
+import { ref, toRaw } from "vue";
+import { plainToInstance } from "class-transformer";
+import { useShowStore } from "@/stores/ShowStore";
 
 export class ShowsService {
     private _traktClient: TraktClient;
     private _showContexts: ShowContext[] = [];
+    private _localStorageService: LocalStorageService;
+    private _showStore
 
-    constructor(traktClient: TraktClient) {
+    constructor(traktClient: TraktClient, localStorageService: LocalStorageService) {
         this._traktClient = traktClient;
+        this._localStorageService = localStorageService;
+        this._showStore = useShowStore();
     }
+
+    async loadShowContexts() {
+        let showContexts = ref<ShowContext[]>([]);
+        const savedShowContexts = ref<ShowContext[]>([]);
+        savedShowContexts.value = await this._localStorageService.getShowContexts();
+        if (savedShowContexts.value && savedShowContexts.value.length > 0) {
+            console.log("Loading show contexts from local storage");
+            showContexts.value = plainToInstance<ShowContext, any>(ShowContext, savedShowContexts.value);
+        }
+
+        if (await this.hasDataBeenUpdated()) {
+            console.log("Loading show contexts from trakt api");
+            showContexts.value = await this.getShowContextsForSelectedSources(this._showStore.myShowsOptions);
+            this._localStorageService.setShowContexts(toRaw(showContexts.value)).then();
+        }
+        //console.log("localShowContexts after loadData: ", localShowContexts.value);
+
+        this._showStore.showContexts = showContexts.value;
+        console.log("ShowContexts:", showContexts.value);
+        console.log("Finished - MyShows.vue loadData");
+    }
+
+    hasDataBeenUpdated = async () => {
+        const savedLastActivities = await this._localStorageService.getLastActivities();
+        console.log(`savedLastActivities=`, savedLastActivities);
+        const currentLastActivitiesResult = await this._traktClient.Sync.getLastActivities();
+        const currentLastActivities = currentLastActivitiesResult.content;
+        console.log(`currentLastActivities=`, currentLastActivities);
+
+        const compareResult = new LastActivitiesComparer(savedLastActivities, currentLastActivities!).compare();
+        console.log(`compareResult=${compareResult}`);
+        const result = compareResult.length > 0;
+        console.log(`isRefresh=${result}`);
+
+        await this._localStorageService.setLastActivities(currentLastActivities!);
+        return result;
+    };
 
     async getShowContextsForSelectedSources(options: MyShowsOptions | null) {
         if (options?.showSources.isWatchedShows) await this.getWatchedShows();
@@ -65,8 +111,6 @@ export class ShowsService {
     }
 
     setShowDisplayCategories() {
-        this._showContexts.forEach((showContext) => {
-            
-        });
+        this._showContexts.forEach((showContext) => {});
     }
 }

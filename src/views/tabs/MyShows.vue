@@ -1,4 +1,6 @@
 <script setup lang="ts">
+    import { LocalStorageService } from "@/services/LocalStorageService";
+
     interface GroupDisplayStatuses {
         isDisplayGroup1: boolean;
         isDisplayGroup2: boolean;
@@ -22,25 +24,25 @@
     import { LastActivitiesComparer } from "@/helpers/LastActivitiesComparer";
 
     console.log("in MyShows.vue");
-    
+
     const _programStore = useProgramStore();
     const _showStore = useShowStore();
     const _traktClient = _programStore.traktClient as TraktClient;
     const _localStorage = _programStore.localStorage as Storage;
-    const _showsService = new ShowsService(_traktClient);
+    const _localStorageService = new LocalStorageService();
+    const _showsService = new ShowsService(_traktClient, _localStorageService);
     const router = useRouter();
     const route = useRoute();
 
-    const showsListRef = ref<HTMLIonListElement|null>(null);
+    const showsListRef = ref<HTMLIonListElement | null>(null);
 
-    let showContexts = ref<ShowContext[]>([]);
-    const groupDisplayStatuses = reactive<GroupDisplayStatuses> ({
+    const groupDisplayStatuses = reactive<GroupDisplayStatuses>({
         isDisplayGroup1: true,
         isDisplayGroup2: true,
         isDisplayGroup3: true,
         isDisplayGroup4: true,
     });
-    
+
     onMounted(async () => {
         console.log("in MyShows.vue onMounted");
         const savedGroupDisplayStatuses = (await _localStorage.get(_programStore.localStorageKeys.groupDisplayStatuses)) as GroupDisplayStatuses;
@@ -70,52 +72,20 @@
     const loadData = async () => {
         try {
             console.log("in MyShows.vue loadData");
-            
-            const savedShowContexts = ref<ShowContext[]>([]);
-            savedShowContexts.value = await _localStorage.get(_programStore.localStorageKeys.showContexts);
-            if (savedShowContexts.value && savedShowContexts.value.length > 0) {
-                console.log("Loading show contexts from local storage");
-                showContexts.value = plainToInstance<ShowContext, any>(ShowContext, savedShowContexts.value);
-            }
-
-            if (await hasDataBeenUpdated()) {
-                console.log("Loading show contexts from trakt api");
-                showContexts.value = await _showsService.getShowContextsForSelectedSources(_showStore.myShowsOptions);
-                _localStorage.set(_programStore.localStorageKeys.showContexts, toRaw(showContexts.value)).then();
-            }
-            //console.log("localShowContexts after loadData: ", localShowContexts.value);
-
-            _showStore.showContexts = showContexts.value;
-            console.log("ShowContexts:", showContexts.value);
+            await _showsService.loadShowContexts();    
+            console.log("ShowContexts:", _showStore.showContexts);
             console.log("Finished - MyShows.vue loadData");
         } catch (e) {
             // Deal with the fact the chain failed
         }
-        // `text` is not available here
     };
     loadData();
-
-    const hasDataBeenUpdated = async () => {
-        const savedLastActivities = await _localStorage.get(_programStore.localStorageKeys.lastActivities);
-        console.log(`savedLastActivities=`, savedLastActivities);
-        const currentLastActivitiesResult = await _traktClient.Sync.getLastActivities();
-        const currentLastActivities = currentLastActivitiesResult.content;
-        console.log(`currentLastActivities=`, currentLastActivities);
-
-        const compareResult = new LastActivitiesComparer(savedLastActivities, currentLastActivities!).compare();
-        console.log(`compareResult=${compareResult}`);
-        const result = compareResult.length > 0;
-        console.log(`isRefresh=${result}`);
-
-        await _localStorage.set(_programStore.localStorageKeys.lastActivities, currentLastActivities);
-        return result;
-    };
 
     const onShowItemSwiped = () => {
         debugger;
         // according to docs the command below with $el should be required, but for some reason here it is not
         // showsListRef!.value!.$el.closeSlidingItems()
-        showsListRef!.value!.closeSlidingItems()
+        showsListRef!.value!.closeSlidingItems();
     };
 
     const saveGroupDisplayStatuses = () => {
@@ -123,28 +93,32 @@
     };
 
     const showsWatchingEpisodesAvailable = computed(() => {
-        return showContexts.value.filter((showContext) => showContext.isSomeWatched());
+        if (!_showStore.showContexts) return [];
+        return _showStore.showContexts.filter((showContext) => showContext.isSomeWatched());
     });
 
     const caughtUpNewEpisodesScheduled = computed(() => {
-        return showContexts.value.filter((showContext) => showContext.isAllWatched() && showContext!.progress!.nextEpisode !== null);
+        if (!_showStore.showContexts) return [];
+        return _showStore.showContexts.filter((showContext) => showContext.isAllWatched() && showContext!.progress!.nextEpisode !== null);
     });
 
     const caughtUpNoNewEpisodesScheduled = computed(() => {
-        return showContexts.value.filter((showContext) => showContext.isAllWatched() && showContext!.progress!.nextEpisode === null);
+        if (!_showStore.showContexts) return [];
+        return _showStore.showContexts.filter((showContext) => showContext.isAllWatched() && showContext!.progress!.nextEpisode === null);
     });
 
     const showsNotStartedWatching = computed(() => {
-        return showContexts.value.filter((showContext) => showContext.isNoneWatched());
+        if (!_showStore.showContexts) return [];
+        return _showStore.showContexts.filter((showContext) => showContext.isNoneWatched());
     });
-    
+
     console.log("Finished - MyShows.vue");
 </script>
 
 <template>
     <ion-page>
         <ion-header :translucent="true">
-            <ion-toolbar mode ="ios">
+            <ion-toolbar mode="ios">
                 <ion-buttons slot="start">
                     <ion-button>
                         <ion-menu-button auto-hide="false"></ion-menu-button>
@@ -160,7 +134,6 @@
                     </ion-button>
                 </ion-buttons>
             </ion-toolbar>
-            
         </ion-header>
 
         <ion-content :fullscreen="true">
@@ -171,7 +144,12 @@
                         <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup1" @click="toggleDisplayGroup(1)"></ion-icon>
                         <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup1" @click="toggleDisplayGroup(1)"></ion-icon>
                     </ion-item-divider>
-                    <MyShowsItem v-show="groupDisplayStatuses.isDisplayGroup1" v-for="showContext in showsWatchingEpisodesAvailable" :show-context="showContext" @show-item-swiped="onShowItemSwiped"></MyShowsItem>
+                    <MyShowsItem
+                        v-show="groupDisplayStatuses.isDisplayGroup1"
+                        v-for="showContext in showsWatchingEpisodesAvailable"
+                        :show-context="showContext"
+                        @show-item-swiped="onShowItemSwiped"
+                    ></MyShowsItem>
 
                     <ion-item-divider sticky>
                         <ion-label> Caught Up, New Episodes Scheduled ({{ caughtUpNewEpisodesScheduled.length }}) </ion-label>
@@ -237,22 +215,7 @@
     /*}*/
 </style>
 
-// Optional approaches to allow using async.await in top level of Vue component with script setup
-// Other alternative is to use in onMounted lifecycle hook
-// showsService.getShowContextsForSelectedSources(showStore.myShowsOptions).then(
-//     (result) => {
-//         showContexts.value = result;
-//     },
-//     (error) => {
-//         console.log(error);
-//     }
-// );
-
-// (async () => {
-//     try {
-//         showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions);
-//     } catch (e) {
-//         // Deal with the fact the chain failed
-//     }
-//     // `text` is not available here
-// })();
+// Optional approaches to allow using async.await in top level of Vue component with script setup // Other alternative is to use in onMounted lifecycle hook //
+showsService.getShowContextsForSelectedSources(showStore.myShowsOptions).then( // (result) => { // showContexts.value = result; // }, // (error) => { // console.log(error); // } //
+); // (async () => { // try { // showContexts.value = await showsService.getShowContextsForSelectedSources(showStore.myShowsOptions); // } catch (e) { // // Deal with the fact the
+chain failed // } // // `text` is not available here // })();

@@ -1,5 +1,5 @@
 export interface Ids {
-    trakt?: string;
+    trakt?: number;
     tvdb?: string | null;
     imdb?: null | string;
     tmdb?: string | null;
