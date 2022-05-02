@@ -12,7 +12,7 @@ export class ShowsService {
     private _traktClient: TraktClient;
     private _showContexts: ShowContext[] = [];
     private _localStorageService: LocalStorageService;
-    private _showStore
+    private _showStore;
 
     constructor(traktClient: TraktClient, localStorageService: LocalStorageService) {
         this._traktClient = traktClient;
@@ -39,6 +39,17 @@ export class ShowsService {
         this._showStore.showContexts = showContexts.value;
         console.log("ShowContexts:", showContexts.value);
         console.log("Finished - MyShows.vue loadData");
+    }
+
+    async loadSeasonsAndEpisodesForShow(showContext: ShowContext) {
+        const getAllSeasonsResult = await this._traktClient.Seasons.getAllSeasons({
+            showId: showContext.traktId!.toString(),
+            extendedFull: true,
+            extendedEpisodes: true
+        });
+        const seasons = getAllSeasonsResult.content;
+        console.log("Seasons:", seasons);
+        showContext.show!.seasons = seasons!;
     }
 
     hasDataBeenUpdated = async () => {

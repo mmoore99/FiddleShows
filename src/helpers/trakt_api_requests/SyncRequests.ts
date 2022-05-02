@@ -9,18 +9,10 @@ import type { RequestPagination } from "@/models/RequestModels";
 import { isString, isValidDateString } from "@/helpers/Utils";
 import { WatchedItemSerializer } from "@/helpers/serializers/WatchedItemSerializer";
 import { WatchListItemSerializer } from "@/helpers/serializers/WatchListItemSerializer";
-import type {
-    WatchListItem
-} from "@/models/WatchListItem";
-import type {
-    WatchedItem
-} from "@/models/WatchedItem";
-import type {
-    HistoryItem
-} from "@/models/HistoryItem";
-import type {
-    LastActivities
-} from "@/models/LastActivitiesModels";
+import type { WatchListItem } from "@/models/WatchListItem";
+import type { WatchedItem } from "@/models/WatchedItem";
+import type { HistoryItem } from "@/models/HistoryItem";
+import type { LastActivities } from "@/models/LastActivitiesModels";
 
 interface ISyncGetHistoryParams {
     type?: SyncGetHistoryTypes | null;
@@ -104,7 +96,7 @@ export default class SyncRequests extends TraktApiCategory {
 
     public getWatched = async ({ type, extendedFull = false, extendedNoSeasons = false }: ISyncGetWatchedParams) => {
         let extendedInfo = null;
-        if (extendedFull || extendedNoSeasons){
+        if (extendedFull || extendedNoSeasons) {
             extendedInfo = new TraktExtendedInfo();
             if (extendedFull) extendedInfo.setFull();
             if (extendedNoSeasons) extendedInfo.setNoSeasons();

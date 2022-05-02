@@ -1,12 +1,5 @@
 import TraktApiCategory from "@/helpers/trakt_api_requests/TraktApiCategory";
-import {
-    AuthorizationRequirement,
-    GetListItemsTypes,
-    ShowMovieType,
-    SyncGetHistoryTypes,
-    SyncGetWatchlistSortTypes,
-    SyncGetWatchlistTypes
-} from "@/helpers/enums";
+import { AuthorizationRequirement, GetListItemsTypes, ShowMovieType, SyncGetHistoryTypes, SyncGetWatchlistSortTypes, SyncGetWatchlistTypes } from "@/helpers/enums";
 import { JsonConvert } from "@/helpers/serializers/JsonConvert";
 import type { TraktClient } from "@/trakt/TraktClient";
 import type { TraktShowFilter } from "@/trakt/parameters/filters/TraktFilters";
@@ -17,37 +10,23 @@ import { isString, isValidDateString } from "@/helpers/Utils";
 import { WatchedItemSerializer } from "@/helpers/serializers/WatchedItemSerializer";
 import { WatchListItemSerializer } from "@/helpers/serializers/WatchListItemSerializer";
 import { ShowWatchedProgressSerializer } from "@/helpers/serializers/ShowWatchedProgressSerializer";
-import type {
-    ShowWatchedProgress
-} from "@/models/ShowWatchedProgress";
-import type {
-    Season
-} from "@/models/Season";
-import type {
-    WatchListItem
-} from "@/models/WatchListItem";
-import type {
-    WatchedItem
-} from "@/models/WatchedItem";
-import type {
-    HistoryItem
-} from "@/models/HistoryItem";
-import type {
-    TraktListItem
-} from "@/models/TraktListItem";
-import type {
-    TraktList
-} from "@/models/TraktList";
+import type { ShowWatchedProgress } from "@/models/ShowWatchedProgress";
+import type { Season } from "@/models/Season";
+import type { WatchListItem } from "@/models/WatchListItem";
+import type { WatchedItem } from "@/models/WatchedItem";
+import type { HistoryItem } from "@/models/HistoryItem";
+import type { TraktListItem } from "@/models/TraktListItem";
+import type { TraktList } from "@/models/TraktList";
 
 interface IGetAllSeasonsParams {
-    showId: string
+    showId: string;
     extendedFull?: boolean;
     extendedEpisodes?: boolean;
 }
 
 interface IGetSeasonEpisodesParams {
-    showId: string
-    seasonNumber: number
+    showId: string;
+    seasonNumber: number;
     extendedFull?: boolean;
 }
 
@@ -56,9 +35,9 @@ export default class SeasonRequests extends TraktApiCategory {
         super(traktClient);
     }
 
-    public getAllSeasons = async ({showId, extendedFull = false, extendedEpisodes = false}:IGetAllSeasonsParams) => {
+    public getAllSeasons = async ({ showId, extendedFull = false, extendedEpisodes = false }: IGetAllSeasonsParams) => {
         const url = `/shows/${showId}/seasons`;
-        
+
         const extendedInfo = new TraktExtendedInfo();
         if (extendedFull) extendedInfo.setFull();
         if (extendedEpisodes) extendedInfo.setEpisodes();
@@ -71,7 +50,7 @@ export default class SeasonRequests extends TraktApiCategory {
         });
     };
 
-    public getSeasonEpisodes = async ({showId, seasonNumber, extendedFull = false }: IGetSeasonEpisodesParams) => {
+    public getSeasonEpisodes = async ({ showId, seasonNumber, extendedFull = false }: IGetSeasonEpisodesParams) => {
         return await this._traktClient.getList<TraktListItem>({
             authorizationRequirement: AuthorizationRequirement.Required,
             request: `/shows/${showId}/seasons/${seasonNumber}`,

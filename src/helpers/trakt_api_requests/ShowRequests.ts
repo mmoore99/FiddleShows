@@ -10,21 +10,13 @@ import { isString, isValidDateString } from "@/helpers/Utils";
 import { WatchedItemSerializer } from "@/helpers/serializers/WatchedItemSerializer";
 import { WatchListItemSerializer } from "@/helpers/serializers/WatchListItemSerializer";
 import { ShowWatchedProgressSerializer } from "@/helpers/serializers/ShowWatchedProgressSerializer";
-import type {
-    ShowWatchedProgress
-} from "@/models/ShowWatchedProgress";
-import type {
-    WatchListItem
-} from "@/models/WatchListItem";
-import type {
-    WatchedItem
-} from "@/models/WatchedItem";
-import type {
-    HistoryItem
-} from "@/models/HistoryItem";
+import type { ShowWatchedProgress } from "@/models/ShowWatchedProgress";
+import type { WatchListItem } from "@/models/WatchListItem";
+import type { WatchedItem } from "@/models/WatchedItem";
+import type { HistoryItem } from "@/models/HistoryItem";
 
 interface IShowWatchedProgressParams {
-    id: string;
+    id: number;
     hidden?: boolean | null;
     specials?: boolean | null;
     countSpecials?: boolean | null;

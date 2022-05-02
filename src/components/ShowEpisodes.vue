@@ -1,10 +1,11 @@
 <script setup>
     import { ref, reactive, computed, onMounted } from "vue";
+    import { ShowContext } from "@/models/ShowContext.ts";
 
     const props = defineProps({
-        modelValue: {
-            type: String,
-            default: ""
+        selectedShowContext: {
+            type: ShowContext,
+            default: null
         }
     });
     const emit = defineEmits(["update:modelValue", "submit"]);

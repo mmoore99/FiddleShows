@@ -34,7 +34,7 @@
     const segmentTitles = ["episodes", "show info", "comments", "news"];
     let selectedSegment = ref("episodes");
     let selectedShowContext = ref<ShowContext | null>(null);
-    const isDisplayBackButton = _showStore && _showStore.showContexts
+    const isDisplayBackButton = _showStore && _showStore.showContexts;
 
     const props = defineProps({
         id: {
@@ -49,8 +49,10 @@
         if (!_showStore.showContexts) {
             await _showsService.loadShowContexts();
         }
-
         selectedShowContext.value = getSelectedShowContext(props.id);
+        await _showsService.loadSeasonsAndEpisodesForShow(selectedShowContext.value!)
+        console.log("selectedShowContext=", selectedShowContext.value);
+        debugger;
     };
 
     const getSelectedShowContext = (showId: string): ShowContext | null => {
@@ -90,7 +92,6 @@
         changeSegmentTo(swiper.realIndex);
     };
     initialize();
-
 </script>
 
 <template>
@@ -119,7 +120,9 @@
             </ion-segment>
 
             <swiper :modules="modules" @swiper="onSwiper" @slideChange="onSlideChange" style="height: 100vh">
-                <swiper-slide><ShowEpisodes></ShowEpisodes></swiper-slide>
+                <swiper-slide>
+                    <ShowEpisodes :selected-show-context="selectedShowContext"></ShowEpisodes>
+                </swiper-slide>
                 <swiper-slide>
                     <ShowInfo></ShowInfo>
                 </swiper-slide>

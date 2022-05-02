@@ -103,44 +103,15 @@
     const loadData = async () => {
         try {
             console.log("in App.vue loadData");
-            // const savedLastActivities = await _localStorage.get(programStore.localStorageKeys.lastActivities);
-            // console.log(`savedLastActivities=`, savedLastActivities);
-            // const currentLastActivitiesResult = await _traktClient.Sync.getLastActivities();
-            // const currentLastActivities = currentLastActivitiesResult.content;
-            //
-            // const compareResult = new LastActivitiesComparer(savedLastActivities, currentLastActivities!).compare();
-            // console.log(`compareResult=${compareResult}`);
-            // const isRefresh = compareResult.length > 0;
-            // console.log(`isRefresh=${isRefresh}`);
-            // await _localStorage.set(programStore.localStorageKeys.lastActivities, currentLastActivities);
             console.log("Finished - App.vue loadData");
         } catch (e) {
-            // Deal with the fact the chain failed
         }
-        // `text` is not available here
     };
 
-    // const isRefreshNeeded = (savedLastActivities: LastActivities, currentLastActivities:LastActivities) => {
-    //     let result = false;
-    //         if (!savedLastActivities){
-    //             console.log(`savedLastActivities=${savedLastActivities}`);
-    //             result = true
-    //         }else {
-    //             console.log(`savedLastActivities.all=${savedLastActivities!.all}currentLastActivities.all=${currentLastActivities!.all}`);
-    //             if (savedLastActivities.all?.toISOString() === currentLastActivities.all?.toISOString()) {
-    //                 console.log("'All' values are the same, no refresh needed");
-    //                 return false;
-    //             }
-    //
-    //             const compareResult = new LastActivitiesComparer(savedLastActivities, currentLastActivities!).compare()
-    //             console.log(`compareResult=${compareResult}`);
-    //             return compareResult.length > 0;
-    //         }
-    // };
     loadData();
 
+    //new TraktApiTests(_traktClient).execute();
 
-    // new TraktApiTests(_traktClient).execute();
     console.log(`screenWidth=${screenWidth.value}`);
     console.log(`isWideScreen=${isWideScreen.value}`);
     console.log("Finished - App.vue");

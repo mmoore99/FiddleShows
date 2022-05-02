@@ -3,7 +3,7 @@ import type { Episode } from "@/models/Episode";
 import { Type } from "class-transformer";
 
 export class ShowWatchedProgress {
-    traktId: string = "";
+    traktId: number = 0;
     aired: number = 0;
     completed: number = 0;
     @Type(() => Date) resetAt?: Date;
