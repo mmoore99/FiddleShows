@@ -28,7 +28,7 @@
 </script>
 
 <template>
-    <div id="" style="width: 100%; height: 100%; background-color: mediumpurple">
+    <div id="" style="width: 100%; height: 100%; background-color: mediumpurple; margin-top: 32px;">
         <span style="display: block;">News Slide</span>
         <span style="display: block;">News Slide</span>
         <span style="display: block;">News Slide</span>

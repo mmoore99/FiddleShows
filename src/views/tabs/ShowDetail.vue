@@ -73,51 +73,12 @@
     console.log("id=", props.id);
     const onSegmentChanged = (ev: CustomEvent) => {
         console.log("Segment changed", ev);
-        changeSlideTo(segments.findIndex((item) => item === ev.detail.value));
     };
 
     const changeSegmentTo = (newSegmentIndex: number) => {
-        segmentRef!.value!.$el!.value = segments[newSegmentIndex];
+        selectedSegment.value = segments[newSegmentIndex];
     };
 
-    const changeSlideTo = (newSlideIndex: number) => {
-        swiperInstance.slideTo(newSlideIndex);
-    };
-
-    const onSwiper = (swiper: any) => {
-        console.log("onSwiper", swiper);
-        swiperInstance = swiper;
-    };
-
-    const onSwiperBeforeSlideChangeStart = (swiper: any) => {
-        console.log("onSwiperBeforeSlideChangeStart", swiper);
-    };
-
-    const onSwiperBeforeTransitionStart = (swiper: any, speed:number, internal: any) => {
-        console.log("onSwiperBeforeTransitionStart", swiper, speed, internal);
-    };
-
-    const onSwiperBreakpoint = (swiper: any, breakpointParams:any) => {
-        console.log("onSwiperBreakpoint", swiper, breakpointParams);
-    };
-
-    const onSwiperSlideChangeTransitionStart = (swiper: any) => {
-        console.log("onSwiperSlideChangeTransitionStart", swiper);
-    };
-
-    const onSwiperRealIndexChanged = (swiper: any) => {
-        console.log("onSwiperRealIndexChanged", swiper);
-    };
-
-    const onSwiperSlideChange = (swiper: any) => {
-        console.log("onSwiperSlideChange", swiper);
-        changeSegmentTo(swiper.realIndex);
-        const element = document.getElementsByClassName("swiper")
-        swiper.slides[0].scrollTop = 500;
-        swiper.slides[1].scrollTop = 500;
-        swiper.slides[2].scrollTop = 500;
-        swiper.slides[3].scrollTop = 500;
-    };
     initialize();
 </script>
 
@@ -139,9 +100,9 @@
             </ion-toolbar>
         </ion-header>
 
-        <ion-content>
+        <ion-content >
             <div slot="fixed" style="height: 40px; width: 100%">
-                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" :value="selectedSegment" ref="segmentRef">
+                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" v-model="selectedSegment" ref="segmentRef" >
                     <ion-segment-button v-for="(segment, index) in segments" :value="segment">
                         <ion-label>
                             {{ segmentTitles[index] }}
@@ -149,31 +110,10 @@
                     </ion-segment-button>
                 </ion-segment>
             </div>
-
-            <swiper 
-                :modules="modules" 
-                @swiper="onSwiper" 
-                @slideChange="onSwiperSlideChange" 
-                @beforeSlideChangeStart="onSwiperBeforeSlideChangeStart" 
-                @beforeTransitionStart="onSwiperBeforeTransitionStart" 
-                @breakpoint="onSwiperBreakpoint" 
-                @slideChangeTransitionStart="onSwiperSlideChangeTransitionStart" 
-                @realIndexChange="onSwiperRealIndexChanged" 
-                style="height: 100vh; margin-top: 25px"
-            >
-                <swiper-slide>
-                    <ShowEpisodes :selected-show-context="selectedShowContext"></ShowEpisodes>
-                </swiper-slide>
-                <swiper-slide>
-                    <ShowInfo></ShowInfo>
-                </swiper-slide>
-                <swiper-slide>
-                    <ShowComments></ShowComments>
-                </swiper-slide>
-                <swiper-slide>
-                    <ShowNews></ShowNews>
-                </swiper-slide>
-            </swiper>
+            <ShowEpisodes v-show="selectedSegment === 'episodes'" :selected-show-context="selectedShowContext"></ShowEpisodes>
+            <ShowInfo v-if="selectedSegment === 'info'"></ShowInfo>
+            <ShowComments  v-if="selectedSegment === 'comments'"></ShowComments>
+            <ShowNews v-if="selectedSegment === 'news'"></ShowNews>
         </ion-content>
     </ion-page>
 </template>

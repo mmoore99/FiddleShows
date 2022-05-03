@@ -28,7 +28,7 @@
 </script>
 
 <template>
-    <div id="" style="width: 100%; height: 100%; background-color: peachpuff">
+    <div id="" style="width: 100%; height: 100%; background-color: peachpuff; margin-top: 32px;">
         <span style="display: block;">Comments Slide</span>
         <span style="display: block;">Comments Slide</span>
         <span style="display: block;">Comments Slide</span>

@@ -40,13 +40,13 @@
 </script>
 
 <template>
-    <div id="" style="width: 100%; height: 100%">
-        <ion-list v-if="isDataLoaded">
+    <div id="ShowEpisodesContainer" style="width: 100%; height: 100%; margin-top: 32px;">
+        <ion-list v-show="isDataLoaded">
             <ion-item-divider v-for="season in selectedShowContext.show.seasons">
                 {{ `Season ${season.number}` }}
             </ion-item-divider>
         </ion-list>
-        <ion-list v-if="!isDataLoaded"> No Season Data Loaded </ion-list>
+        <ion-list v-show="!isDataLoaded"> No Season Data Loaded </ion-list>
     </div>
 </template>
 
