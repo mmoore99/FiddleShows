@@ -89,9 +89,34 @@
         swiperInstance = swiper;
     };
 
-    const onSlideChange = (swiper: any) => {
-        console.log("onSlideChange");
+    const onSwiperBeforeSlideChangeStart = (swiper: any) => {
+        console.log("onSwiperBeforeSlideChangeStart", swiper);
+    };
+
+    const onSwiperBeforeTransitionStart = (swiper: any, speed:number, internal: any) => {
+        console.log("onSwiperBeforeTransitionStart", swiper, speed, internal);
+    };
+
+    const onSwiperBreakpoint = (swiper: any, breakpointParams:any) => {
+        console.log("onSwiperBreakpoint", swiper, breakpointParams);
+    };
+
+    const onSwiperSlideChangeTransitionStart = (swiper: any) => {
+        console.log("onSwiperSlideChangeTransitionStart", swiper);
+    };
+
+    const onSwiperRealIndexChanged = (swiper: any) => {
+        console.log("onSwiperRealIndexChanged", swiper);
+    };
+
+    const onSwiperSlideChange = (swiper: any) => {
+        console.log("onSwiperSlideChange", swiper);
         changeSegmentTo(swiper.realIndex);
+        const element = document.getElementsByClassName("swiper")
+        swiper.slides[0].scrollTop = 500;
+        swiper.slides[1].scrollTop = 500;
+        swiper.slides[2].scrollTop = 500;
+        swiper.slides[3].scrollTop = 500;
     };
     initialize();
 </script>
@@ -114,9 +139,9 @@
             </ion-toolbar>
         </ion-header>
 
-        <ion-content >
+        <ion-content>
             <div slot="fixed" style="height: 40px; width: 100%">
-                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" :value="selectedSegment" ref="segmentRef" >
+                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" :value="selectedSegment" ref="segmentRef">
                     <ion-segment-button v-for="(segment, index) in segments" :value="segment">
                         <ion-label>
                             {{ segmentTitles[index] }}
@@ -125,7 +150,17 @@
                 </ion-segment>
             </div>
 
-            <swiper :modules="modules" @swiper="onSwiper" @slideChange="onSlideChange" style="height: 100vh; margin-top: 25px;">
+            <swiper 
+                :modules="modules" 
+                @swiper="onSwiper" 
+                @slideChange="onSwiperSlideChange" 
+                @beforeSlideChangeStart="onSwiperBeforeSlideChangeStart" 
+                @beforeTransitionStart="onSwiperBeforeTransitionStart" 
+                @breakpoint="onSwiperBreakpoint" 
+                @slideChangeTransitionStart="onSwiperSlideChangeTransitionStart" 
+                @realIndexChange="onSwiperRealIndexChanged" 
+                style="height: 100vh; margin-top: 25px"
+            >
                 <swiper-slide>
                     <ShowEpisodes :selected-show-context="selectedShowContext"></ShowEpisodes>
                 </swiper-slide>
