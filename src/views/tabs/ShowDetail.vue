@@ -1,9 +1,9 @@
 <script setup lang="ts">
-    import { defineComponent, ref, reactive, onMounted, computed } from "vue";
-    import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonSegment, IonSegmentButton, IonLabel, IonicSlides } from "@ionic/vue";
+    import { computed, onMounted, ref } from "vue";
+    import { IonButtons, IonContent, IonHeader, IonicSlides, IonLabel, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/vue";
     import { arrowBackOutline, ellipsisVerticalCircle } from "ionicons/icons";
-    import { useRouter, useRoute } from "vue-router";
-    import { Swiper, SwiperSlide, useSwiper } from "swiper/vue";
+    import { useRoute, useRouter } from "vue-router";
+    import { Swiper, SwiperSlide } from "swiper/vue";
     import "swiper/css";
     import "@ionic/vue/css/ionic-swiper.css";
     import ShowInfo from "@/components/ShowInfo.vue";
@@ -49,19 +49,21 @@
         if (!_showStore.showContexts) {
             await _showsService.loadShowContexts();
         }
-        selectedShowContext.value = getSelectedShowContext(props.id);
-        await _showsService.loadSeasonsAndEpisodesForShow(selectedShowContext.value!)
+
+        const selectedShowContextIndex = getSelectedShowContextIndex(props.id);
+        selectedShowContext.value = _showStore.showContexts![selectedShowContextIndex];
         console.log("selectedShowContext=", selectedShowContext.value);
-        debugger;
+
+        if (!selectedShowContext.value!.show!.seasons) {
+            await _showsService.loadSeasonsAndEpisodesForShow(selectedShowContext.value!);
+        }
+        console.log("selectedShowContext=", selectedShowContext.value);
+        console.log("showStoreShowContext=", _showStore.showContexts![selectedShowContextIndex]);
     };
 
-    const getSelectedShowContext = (showId: string): ShowContext | null => {
+    const getSelectedShowContextIndex = (showId: string): number => {
         const searchId = parseInt(showId);
-        const index = _showStore.showContexts!.findIndex((showContext) => {
-            // console.log(showContext!.show!.ids!.trakt);
-            return showContext!.traktId === searchId;
-        });
-        return index !== -1 ? _showStore.showContexts![index] : null;
+        return _showStore.showContexts!.findIndex((showContext) => showContext!.traktId === searchId);
     };
 
     const headerTitleDisplay = computed(() => {
@@ -112,14 +114,18 @@
             </ion-toolbar>
         </ion-header>
 
-        <ion-content :fullscreen="true">
-            <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" :value="selectedSegment" ref="segmentRef">
-                <ion-segment-button v-for="(segment, index) in segments" :value="segment">
-                    <ion-label> {{ segmentTitles[index] }}</ion-label>
-                </ion-segment-button>
-            </ion-segment>
+        <ion-content >
+            <div slot="fixed" style="height: 40px; width: 100%">
+                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" :value="selectedSegment" ref="segmentRef" >
+                    <ion-segment-button v-for="(segment, index) in segments" :value="segment">
+                        <ion-label>
+                            {{ segmentTitles[index] }}
+                        </ion-label>
+                    </ion-segment-button>
+                </ion-segment>
+            </div>
 
-            <swiper :modules="modules" @swiper="onSwiper" @slideChange="onSlideChange" style="height: 100vh">
+            <swiper :modules="modules" @swiper="onSwiper" @slideChange="onSlideChange" style="height: 100vh; margin-top: 25px;">
                 <swiper-slide>
                     <ShowEpisodes :selected-show-context="selectedShowContext"></ShowEpisodes>
                 </swiper-slide>

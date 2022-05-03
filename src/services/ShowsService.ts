@@ -50,6 +50,7 @@ export class ShowsService {
         const seasons = getAllSeasonsResult.content;
         console.log("Seasons:", seasons);
         showContext.show!.seasons = seasons!;
+        this._localStorageService.setShowContexts!(toRaw(this._showStore.showContexts!)).then();
     }
 
     hasDataBeenUpdated = async () => {
