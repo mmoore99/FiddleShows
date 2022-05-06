@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
     import { ref, reactive, computed, onMounted } from "vue";
     import {
         IonList,
@@ -26,8 +26,16 @@
     const emit = defineEmits(["update:modelValue", "submit"]);
 
     const state = reactive({});
+    const episodesContainerRef: any = ref(null);
+    const seasonsListRef: any = ref(null);
+
 
     onMounted(async () => {});
+
+    const scrollList = () => {
+        console.log("In scrollList");
+        seasonsListRef.value.$el.scrollTop = 500;
+    };
 
     function myFunction() {}
 
@@ -36,13 +44,21 @@
         return props.selectedShowContext.show.seasons && props.selectedShowContext.show.seasons.length > 0;
     });
 
-    defineExpose({});
+    const logScrollTop = () => {
+        debugger
+        console.log("episodesContainer ScrollTop=", episodesContainerRef.value.scrollTop);
+        console.log("seasonsList ScrollTop=", seasonsListRef.value.$el.scrollTop);
+    };
+
+    defineExpose({
+        scrollList
+    });
 </script>
 
 <template>
-    <div id="ShowEpisodesContainer" style="width: 100%; height: 100%; margin-top: 32px;">
-        <ion-list v-show="isDataLoaded">
-            <ion-item-divider v-for="season in selectedShowContext.show.seasons">
+    <div id="ShowEpisodesContainer" style="width: 100%; height: 100%; margin-top: 32px;" ref="episodesContainerRef">
+        <ion-list v-show="isDataLoaded" ref="seasonsListRef">
+            <ion-item-divider v-for="season in selectedShowContext.show.seasons" @click="logScrollTop">
                 {{ `Season ${season.number}` }}
             </ion-item-divider>
         </ion-list>

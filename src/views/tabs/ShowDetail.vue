@@ -28,7 +28,11 @@
     const _showsService = new ShowsService(_traktClient, _localStorageService);
 
     let swiperInstance: any = null;
+    const contentRef: any = ref(null);
     const segmentRef: any = ref(null);
+    const segmentLabelRef: any = ref(null);
+    const episodesRef: any = ref(null);
+    const episodesContainerRef: any = ref(null);
     const modules = [IonicSlides];
     const segments = ["episodes", "info", "comments", "news"];
     const segmentTitles = ["episodes", "show info", "comments", "news"];
@@ -43,7 +47,9 @@
         },
     });
 
-    onMounted(async () => {});
+    onMounted(async () => {
+        console.log(segmentRef);
+    });
 
     const initialize = async () => {
         if (!_showStore.showContexts) {
@@ -71,12 +77,46 @@
     });
 
     console.log("id=", props.id);
+
     const onSegmentChanged = (ev: CustomEvent) => {
         console.log("Segment changed", ev);
+        console.log("segmentRef", segmentRef.value.$el);
+        console.log("episodesRef", episodesRef.value.$el);
+        episodesRef.value.scrollList();
     };
 
     const changeSegmentTo = (newSegmentIndex: number) => {
         selectedSegment.value = segments[newSegmentIndex];
+    };
+
+    const scrollToTop = (duration?:number) => {
+        duration = typeof duration == 'number' ? duration : 0;
+        contentRef.value.$el.scrollToTop(duration);
+    };
+
+    const scrollToBottom = (duration?:number) => {
+        duration = typeof duration == 'number' ? duration : 0;
+        contentRef.value.$el.scrollToBottom(duration);
+    };
+
+    const scrollToPoint = (x?:number, y?:number, duration?: number) => {
+        x = typeof x == 'number' ? x : 0
+        y = typeof y == 'number' ? y : 0
+        duration = typeof duration == 'number' ? duration : 0
+        contentRef.value.$el.scrollToPoint(x, y, duration);
+    };
+
+    const logScrollStart = (event: any) => {
+        //console.log("logScrollStart : When Scroll Starts", event);
+    };
+
+    const logScrollEnd = (event: any) => {
+        // console.log("logScrollEnd : When Scroll Ends", event);
+        console.log(`logScrollEnd : When Scroll Ends: Current X, Current Y ${event.srcElement.detail.currentX},${event.srcElement.detail.currentY}`);
+    };
+
+    const logScrolling = (event: any) => {
+        //console.log("logScrolling : When Scrolling", event);
     };
 
     initialize();
@@ -93,27 +133,33 @@
                 </ion-buttons>
                 <ion-title> {{ headerTitleDisplay }}</ion-title>
                 <ion-buttons slot="end">
-                    <ion-button>
+                    <ion-button @click="scrollToTop">
+                        <ion-icon :icon="ellipsisVerticalCircle"></ion-icon>
+                    </ion-button>
+                    <ion-button @click="scrollToBottom">
+                        <ion-icon :icon="ellipsisVerticalCircle"></ion-icon>
+                    </ion-button>
+                    <ion-button @click="scrollToPoint(0,50)">
                         <ion-icon :icon="ellipsisVerticalCircle"></ion-icon>
                     </ion-button>
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content >
+        <ion-content ref="contentRef" scrollEvents="true" @ionScrollStart="logScrollStart($event)" @ionScroll="logScrolling($event)" @ionScrollEnd="logScrollEnd($event)">
             <div slot="fixed" style="height: 40px; width: 100%">
-                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" v-model="selectedSegment" ref="segmentRef" >
+                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" v-model="selectedSegment" ref="segmentRef">
                     <ion-segment-button v-for="(segment, index) in segments" :value="segment">
-                        <ion-label>
+                        <ion-label ref="segmentLabelRef">
                             {{ segmentTitles[index] }}
                         </ion-label>
                     </ion-segment-button>
                 </ion-segment>
             </div>
-            <ShowEpisodes v-show="selectedSegment === 'episodes'" :selected-show-context="selectedShowContext"></ShowEpisodes>
-            <ShowInfo v-if="selectedSegment === 'info'"></ShowInfo>
-            <ShowComments  v-if="selectedSegment === 'comments'"></ShowComments>
-            <ShowNews v-if="selectedSegment === 'news'"></ShowNews>
+            <ShowEpisodes v-show="selectedSegment === 'episodes'" :selected-show-context="selectedShowContext" ref="episodesRef"></ShowEpisodes>
+            <ShowInfo v-show="selectedSegment === 'info'"></ShowInfo>
+            <ShowComments v-show="selectedSegment === 'comments'"></ShowComments>
+            <ShowNews v-show="selectedSegment === 'news'"></ShowNews>
         </ion-content>
     </ion-page>
 </template>
