@@ -69,7 +69,7 @@
     };
 
     const initializeSegmentScrollPositions = () => {
-        segments.forEach((segment) => segmentScrollPositions[segment] = null);
+        segments.forEach((segment) => segmentScrollPositions[segment] = {x: 0, y:0});
     };
 
     const getSelectedShowContextIndex = (showId: string): number => {
@@ -84,7 +84,6 @@
     const onSegmentChanged = (ev: CustomEvent) => {
         console.log("Segment changed to:", ev.detail.value);
         if (segmentScrollPositions[ev.detail.value] === null) return; 
-        const x = segmentScrollPositions[ev.detail.value]!.x
         scrollToPoint(segmentScrollPositions![ev.detail.value]!.x, segmentScrollPositions[ev.detail.value]!.y)
     };
 
