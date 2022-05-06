@@ -14,13 +14,14 @@
         IonSegmentButton,
         IonTitle,
         IonToolbar,
+        IonSkeletonText
     } from "@ionic/vue";
-    import { ShowContext } from "@/models/ShowContext.ts";
+    import { ShowContext } from "@/models/ShowContext";
 
     const props = defineProps({
         selectedShowContext: {
             type: ShowContext,
-            default: null,
+            required: true,
         },
     });
     const emit = defineEmits(["update:modelValue", "submit"]);
@@ -32,37 +33,27 @@
 
     onMounted(async () => {});
 
-    const scrollList = () => {
-        console.log("In scrollList");
-        seasonsListRef.value.$el.scrollTop = 500;
-    };
-
-    function myFunction() {}
-
     const isDataLoaded = computed(() => {
         console.log("prop.selectedShowContext", props.selectedShowContext);
-        return props.selectedShowContext.show.seasons && props.selectedShowContext.show.seasons.length > 0;
+        return props.selectedShowContext.show!.seasons && props.selectedShowContext.show!.seasons.length > 0;
     });
 
-    const logScrollTop = () => {
-        debugger
-        console.log("episodesContainer ScrollTop=", episodesContainerRef.value.scrollTop);
-        console.log("seasonsList ScrollTop=", seasonsListRef.value.$el.scrollTop);
-    };
-
     defineExpose({
-        scrollList
     });
 </script>
 
 <template>
     <div id="ShowEpisodesContainer" style="width: 100%; height: 100%; margin-top: 32px;" ref="episodesContainerRef">
         <ion-list v-show="isDataLoaded" ref="seasonsListRef">
-            <ion-item-divider v-for="season in selectedShowContext.show.seasons" @click="logScrollTop">
+            <ion-item-divider v-for="season in selectedShowContext.show.seasons" @click="">
                 {{ `Season ${season.number}` }}
             </ion-item-divider>
         </ion-list>
-        <ion-list v-show="!isDataLoaded"> No Season Data Loaded </ion-list>
+        <ion-list v-show="!isDataLoaded">
+            <ion-item-divider v-for="index in 15" :key="index" @click="">
+                <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+            </ion-item-divider>
+        </ion-list>
     </div>
 </template>
 

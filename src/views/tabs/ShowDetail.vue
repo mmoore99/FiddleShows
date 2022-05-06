@@ -1,11 +1,8 @@
 <script setup lang="ts">
     import { computed, onMounted, ref } from "vue";
-    import { IonButtons, IonContent, IonHeader, IonicSlides, IonLabel, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/vue";
+    import { IonButtons, IonContent, IonHeader, IonLabel, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/vue";
     import { arrowBackOutline, ellipsisVerticalCircle } from "ionicons/icons";
     import { useRoute, useRouter } from "vue-router";
-    import { Swiper, SwiperSlide } from "swiper/vue";
-    import "swiper/css";
-    import "@ionic/vue/css/ionic-swiper.css";
     import ShowInfo from "@/components/ShowInfo.vue";
     import ShowEpisodes from "@/components/ShowEpisodes.vue";
     import ShowComments from "@/components/ShowComments.vue";
@@ -13,7 +10,6 @@
     import { useProgramStore } from "@/stores/ProgramStore";
     import { useShowStore } from "@/stores/ShowStore";
     import type { TraktClient } from "@/trakt/TraktClient";
-    import type { Storage } from "@ionic/storage";
     import { LocalStorageService } from "@/services/LocalStorageService";
     import { ShowsService } from "@/services/ShowsService";
     import type { ShowContext } from "@/models/ShowContext";
@@ -28,17 +24,14 @@
     const _programStore = useProgramStore();
     const _showStore = useShowStore();
     const _traktClient = _programStore.traktClient as TraktClient;
-    const _localStorage = _programStore.localStorage as Storage;
     const _localStorageService = new LocalStorageService();
     const _showsService = new ShowsService(_traktClient, _localStorageService);
 
-    let swiperInstance: any = null;
     const contentRef: any = ref(null);
     const segmentRef: any = ref(null);
     const segmentLabelRef: any = ref(null);
     const episodesRef: any = ref(null);
     const episodesContainerRef: any = ref(null);
-    const modules = [IonicSlides];
     const segments = ["episodes", "info", "comments", "news"];
     const segmentTitles = ["episodes", "show info", "comments", "news"];
     const segmentScrollPositions: ISegmentScrollPositions = {};
@@ -87,8 +80,6 @@
     const headerTitleDisplay = computed(() => {
         return selectedShowContext.value ? selectedShowContext.value.show!.title! : "";
     });
-
-    console.log("id=", props.id);
 
     const onSegmentChanged = (ev: CustomEvent) => {
         console.log("Segment changed to:", ev.detail.value);
