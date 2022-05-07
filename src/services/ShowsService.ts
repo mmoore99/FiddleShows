@@ -7,12 +7,10 @@ import type { LocalStorageService } from "@/services/LocalStorageService";
 import { ref, toRaw } from "vue";
 import { plainToInstance } from "class-transformer";
 import { useShowStore } from "@/stores/ShowStore";
-import {
-    SeasonContext
-} from "@/models/SeasonContext";
-import {
-    EpisodeContext
-} from "@/models/EpidodeContext";
+import { SeasonContext } from "@/models/SeasonContext";
+import { EpisodeContext } from "@/models/EpidodeContext";
+import { ShowSeasonProgress } from "@/models/ShowSeasonProgress";
+import { ShowEpisodeProgress } from "@/models/ShowEpisodeProgress";
 
 export class ShowsService {
     private _traktClient: TraktClient;
@@ -51,28 +49,34 @@ export class ShowsService {
         const getAllSeasonsResult = await this._traktClient.Seasons.getAllSeasons({
             showId: showContext.traktId!.toString(),
             extendedFull: true,
-            extendedEpisodes: true
+            extendedEpisodes: true,
         });
         const seasons = getAllSeasonsResult.content;
         console.log("Seasons:", seasons);
         showContext.show!.seasons = seasons!;
-        showContext.isContainsSpecials = showContext.show!.seasons &&  showContext.show!.seasons.length > 0 && showContext.show!.seasons![0].title!.toLowerCase() === "specials";
-        
-        const seasonNumberAdjustment = showContext.isContainsSpecials ? 0 : -1
+        showContext.isContainsSpecials = showContext.show!.seasons && showContext.show!.seasons.length > 0 && showContext.show!.seasons![0].title!.toLowerCase() === "specials";
+
+        const seasonNumberAdjustment = showContext.isContainsSpecials ? 0 : -1;
 
         showContext.seasonContexts = seasons!.map((season) => {
             const seasonContext = new SeasonContext(season);
-            seasonContext.progress = showContext.progress!.seasons[season.number + seasonNumberAdjustment]
+            if (showContext.progress) {
+                let seasonProgress = showContext.progress!.seasons.find((item) => item.number === season.number);
+                if (seasonProgress) seasonContext.progress = seasonProgress;
+            }
             console.log("seasonContext", seasonContext);
             seasonContext.episodeContexts = season.episodes!.map((episode) => {
                 const episodeContext = new EpisodeContext(episode!);
                 console.log(`S${season.number}E${episode.number}`);
-                episodeContext.progress = seasonContext.progress!.episodes[episode!.number - 1]
-                return episodeContext
+                if (seasonContext.progress) {
+                    let episodeProgress = seasonContext.progress!.episodes.find((item) => item.number === episode.number);
+                    if (episodeProgress) episodeContext.progress = episodeProgress;
+                }
+                return episodeContext;
             });
-            return seasonContext
-        }); 
-        
+            return seasonContext;
+        });
+
         this._localStorageService.setShowContexts!(toRaw(this._showStore.showContexts!)).then();
     }
 
