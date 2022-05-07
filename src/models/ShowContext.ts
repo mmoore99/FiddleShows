@@ -16,6 +16,8 @@ export class ShowContext {
 
     isInWatchList = false;
 
+    isContainsSpecials = false
+
     @Type(() => ShowWatchedProgress)
     progress: ShowWatchedProgress | null = null;
 

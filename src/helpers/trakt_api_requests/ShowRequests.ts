@@ -47,13 +47,13 @@ export default class ShowRequests extends TraktApiCategory {
         super(traktClient);
     }
 
-    public getShowWatchedProgress = async ({ id, hidden = false, specials = false, countSpecials = false }: IShowWatchedProgressParams) => {
+    public getShowWatchedProgress = async ({ id, hidden = false, specials = true, countSpecials = false }: IShowWatchedProgressParams) => {
         const url = `/shows/${id}/progress/watched`;
 
         const queryParams: IDictionary = {};
         queryParams["hidden"] = hidden;
-        queryParams["specials"] = hidden;
-        queryParams["count_specials"] = hidden;
+        queryParams["specials"] = specials;
+        queryParams["count_specials"] = countSpecials;
 
         const response = await this._traktClient.get<ShowWatchedProgress>({
             authorizationRequirement: AuthorizationRequirement.Required,

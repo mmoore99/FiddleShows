@@ -12,11 +12,11 @@ export class LocalStorageService {
     }
 
     async getShowContexts() {
-        return await this._localStorage!.get(this._programStore.localStorageKeys.showContexts);
+        return JSON.parse(await this._localStorage!.get(this._programStore.localStorageKeys.showContexts));
     }
 
     async setShowContexts(storeContexts: ShowContext[]) {
-        return await this._localStorage!.set(this._programStore.localStorageKeys.showContexts, storeContexts);
+        return await this._localStorage!.set(this._programStore.localStorageKeys.showContexts, JSON.stringify(storeContexts));
     }
 
     async getLastActivities() {
