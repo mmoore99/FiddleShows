@@ -4,7 +4,7 @@ import type {
 
 export interface Episode {
     season?: number;
-    number?: number;
+    number: number;
     title?: null | string;
     ids?: Ids;
     numberAbs?: null;

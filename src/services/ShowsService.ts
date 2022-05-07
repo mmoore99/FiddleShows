@@ -7,6 +7,12 @@ import type { LocalStorageService } from "@/services/LocalStorageService";
 import { ref, toRaw } from "vue";
 import { plainToInstance } from "class-transformer";
 import { useShowStore } from "@/stores/ShowStore";
+import {
+    SeasonContext
+} from "@/models/SeasonContext";
+import {
+    EpisodeContext
+} from "@/models/EpidodeContext";
 
 export class ShowsService {
     private _traktClient: TraktClient;
@@ -50,6 +56,19 @@ export class ShowsService {
         const seasons = getAllSeasonsResult.content;
         console.log("Seasons:", seasons);
         showContext.show!.seasons = seasons!;
+
+        showContext.seasonContexts = seasons!.map((season) => {
+            const seasonContext = new SeasonContext(season);
+            seasonContext.progress = showContext.progress!.seasons[season.number]
+            seasonContext.episodeContexts = season.episodes!.map((episode) => {
+                const episodeContext = new EpisodeContext(episode!);
+                // console.log(`S${season.number}E${episode.number}`);
+                episodeContext.progress = seasonContext.progress!.episodes[episode!.number]
+                return episodeContext
+            });
+            return seasonContext
+        }); 
+        
         this._localStorageService.setShowContexts!(toRaw(this._showStore.showContexts!)).then();
     }
 

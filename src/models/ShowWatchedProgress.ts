@@ -9,7 +9,7 @@ export class ShowWatchedProgress {
     @Type(() => Date) resetAt?: Date;
     @Type(() => Date) lastWatchedAt?: Date;
     hiddenSeasons?: ShowSeasonProgress[];
-    @Type(() => ShowSeasonProgress) seasons?: ShowSeasonProgress[];
+    @Type(() => ShowSeasonProgress) seasons: ShowSeasonProgress[] = [];
     nextEpisode?: Episode | null;
     lastEpisode?: Episode | null;
 }

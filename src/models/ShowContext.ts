@@ -3,14 +3,16 @@ import { ShowWatchedProgress } from "@/models/ShowWatchedProgress";
 import { Show } from "@/models/Show";
 import { Type } from "class-transformer";
 import { ShowWatchedProgressSerializer } from "@/helpers/serializers/ShowWatchedProgressSerializer";
+import type { SeasonContext } from "@/models/SeasonContext";
 
 export class ShowContext {
-    traktId: number|null = null;
+    traktId: number | null = null;
     title: string = "";
     rank: number | null = null;
 
     @Type(() => Show)
     show: Show | null = null;
+    seasonContexts: SeasonContext[] = [];
 
     isInWatchList = false;
 
