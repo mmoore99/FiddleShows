@@ -33,7 +33,7 @@ export class ShowsService {
             showContexts.value = plainToInstance<ShowContext, any>(ShowContext, savedShowContexts.value);
         }
 
-        if (await this.hasDataBeenUpdated()) {
+        if (!savedShowContexts.value || await this.hasDataBeenUpdated()) {
             console.log("Loading show contexts from trakt api");
             showContexts.value = await this.getShowContextsForSelectedSources(this._showStore.myShowsOptions);
             this._localStorageService.setShowContexts(toRaw(showContexts.value)).then();
@@ -55,8 +55,6 @@ export class ShowsService {
         console.log("Seasons:", seasons);
         showContext.show!.seasons = seasons!;
         showContext.isContainsSpecials = showContext.show!.seasons && showContext.show!.seasons.length > 0 && showContext.show!.seasons![0].title!.toLowerCase() === "specials";
-
-        const seasonNumberAdjustment = showContext.isContainsSpecials ? 0 : -1;
 
         showContext.seasonContexts = seasons!.map((season) => {
             const seasonContext = new SeasonContext(season);

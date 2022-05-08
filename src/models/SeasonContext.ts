@@ -6,7 +6,7 @@ export class SeasonContext {
     season: Season | null = null;
     progress: ShowSeasonProgress | null = null;
     episodeContexts: EpisodeContext[] = [];
-    isShowEpisodes = false;
+    isDisplayEpisodes = false;
 
     constructor(season: Season) {
         if (season) {

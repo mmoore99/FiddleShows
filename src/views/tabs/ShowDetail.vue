@@ -59,7 +59,7 @@
         selectedShowContext.value = _showStore.showContexts![selectedShowContextIndex];
         console.log("selectedShowContext=", selectedShowContext.value);
 
-        if (!selectedShowContext.value!.show!.seasons) {
+        if (selectedShowContext.value!.seasonContexts.length === 0) {
             await _showsService.loadSeasonsAndEpisodesForShow(selectedShowContext.value!);
         }
         console.log("selectedShowContext=", selectedShowContext.value);

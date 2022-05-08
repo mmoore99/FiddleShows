@@ -1,5 +1,4 @@
 import type { Airs } from "@/models/CommonModels";
-import type { Season } from "@/models/Season";
 import type { Ids } from "@/models/Ids";
 import { Type } from "class-transformer";
 export class Show {
@@ -30,5 +29,4 @@ export class Show {
     availableTranslations?: string[];
     genres?: string[];
     airedEpisodes?: number;
-    seasons?: Season[];
 }

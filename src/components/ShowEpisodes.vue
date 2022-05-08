@@ -14,7 +14,7 @@
         IonSegmentButton,
         IonTitle,
         IonToolbar,
-        IonSkeletonText
+        IonSkeletonText,
     } from "@ionic/vue";
     import { ShowContext } from "@/models/ShowContext";
 
@@ -30,7 +30,6 @@
     const episodesContainerRef: any = ref(null);
     const seasonsListRef: any = ref(null);
 
-
     onMounted(async () => {});
 
     const isDataLoaded = computed(() => {
@@ -38,16 +37,23 @@
         return props.selectedShowContext.show!.seasons && props.selectedShowContext.show!.seasons.length > 0;
     });
 
-    defineExpose({
-    });
+    defineExpose({});
 </script>
 
 <template>
-    <div id="ShowEpisodesContainer" style="width: 100%; height: 100%; margin-top: 32px;" ref="episodesContainerRef">
+    <div id="ShowEpisodesContainer" style="width: 100%; height: 100%; margin-top: 32px" ref="episodesContainerRef">
         <ion-list v-show="isDataLoaded" ref="seasonsListRef">
-            <ion-item-divider v-for="season in selectedShowContext.show.seasons" @click="">
-                {{ `Season ${season.number}` }}
-            </ion-item-divider>
+            <div v-for="seasonContext in selectedShowContext.seasonContexts">
+                <ion-item-divider @click="">
+                    {{ `Season ${seasonContext.season.number}` }}
+                </ion-item-divider>
+                <ion-list>
+                    <ion-item v-for="episodeContext in seasonContext.episodeContexts">
+                        {{ `${episodeContext.episode.number} ${episodeContext.episode.title}`}}
+                    </ion-item>
+                </ion-list>
+            </div>
+            
         </ion-list>
         <ion-list v-show="!isDataLoaded">
             <ion-item-divider v-for="index in 15" :key="index" @click="">

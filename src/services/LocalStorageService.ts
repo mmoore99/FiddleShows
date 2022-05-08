@@ -12,7 +12,8 @@ export class LocalStorageService {
     }
 
     async getShowContexts() {
-        return JSON.parse(await this._localStorage!.get(this._programStore.localStorageKeys.showContexts));
+        const jsonString = await this._localStorage!.get(this._programStore.localStorageKeys.showContexts) 
+        return jsonString ? JSON.parse(jsonString) : null;
     }
 
     async setShowContexts(storeContexts: ShowContext[]) {
