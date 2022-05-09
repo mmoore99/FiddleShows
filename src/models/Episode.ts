@@ -1,10 +1,9 @@
-import type {
-    Ids
-} from "@/models/Ids";
+import type { Ids } from "@/models/Ids";
+import { Type } from "class-transformer";
 
-export interface Episode {
+export class Episode {
     season?: number;
-    number: number;
+    number: number = 0;
     title?: null | string;
     ids?: Ids;
     numberAbs?: null;
@@ -12,7 +11,9 @@ export interface Episode {
     rating?: number;
     votes?: number;
     commentCount?: number;
-    firstAired?: Date;
+    @Type(() => Date)
+    firstAired?: Date | null;
+    @Type(() => Date)
     updatedAt?: Date;
     availableTranslations?: string[];
     runtime?: number;

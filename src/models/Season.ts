@@ -1,9 +1,11 @@
 import type { Ids } from "@/models/Ids";
+import { Episode } from "@/models/Episode";
+import { Type } from "class-transformer";
 
-export interface Season {
+export class Season {
     // Extended: metadata (minimum data provided)
-    number: number;
-    ids: Ids;
+    number: number = 0;
+    ids: Ids = {};
 
     //Extended: full
     title?: string;
@@ -13,6 +15,13 @@ export interface Season {
     votes?: number;
     episodeCount?: number;
     airedEpisodes?: number;
+
+    @Type(() => Date)
     firstAired?: Date;
+
+    @Type(() => Date)
     updatedAt?: Date;
+    
+    @Type(() => Episode)
+    episodes: Episode[] = [];
 }

@@ -179,14 +179,13 @@
 
 <style scoped>
     ion-item-divider {
-        background-color: #9e6d6d;
-        color: white;
+        color: black;
         font-weight: 600;
         height: 31px;
+        background: #e7e1e1;
     }
 
     .chevron {
-        color: white;
         margin-right: 10px;
     }
     /*#container {*/

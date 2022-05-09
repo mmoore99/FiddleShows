@@ -147,7 +147,7 @@
 
         <ion-content ref="contentRef" scrollEvents="true"  @ionScrollEnd="onScrollEnd($event)">
             <div slot="fixed" style="height: 40px; width: 100%">
-                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" v-model="selectedSegment" ref="segmentRef">
+                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" v-model="selectedSegment" ref="segmentRef" style="border-radius: 0; background: #e7e1e1;">
                     <ion-segment-button v-for="(segment, index) in segments" :value="segment">
                         <ion-label ref="segmentLabelRef">
                             {{ segmentTitles[index] }}
@@ -164,6 +164,7 @@
 </template>
 
 <style scoped>
+    
     #container {
         text-align: center;
         position: absolute;

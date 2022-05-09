@@ -53,8 +53,6 @@ export class ShowsService {
         });
         const seasons = getAllSeasonsResult.content;
         console.log("Seasons:", seasons);
-        showContext.show!.seasons = seasons!;
-        showContext.isContainsSpecials = showContext.show!.seasons && showContext.show!.seasons.length > 0 && showContext.show!.seasons![0].title!.toLowerCase() === "specials";
 
         showContext.seasonContexts = seasons!.map((season) => {
             const seasonContext = new SeasonContext(season);
@@ -63,6 +61,9 @@ export class ShowsService {
                 if (seasonProgress) seasonContext.progress = seasonProgress;
             }
             console.log("seasonContext", seasonContext);
+
+            showContext.isContainsSpecials = showContext.seasonContexts.length > 0 && showContext.seasonContexts[0].season!.title!.toLowerCase() === "specials";
+
             seasonContext.episodeContexts = season.episodes!.map((episode) => {
                 const episodeContext = new EpisodeContext(episode!);
                 console.log(`S${season.number}E${episode.number}`);

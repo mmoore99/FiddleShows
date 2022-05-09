@@ -3,20 +3,20 @@ import { ShowWatchedProgress } from "@/models/ShowWatchedProgress";
 import { Show } from "@/models/Show";
 import { Type } from "class-transformer";
 import { ShowWatchedProgressSerializer } from "@/helpers/serializers/ShowWatchedProgressSerializer";
-import type { SeasonContext } from "@/models/SeasonContext";
+import  { SeasonContext } from "@/models/SeasonContext";
 
 export class ShowContext {
     traktId: number | null = null;
     title: string = "";
     rank: number | null = null;
+    isInWatchList = false;
+    isContainsSpecials = false
 
     @Type(() => Show)
     show: Show | null = null;
+
+    @Type(() => SeasonContext)
     seasonContexts: SeasonContext[] = [];
-
-    isInWatchList = false;
-
-    isContainsSpecials = false
 
     @Type(() => ShowWatchedProgress)
     progress: ShowWatchedProgress | null = null;

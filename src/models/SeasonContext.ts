@@ -1,12 +1,19 @@
-import type { Season } from "@/models/Season";
-import type { EpisodeContext } from "@/models/EpidodeContext";
-import type { ShowSeasonProgress } from "@/models/ShowSeasonProgress";
+import { EpisodeContext } from "@/models/EpidodeContext";
+import { ShowSeasonProgress } from "@/models/ShowSeasonProgress";
+import { Type } from "class-transformer";
+import { Season } from "@/models/Season";
 
 export class SeasonContext {
+    @Type(() => Season)
     season: Season | null = null;
+
+    @Type(() => ShowSeasonProgress)
     progress: ShowSeasonProgress | null = null;
-    episodeContexts: EpisodeContext[] = [];
+
     isDisplayEpisodes = false;
+
+    @Type(() => EpisodeContext)
+    episodeContexts: EpisodeContext[] = [];
 
     constructor(season: Season) {
         if (season) {
@@ -25,5 +32,4 @@ export class SeasonContext {
     isNoneWatched() {
         return !this.progress || this.progress.completed === 0;
     }
-
 }
