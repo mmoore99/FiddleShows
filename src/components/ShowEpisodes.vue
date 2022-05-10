@@ -2,6 +2,7 @@
     import { ref, reactive, computed, onMounted } from "vue";
     import type { PropType } from "vue";
     import {
+        IonIcon,
         IonList,
         IonItemDivider,
         IonItem,
@@ -109,7 +110,7 @@
                                 }}
                             </h3>
                             <h4>
-                                {{ `Aired: ${episodeContext.formattedAiredDate}` }}
+                                {{ `Aired: ${episodeContext.formattedAiredDate()}` }}
                             </h4>
                         </ion-label>
                         <!--                        <ion-icon class="chevron" slot="end" :icon="ellipsisHorizontalOutline" @click=""></ion-icon>-->
