@@ -1,13 +1,5 @@
 <script setup lang="ts">
     import { LocalStorageService } from "@/services/LocalStorageService";
-
-    interface GroupDisplayStatuses {
-        isDisplayGroup1: boolean;
-        isDisplayGroup2: boolean;
-        isDisplayGroup3: boolean;
-        isDisplayGroup4: boolean;
-    }
-
     import { ref, reactive, onMounted, computed, toRaw } from "vue";
     import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonList, IonItemDivider, IonIcon, IonLabel } from "@ionic/vue";
     import { chevronUp, chevronDown, filterCircleOutline, calendar, personCircle, tv, timerOutline, search, list, funnel, heart } from "ionicons/icons";
@@ -23,6 +15,12 @@
     import type { Storage } from "@ionic/storage";
     import { LastActivitiesComparer } from "@/helpers/LastActivitiesComparer";
 
+    interface GroupDisplayStatuses {
+        isDisplayGroup1: boolean;
+        isDisplayGroup2: boolean;
+        isDisplayGroup3: boolean;
+        isDisplayGroup4: boolean;
+    }
     console.log("in MyShows.vue");
 
     const _programStore = useProgramStore();

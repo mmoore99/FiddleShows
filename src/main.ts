@@ -62,8 +62,8 @@ showStore.myShowsOptions = myShowsOptions;
 programStore.traktClient = new TraktClient({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, accessToken: ACCESS_TOKEN, isUseProxy: false });
 
 const localStorage = new Storage();
-await localStorage.create();
-programStore.localStorage = localStorage;
+localStorage.create().then(() => programStore.localStorage = localStorage);
+
 
 router.isReady().then(() => {
     app.mount("#app");

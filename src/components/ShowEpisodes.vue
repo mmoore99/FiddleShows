@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { ref, reactive, computed, onMounted } from "vue";
+    import type { PropType } from "vue";
     import {
         IonList,
         IonItemDivider,
@@ -16,14 +17,14 @@
         IonToolbar,
         IonSkeletonText,
     } from "@ionic/vue";
-    import { ShowContext } from "@/models/ShowContext";
+    import type { ShowContext } from "@/models/ShowContext";
     import { chevronUp, chevronDown, filterCircleOutline, calendar, personCircle, tv, timerOutline, search, list, funnel, heart } from "ionicons/icons";
     import type { SeasonContext } from "@/models/SeasonContext";
     import type { EpisodeContext } from "@/models/EpidodeContext";
 
     const props = defineProps({
         selectedShowContext: {
-            type: ShowContext,
+            type: Object as PropType<ShowContext>,
             required: true,
         },
     });
@@ -34,6 +35,15 @@
     const seasonsListRef: any = ref(null);
 
     onMounted(async () => {
+        // let parent = document!.querySelector('.sticky')!.parentElement;
+        // while (parent) {
+        //     const hasOverflow = getComputedStyle(parent).overflow;
+        //     if (hasOverflow !== 'visible') {
+        //         console.log(hasOverflow, parent);
+        //     }
+        //     parent = parent.parentElement;
+        // }
+        // debugger
     });
 
     const isDataLoaded = computed(() => {
@@ -81,28 +91,30 @@
     <div id="ShowEpisodesContainer" style="width: 100%; height: 100%; margin-top: 32px" ref="episodesContainerRef">
         <ion-list v-show="isDataLoaded" ref="seasonsListRef" style="padding-top: 0">
             <div v-for="(seasonContext, seasonIndex) in selectedShowContext.seasonContexts">
-                <ion-item-divider  @click="" >
-                    <ion-label>
-                        {{ `Season ${seasonContext.season.number}` }}
-                    </ion-label>
-                    <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="seasonContext.isDisplayEpisodes" @click="toggleDisplaySeason(seasonContext)"></ion-icon>
-                    <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!seasonContext.isDisplayEpisodes" @click="toggleDisplaySeason(seasonContext)"></ion-icon>
-                </ion-item-divider>
-                <ion-item v-for="(episodeContext, episodeIndex) in seasonContext.episodeContexts" v-show="isDisplayEpisodes(selectedShowContext, seasonIndex)">
-                    <ion-label @click="">
-                        <h3 style="font-size: 15px; font-weight: 600">
-                            {{
-                                `S${seasonContext.season.number.toString().padStart(2, "0")}E${episodeContext.episode.number.toString().padStart(2, "0")} - ${
-                                    episodeContext.episode.title
-                                }`
-                            }}
-                        </h3>
-                        <h4>
-                            {{ `Aired: ${episodeContext.formattedAiredDate(episodeContext)}` }}
-                        </h4>
-                    </ion-label>
-                    <ion-icon class="chevron" slot="end" :icon="ellipsisHorizontalOutline" @click=""></ion-icon>
-                </ion-item>
+                <div style="overflow: unset">
+                    <ion-item-divider class="sticky" @click="">
+                        <ion-label v-if="seasonContext.season">
+                            {{ `Season ${seasonContext.season.number}` }}
+                        </ion-label>
+                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="seasonContext.isDisplayEpisodes" @click="toggleDisplaySeason(seasonContext)"></ion-icon>
+                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!seasonContext.isDisplayEpisodes" @click="toggleDisplaySeason(seasonContext)"></ion-icon>
+                    </ion-item-divider>
+                    <ion-item v-for="(episodeContext, episodeIndex) in seasonContext.episodeContexts" v-show="isDisplayEpisodes(selectedShowContext, seasonIndex)">
+                        <ion-label @click="">
+                            <h3 style="font-size: 15px; font-weight: 600" v-if="seasonContext.season && episodeContext.episode">
+                                {{
+                                    `S${seasonContext.season.number.toString().padStart(2, "0")}E${episodeContext.episode.number.toString().padStart(2, "0")} - ${
+                                        episodeContext.episode.title
+                                    }`
+                                }}
+                            </h3>
+                            <h4>
+                                {{ `Aired: ${episodeContext.formattedAiredDate}` }}
+                            </h4>
+                        </ion-label>
+                        <!--                        <ion-icon class="chevron" slot="end" :icon="ellipsisHorizontalOutline" @click=""></ion-icon>-->
+                    </ion-item>
+                </div>
             </div>
         </ion-list>
         <ion-list v-show="!isDataLoaded">
@@ -129,8 +141,9 @@
         height: 31px;
         background: #e7e1e1;
         top: 32px;
-        position: -webkit-sticky; 
-        position: sticky
+        position: -webkit-sticky;
+        position: sticky;
+        overflow: unset;
     }
 </style>
 

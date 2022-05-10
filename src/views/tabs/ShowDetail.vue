@@ -12,13 +12,17 @@
     import type { TraktClient } from "@/trakt/TraktClient";
     import { LocalStorageService } from "@/services/LocalStorageService";
     import { ShowsService } from "@/services/ShowsService";
-    import type { ShowContext } from "@/models/ShowContext";
-    
-    interface IXYCoordinates {x: number,  y:number}
-    interface ISegmentScrollPositions {
-        [index: string]: IXYCoordinates|null;
+    import { ShowContext } from "@/models/ShowContext";
+    import { Show } from "@/models/Show";
+
+    interface IXYCoordinates {
+        x: number;
+        y: number;
     }
-    
+    interface ISegmentScrollPositions {
+        [index: string]: IXYCoordinates | null;
+    }
+
     const router = useRouter();
     const route = useRoute();
     const _programStore = useProgramStore();
@@ -36,7 +40,7 @@
     const segmentTitles = ["episodes", "show info", "comments", "news"];
     const segmentScrollPositions: ISegmentScrollPositions = {};
     let selectedSegment = ref("episodes");
-    let selectedShowContext = ref<ShowContext | null>(null);
+    let selectedShowContext = ref<ShowContext>(new ShowContext());
     const isDisplayBackButton = _showStore && _showStore.showContexts;
 
     const props = defineProps({
@@ -64,12 +68,12 @@
         }
         console.log("selectedShowContext=", selectedShowContext.value);
         console.log("showStoreShowContext=", _showStore.showContexts![selectedShowContextIndex]);
-        
-        initializeSegmentScrollPositions()
+
+        initializeSegmentScrollPositions();
     };
 
     const initializeSegmentScrollPositions = () => {
-        segments.forEach((segment) => segmentScrollPositions[segment] = {x: 0, y:0});
+        segments.forEach((segment) => (segmentScrollPositions[segment] = { x: 0, y: 0 }));
     };
 
     const getSelectedShowContextIndex = (showId: string): number => {
@@ -83,24 +87,24 @@
 
     const onSegmentChanged = (ev: CustomEvent) => {
         console.log("Segment changed to:", ev.detail.value);
-        if (segmentScrollPositions[ev.detail.value] === null) return; 
-        scrollToPoint(segmentScrollPositions![ev.detail.value]!.x, segmentScrollPositions[ev.detail.value]!.y)
+        if (segmentScrollPositions[ev.detail.value] === null) return;
+        scrollToPoint(segmentScrollPositions![ev.detail.value]!.x, segmentScrollPositions[ev.detail.value]!.y);
     };
 
-    const scrollToTop = (duration?:number) => {
-        duration = typeof duration == 'number' ? duration : 0;
+    const scrollToTop = (duration?: number) => {
+        duration = typeof duration == "number" ? duration : 0;
         contentRef.value.$el.scrollToTop(duration);
     };
 
-    const scrollToBottom = (duration?:number) => {
-        duration = typeof duration == 'number' ? duration : 0;
+    const scrollToBottom = (duration?: number) => {
+        duration = typeof duration == "number" ? duration : 0;
         contentRef.value.$el.scrollToBottom(duration);
     };
 
-    const scrollToPoint = (x?:number, y?:number, duration?: number) => {
-        x = typeof x == 'number' ? x : 0
-        y = typeof y == 'number' ? y : 0
-        duration = typeof duration == 'number' ? duration : 0
+    const scrollToPoint = (x?: number, y?: number, duration?: number) => {
+        x = typeof x == "number" ? x : 0;
+        y = typeof y == "number" ? y : 0;
+        duration = typeof duration == "number" ? duration : 0;
         contentRef.value.$el.scrollToPoint(x, y, duration);
     };
 
@@ -111,7 +115,7 @@
     const onScrollEnd = (event: any) => {
         // console.log("logScrollEnd : When Scroll Ends", event);
         console.log(`logScrollEnd : When Scroll Ends: Current X, Current Y ${event.srcElement.detail.currentX},${event.srcElement.detail.currentY}`);
-        segmentScrollPositions[selectedSegment.value] = {x: event.srcElement.detail.currentX, y: event.srcElement.detail.currentY}
+        segmentScrollPositions[selectedSegment.value] = { x: event.srcElement.detail.currentX, y: event.srcElement.detail.currentY };
     };
 
     const onScrolling = (event: any) => {
@@ -138,16 +142,16 @@
                     <ion-button @click="scrollToBottom">
                         <ion-icon :icon="ellipsisVerticalCircle"></ion-icon>
                     </ion-button>
-                    <ion-button @click="scrollToPoint(0,50)">
+                    <ion-button @click="scrollToPoint(0, 50)">
                         <ion-icon :icon="ellipsisVerticalCircle"></ion-icon>
                     </ion-button>
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content ref="contentRef" scrollEvents="true"  @ionScrollEnd="onScrollEnd($event)">
+        <ion-content ref="contentRef" scrollEvents="true" @ionScrollEnd="onScrollEnd($event)">
             <div slot="fixed" style="height: 40px; width: 100%">
-                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" v-model="selectedSegment" ref="segmentRef" style="border-radius: 0; background: #e7e1e1;">
+                <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" v-model="selectedSegment" ref="segmentRef" style="border-radius: 0; background: #e7e1e1">
                     <ion-segment-button v-for="(segment, index) in segments" :value="segment">
                         <ion-label ref="segmentLabelRef">
                             {{ segmentTitles[index] }}
@@ -164,7 +168,6 @@
 </template>
 
 <style scoped>
-    
     #container {
         text-align: center;
         position: absolute;

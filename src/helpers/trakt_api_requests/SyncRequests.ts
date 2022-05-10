@@ -95,7 +95,7 @@ export default class SyncRequests extends TraktApiCategory {
     };
 
     public getWatched = async ({ type, extendedFull = false, extendedNoSeasons = false }: ISyncGetWatchedParams) => {
-        let extendedInfo = null;
+        let extendedInfo : TraktExtendedInfo | null = null;
         if (extendedFull || extendedNoSeasons) {
             extendedInfo = new TraktExtendedInfo();
             if (extendedFull) extendedInfo.setFull();

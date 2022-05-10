@@ -23,10 +23,10 @@ export class ShowContext {
 
     displayCategory: ShowDisplayCategories | null = null;
 
-    constructor(show: Show) {
+    constructor(show?: Show) {
         if (show) {
             this.show = show;
-            this.traktId = show!.ids!.trakt!;
+            this.traktId = show.ids?.trakt ? show!.ids!.trakt! : null;
             this.title = show!.title!;
         }
     }
