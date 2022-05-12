@@ -66,7 +66,7 @@ export class ShowsService {
 
             seasonContext.episodeContexts = season.episodes!.map((episode) => {
                 const episodeContext = new EpisodeContext(episode!);
-                console.log(`S${season.number}E${episode.number}`);
+                // console.log(`S${season.number}E${episode.number}`);
                 if (seasonContext.progress) {
                     let episodeProgress = seasonContext.progress!.episodes.find((item) => item.number === episode.number);
                     if (episodeProgress) episodeContext.progress = episodeProgress;

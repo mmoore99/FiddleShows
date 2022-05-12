@@ -1,5 +1,11 @@
 <script setup lang="ts">
-    import { ref, reactive, computed, onMounted } from "vue";
+    import {
+        ref,
+        reactive,
+        computed,
+        onMounted,
+        onUpdated
+    } from "vue";
     import type { PropType } from "vue";
     import {
         IonIcon,
@@ -29,13 +35,16 @@
             required: true,
         },
     });
-    const emit = defineEmits(["update:modelValue", "submit"]);
+    const emit = defineEmits(["episodesRenderComplete"]);
 
     const state = reactive({});
     const episodesContainerRef: any = ref(null);
     const seasonsListRef: any = ref(null);
+    let isFirstRender = true;
 
     onMounted(async () => {
+        // console.log("inOnMounted");
+        emit("episodesRenderComplete")
         // let parent = document!.querySelector('.sticky')!.parentElement;
         // while (parent) {
         //     const hasOverflow = getComputedStyle(parent).overflow;
@@ -47,17 +56,32 @@
         // debugger
     });
 
+    onUpdated(() => {
+         //console.log("in onUpdated");
+    })
+
     const isDataLoaded = computed(() => {
         console.log("prop.selectedShowContext", props.selectedShowContext);
         return props.selectedShowContext.seasonContexts && props.selectedShowContext.seasonContexts.length > 0;
     });
 
     const toggleDisplaySeason = (seasonContext: SeasonContext) => {
+        // console.log("in toggleDisplaySeason");
         seasonContext.isDisplayEpisodes = !seasonContext.isDisplayEpisodes;
     };
 
     const isDisplayEpisodes = (showContext: ShowContext, seasonContextIndex: number) => {
-        return showContext.seasonContexts[seasonContextIndex].isDisplayEpisodes || showContext.seasonContexts.length - 1 === seasonContextIndex;
+        // console.log("in isDisplayEpisodes");
+        // console.log("seasonContextIndex", seasonContextIndex);
+        // console.log("showContext.seasonContexts.length - 1", showContext.seasonContexts.length -1);
+        // console.log("isFirstRender", isFirstRender);
+        if (isFirstRender && showContext.seasonContexts.length - 1 === seasonContextIndex){
+            isFirstRender = false
+            showContext.seasonContexts[seasonContextIndex].isDisplayEpisodes = true;
+        }
+        // console.log("isDisplayEpisodes", showContext.seasonContexts[seasonContextIndex].isDisplayEpisodes);
+        return showContext.seasonContexts[seasonContextIndex].isDisplayEpisodes 
+            
     };
 
     const formattedAiredDate = (episodeContext: EpisodeContext) => {
@@ -93,28 +117,30 @@
         <ion-list v-show="isDataLoaded" ref="seasonsListRef" style="padding-top: 0">
             <div v-for="(seasonContext, seasonIndex) in selectedShowContext.seasonContexts">
                 <div style="overflow: unset">
-                    <ion-item-divider class="sticky" @click="">
+                    <ion-item-divider class="sticky" @click="toggleDisplaySeason(seasonContext)">
                         <ion-label v-if="seasonContext.season">
                             {{ `Season ${seasonContext.season.number}` }}
                         </ion-label>
-                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="seasonContext.isDisplayEpisodes" @click="toggleDisplaySeason(seasonContext)"></ion-icon>
-                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!seasonContext.isDisplayEpisodes" @click="toggleDisplaySeason(seasonContext)"></ion-icon>
+                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="seasonContext.isDisplayEpisodes" ></ion-icon>
+                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!seasonContext.isDisplayEpisodes" ></ion-icon>
                     </ion-item-divider>
-                    <ion-item v-for="(episodeContext, episodeIndex) in seasonContext.episodeContexts" v-show="isDisplayEpisodes(selectedShowContext, seasonIndex)">
-                        <ion-label @click="">
-                            <h3 style="font-size: 15px; font-weight: 600" v-if="seasonContext.season && episodeContext.episode">
-                                {{
-                                    `S${seasonContext.season.number.toString().padStart(2, "0")}E${episodeContext.episode.number.toString().padStart(2, "0")} - ${
-                                        episodeContext.episode.title
-                                    }`
-                                }}
-                            </h3>
-                            <h4>
-                                {{ `Aired: ${episodeContext.formattedAiredDate()}` }}
-                            </h4>
-                        </ion-label>
-                        <!--                        <ion-icon class="chevron" slot="end" :icon="ellipsisHorizontalOutline" @click=""></ion-icon>-->
-                    </ion-item>
+                    <div v-show="isDisplayEpisodes(selectedShowContext, seasonIndex)">
+                        
+                        <ion-item v-for="(episodeContext, episodeIndex) in seasonContext.episodeContexts" >
+                            <ion-label @click="">
+                                <h3 style="font-size: 15px; font-weight: 600" v-if="seasonContext.season && episodeContext.episode">
+                                    {{
+                                        `S${seasonContext.season.number.toString().padStart(2, "0")}E${episodeContext.episode.number.toString().padStart(2, "0")} - ${episodeContext.episode.title}`
+                                    }}
+                                </h3>
+                                <h4>
+                                    {{ `Aired: ${episodeContext.formattedAiredDate()}`
+                                    }}
+                                </h4>
+                            </ion-label>
+                            <!--                        <ion-icon class="chevron" slot="end" :icon="ellipsisHorizontalOutline" @click=""></ion-icon>-->
+                        </ion-item>
+                    </div>
                 </div>
             </div>
         </ion-list>

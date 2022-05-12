@@ -1,5 +1,10 @@
 <script setup lang="ts">
-    import { computed, onMounted, ref } from "vue";
+    import {
+        computed,
+        nextTick,
+        onMounted,
+        ref
+    } from "vue";
     import { IonButtons, IonContent, IonHeader, IonLabel, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/vue";
     import { arrowBackOutline, ellipsisVerticalCircle } from "ionicons/icons";
     import { useRoute, useRouter } from "vue-router";
@@ -51,7 +56,7 @@
     });
 
     onMounted(async () => {
-        console.log(segmentRef);
+        // console.log(segmentRef);
     });
 
     const initialize = async () => {
@@ -61,13 +66,13 @@
 
         const selectedShowContextIndex = getSelectedShowContextIndex(props.id);
         selectedShowContext.value = _showStore.showContexts![selectedShowContextIndex];
-        console.log("selectedShowContext=", selectedShowContext.value);
+        // console.log("selectedShowContext=", selectedShowContext.value);
 
         if (selectedShowContext.value!.seasonContexts.length === 0) {
             await _showsService.loadSeasonsAndEpisodesForShow(selectedShowContext.value!);
         }
-        console.log("selectedShowContext=", selectedShowContext.value);
-        console.log("showStoreShowContext=", _showStore.showContexts![selectedShowContextIndex]);
+        // console.log("selectedShowContext=", selectedShowContext.value);
+        //console.log("showStoreShowContext=", _showStore.showContexts![selectedShowContextIndex]);
 
         initializeSegmentScrollPositions();
     };
@@ -114,8 +119,13 @@
 
     const onScrollEnd = (event: any) => {
         // console.log("logScrollEnd : When Scroll Ends", event);
-        console.log(`logScrollEnd : When Scroll Ends: Current X, Current Y ${event.srcElement.detail.currentX},${event.srcElement.detail.currentY}`);
+        // console.log(`logScrollEnd : When Scroll Ends: Current X, Current Y ${event.srcElement.detail.currentX},${event.srcElement.detail.currentY}`);
         segmentScrollPositions[selectedSegment.value] = { x: event.srcElement.detail.currentX, y: event.srcElement.detail.currentY };
+    };
+
+    const onEpisodesRenderComplete = () => {
+        nextTick()
+        scrollToBottom(2000)
     };
 
     const onScrolling = (event: any) => {
@@ -159,7 +169,7 @@
                     </ion-segment-button>
                 </ion-segment>
             </div>
-            <ShowEpisodes v-show="selectedSegment === 'episodes'" :selected-show-context="selectedShowContext" ref="episodesRef"></ShowEpisodes>
+            <ShowEpisodes v-show="selectedSegment === 'episodes'" :selected-show-context="selectedShowContext" ref="episodesRef" @episodesRenderComplete="onEpisodesRenderComplete"></ShowEpisodes>
             <ShowInfo v-show="selectedSegment === 'info'"></ShowInfo>
             <ShowComments v-show="selectedSegment === 'comments'"></ShowComments>
             <ShowNews v-show="selectedSegment === 'news'"></ShowNews>

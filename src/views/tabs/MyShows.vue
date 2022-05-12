@@ -69,10 +69,10 @@
 
     const loadData = async () => {
         try {
-            console.log("in MyShows.vue loadData");
+            // console.log("in MyShows.vue loadData");
             await _showsService.loadShowContexts();    
-            console.log("ShowContexts:", _showStore.showContexts);
-            console.log("Finished - MyShows.vue loadData");
+            // console.log("ShowContexts:", _showStore.showContexts);
+            // console.log("Finished - MyShows.vue loadData");
         } catch (e) {
             // Deal with the fact the chain failed
         }
@@ -137,10 +137,10 @@
         <ion-content :fullscreen="true">
             <div id="container">
                 <ion-list style="padding-top: 0" ref="showsListRef">
-                    <ion-item-divider sticky>
-                        <ion-label> In Progress, New Episodes Available ({{ showsWatchingEpisodesAvailable.length }}) </ion-label>
-                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup1" @click="toggleDisplayGroup(1)"></ion-icon>
-                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup1" @click="toggleDisplayGroup(1)"></ion-icon>
+                    <ion-item-divider sticky @click="toggleDisplayGroup(1)">
+                        <ion-label > In Progress, New Episodes Available ({{ showsWatchingEpisodesAvailable.length }}) </ion-label>
+                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup1" ></ion-icon>
+                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup1" ></ion-icon>
                     </ion-item-divider>
                     <MyShowsItem
                         v-show="groupDisplayStatuses.isDisplayGroup1"
@@ -149,24 +149,24 @@
                         @show-item-swiped="onShowItemSwiped"
                     ></MyShowsItem>
 
-                    <ion-item-divider sticky>
-                        <ion-label> Caught Up, New Episodes Scheduled ({{ caughtUpNewEpisodesScheduled.length }}) </ion-label>
-                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup2" @click="toggleDisplayGroup(2)"></ion-icon>
-                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup2" @click="toggleDisplayGroup(2)"></ion-icon>
+                    <ion-item-divider sticky @click="toggleDisplayGroup(2)">
+                        <ion-label > Caught Up, New Episodes Scheduled ({{ caughtUpNewEpisodesScheduled.length }}) </ion-label>
+                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup2" ></ion-icon>
+                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup2" ></ion-icon>
                     </ion-item-divider>
                     <MyShowsItem v-show="groupDisplayStatuses.isDisplayGroup2" v-for="showContext in caughtUpNewEpisodesScheduled" :show-context="showContext"></MyShowsItem>
 
-                    <ion-item-divider sticky>
-                        <ion-label> Caught Up, No New Episodes Scheduled ({{ caughtUpNoNewEpisodesScheduled.length }}) </ion-label>
-                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup3" @click="toggleDisplayGroup(3)"></ion-icon>
-                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup3" @click="toggleDisplayGroup(3)"></ion-icon>
+                    <ion-item-divider sticky @click="toggleDisplayGroup(3)">
+                        <ion-label > Caught Up, No New Episodes Scheduled ({{ caughtUpNoNewEpisodesScheduled.length }}) </ion-label>
+                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup3" ></ion-icon>
+                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup3" ></ion-icon>
                     </ion-item-divider>
                     <MyShowsItem v-show="groupDisplayStatuses.isDisplayGroup3" v-for="showContext in caughtUpNoNewEpisodesScheduled" :show-context="showContext"></MyShowsItem>
 
-                    <ion-item-divider sticky>
-                        <ion-label> Not Started Watching ({{ showsNotStartedWatching.length }}) </ion-label>
-                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup4" @click="toggleDisplayGroup(4)"></ion-icon>
-                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup4" @click="toggleDisplayGroup(4)"></ion-icon>
+                    <ion-item-divider sticky @click="toggleDisplayGroup(4)">
+                        <ion-label > Not Started Watching ({{ showsNotStartedWatching.length }}) </ion-label>
+                        <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup4" ></ion-icon>
+                        <ion-icon class="chevron" slot="end" :icon="chevronUp" v-show="!groupDisplayStatuses.isDisplayGroup4" ></ion-icon>
                     </ion-item-divider>
                     <MyShowsItem v-show="groupDisplayStatuses.isDisplayGroup4" v-for="showContext in showsNotStartedWatching" :show-context="showContext"></MyShowsItem>
                 </ion-list>
