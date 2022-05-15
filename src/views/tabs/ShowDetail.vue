@@ -124,8 +124,8 @@
     };
 
     const onEpisodesRenderComplete = () => {
-        nextTick()
-        scrollToBottom(2000)
+        // nextTick()
+        // scrollToBottom(2000)
     };
 
     const onScrolling = (event: any) => {
@@ -159,7 +159,7 @@
             </ion-toolbar>
         </ion-header>
 
-        <ion-content ref="contentRef" scrollEvents="true" @ionScrollEnd="onScrollEnd($event)">
+        <ion-content ref="contentRef" scrollEvents="true" @ionScrollEnd="onScrollEnd($event)" style="--overflow: hidden">
             <div slot="fixed" style="height: 40px; width: 100%">
                 <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" v-model="selectedSegment" ref="segmentRef" style="border-radius: 0; background: #e7e1e1">
                     <ion-segment-button v-for="(segment, index) in segments" :value="segment">
@@ -201,5 +201,9 @@
 
     #container a {
         text-decoration: none;
+    }
+    
+    .inner-scroll{
+        overflow: unset;
     }
 </style>
