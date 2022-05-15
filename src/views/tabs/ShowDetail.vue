@@ -56,7 +56,7 @@
     });
 
     onMounted(async () => {
-        // console.log(segmentRef);
+        console.log(contentRef);
     });
 
     const initialize = async () => {

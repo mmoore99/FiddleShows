@@ -41,7 +41,7 @@
             @ionTabsDidChange="afterTabChange"
         >
             <ion-router-outlet></ion-router-outlet>
-            <ion-tab-bar v-if="!isWideScreen" slot="bottom">
+            <ion-tab-bar class="tab-bar" v-if="!isWideScreen" slot="bottom">
                 <ion-tab-button tab="my-shows" href="/tabs/my-shows">
                     <ion-icon :icon="tv"></ion-icon>
                     <ion-label> My Shows </ion-label>

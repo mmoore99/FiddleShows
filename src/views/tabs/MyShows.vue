@@ -23,6 +23,11 @@
     }
     console.log("in MyShows.vue");
 
+    const pageRef: any = ref(null);
+    const headerRef: any = ref(null);
+    const contentRef: any = ref(null);
+    // const showsListRef = ref<HTMLIonListElement | null>(null);
+    const showsListRef:any = ref(null);
     const _programStore = useProgramStore();
     const _showStore = useShowStore();
     const _traktClient = _programStore.traktClient as TraktClient;
@@ -32,7 +37,6 @@
     const router = useRouter();
     const route = useRoute();
 
-    const showsListRef = ref<HTMLIonListElement | null>(null);
 
     const groupDisplayStatuses = reactive<GroupDisplayStatuses>({
         isDisplayGroup1: true,
@@ -47,6 +51,22 @@
         if (savedGroupDisplayStatuses) {
             Object.assign(groupDisplayStatuses, savedGroupDisplayStatuses);
         }
+        console.log("pageRef", pageRef.value.$el.offsetHeight);
+        console.log("headerRef", headerRef.value.$el.offsetHeight);
+        console.log("contentRef", contentRef.value.$el.offsetHeight);
+        console.log("showsListRef", showsListRef.value.$el.offsetHeight);
+        
+        const elements: any = document.getElementsByClassName("tab-bar")
+        
+        const tabBarHeight = (elements.length === 0) ? 0 : elements[0].offsetHeight 
+        console.log("tabBar", elements[0].offsetHeight);
+        // const showListHeight = pageRef.value.$el.offsetHeight - headerRef.value.$el.offsetHeight - tabBarHeight
+        const showListHeight = contentRef.value.$el.offsetHeight
+        console.log("showListHeight", showListHeight);
+        showsListRef.value.$el.style.height = `${showListHeight}px`
+        console.log("showsListRef", showsListRef.value.$el.offsetHeight);
+        
+
     });
 
     const toggleDisplayGroup = (group: number) => {
@@ -80,7 +100,6 @@
     loadData();
 
     const onShowItemSwiped = () => {
-        debugger;
         // according to docs the command below with $el should be required, but for some reason here it is not
         // showsListRef!.value!.$el.closeSlidingItems()
         showsListRef!.value!.closeSlidingItems();
@@ -114,8 +133,8 @@
 </script>
 
 <template>
-    <ion-page>
-        <ion-header :translucent="true">
+    <ion-page ref="pageRef">
+        <ion-header :translucent="true" ref="headerRef">
             <ion-toolbar mode="ios">
                 <ion-buttons slot="start">
                     <ion-button>
@@ -134,9 +153,9 @@
             </ion-toolbar>
         </ion-header>
 
-        <ion-content :fullscreen="true">
+        <ion-content :fullscreen="true" ref="contentRef">
             <div id="container">
-                <ion-list style="padding-top: 0" ref="showsListRef">
+                <ion-list style="padding-top: 0; overflow: auto;" ref="showsListRef" >
                     <ion-item-divider sticky @click="toggleDisplayGroup(1)">
                         <ion-label > In Progress, New Episodes Available ({{ showsWatchingEpisodesAvailable.length }}) </ion-label>
                         <ion-icon class="chevron" slot="end" :icon="chevronDown" v-show="groupDisplayStatuses.isDisplayGroup1" ></ion-icon>
