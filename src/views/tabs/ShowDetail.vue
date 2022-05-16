@@ -97,8 +97,15 @@
     };
 
     const scrollToTop = (duration?: number) => {
-        duration = typeof duration == "number" ? duration : 0;
-        contentRef.value.$el.scrollToTop(duration);
+        // duration = typeof duration == "number" ? duration : 0;
+        // contentRef.value.$el.scrollToTop(duration);
+        const elShowEpisodesContainer = document.getElementById("ShowEpisodesContainer")
+        console.log("elShowEpisodesContainer", elShowEpisodesContainer);
+        const elEpisodesList = document.getElementById("EpisodesList")
+        console.log("elEpisodesList", elEpisodesList);
+        const listOffset = elShowEpisodesContainer!.offsetTop - elEpisodesList!.offsetTop
+        console.log("episodesListOffset=", listOffset);
+        debugger
     };
 
     const scrollToBottom = (duration?: number) => {
@@ -123,7 +130,14 @@
         segmentScrollPositions[selectedSegment.value] = { x: event.srcElement.detail.currentX, y: event.srcElement.detail.currentY };
     };
 
-    const onEpisodesRenderComplete = () => {
+    const onSeasonsMounted = () => {
+        console.log("in onSeasonsMounted");
+        const elShowEpisodesContainer = document.getElementById("ShowEpisodesContainer") as Element
+        console.log("elShowEpisodesContainer", elShowEpisodesContainer);
+        const elEpisodesList = document.getElementById("EpisodesList")
+        console.log("elEpisodesList", elEpisodesList);
+        const showEpisodesContainerMargin = window.getComputedStyle(elShowEpisodesContainer).marginTop
+        console.log("showEpisodesContainerMargin=", showEpisodesContainerMargin);
         // nextTick()
         // scrollToBottom(2000)
     };
@@ -169,7 +183,7 @@
                     </ion-segment-button>
                 </ion-segment>
             </div>
-            <ShowEpisodes v-show="selectedSegment === 'episodes'" :selected-show-context="selectedShowContext" ref="episodesRef" @episodesRenderComplete="onEpisodesRenderComplete"></ShowEpisodes>
+            <ShowEpisodes v-show="selectedSegment === 'episodes'" :selected-show-context="selectedShowContext" ref="episodesRef" @seasonsMounted="onSeasonsMounted"></ShowEpisodes>
             <ShowInfo v-show="selectedSegment === 'info'"></ShowInfo>
             <ShowComments v-show="selectedSegment === 'comments'"></ShowComments>
             <ShowNews v-show="selectedSegment === 'news'"></ShowNews>

@@ -35,7 +35,7 @@
             required: true,
         },
     });
-    const emit = defineEmits(["episodesRenderComplete"]);
+    const emit = defineEmits(["seasonsMounted"]);
 
     const state = reactive({});
     const episodesContainerRef: any = ref(null);
@@ -44,7 +44,7 @@
 
     onMounted(async () => {
         // console.log("inOnMounted");
-        emit("episodesRenderComplete")
+        emit("seasonsMounted")
         // let parent = document!.querySelector('.sticky')!.parentElement;
         // while (parent) {
         //     const hasOverflow = getComputedStyle(parent).overflow;
@@ -114,7 +114,7 @@
 
 <template>
     <div id="ShowEpisodesContainer" style="width: 100%; height: 100%; margin-top: 32px" ref="episodesContainerRef">
-        <ion-list v-show="isDataLoaded" ref="seasonsListRef" style="padding-top: 0; overflow: auto; height: 578px;">
+        <ion-list id="EpisodesList" v-show="isDataLoaded" ref="seasonsListRef" style="padding-top: 0; overflow: auto; height: 578px;">
             <div v-for="(seasonContext, seasonIndex) in selectedShowContext.seasonContexts">
                 <div style="overflow: unset">
                     <ion-item-divider class="sticky" @click="toggleDisplaySeason(seasonContext)">
