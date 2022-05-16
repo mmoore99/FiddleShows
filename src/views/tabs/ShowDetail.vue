@@ -3,7 +3,8 @@
         computed,
         nextTick,
         onMounted,
-        ref
+        ref,
+        watch
     } from "vue";
     import { IonButtons, IonContent, IonHeader, IonLabel, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/vue";
     import { arrowBackOutline, ellipsisVerticalCircle } from "ionicons/icons";
@@ -56,8 +57,34 @@
     });
 
     onMounted(async () => {
-        console.log(contentRef);
+        console.log("*****in ShowDetail onMounted");
+        console.log("contentRef", contentRef);
+        console.log("contentRef height", contentRef.value.$el.offsetHeight);
+        await setListHeight()
+        
+        
+        console.log("*****finished ShowDetail onMounted");
     });
+
+    const setListHeight = async () => {
+        await new Promise(r => setTimeout(r, 0));
+
+        const elShowDetailPage = document.getElementById("ShowDetailPage") as HTMLElement
+        const elShowDetailHeader = document.getElementById("ShowDetailHeader") as HTMLElement
+        const elShowEpisodesContainer = document.getElementById("ShowEpisodesContainer") as Element
+        const elEpisodesList = document.getElementById("EpisodesList")
+
+        const showDetailPageHeight = elShowDetailPage.offsetHeight
+        const showDetailHeaderHeight = elShowDetailHeader.offsetHeight
+        const showEpisodesContainerMargin = parseInt(window.getComputedStyle(elShowEpisodesContainer).marginTop.replace("px", ""))
+        const episodesListHeight = showDetailPageHeight - showDetailHeaderHeight - showEpisodesContainerMargin
+        elEpisodesList!.style.height = `${episodesListHeight}px`
+
+        console.log("showDetailPageHeight =", showDetailPageHeight);
+        console.log("showDetailHeaderHeight =", showDetailHeaderHeight);
+        console.log("showEpisodesContainerMargin =", showEpisodesContainerMargin);
+        console.log("episodesListHeight", episodesListHeight);
+    };
 
     const initialize = async () => {
         if (!_showStore.showContexts) {
@@ -105,7 +132,8 @@
         console.log("elEpisodesList", elEpisodesList);
         const listOffset = elShowEpisodesContainer!.offsetTop - elEpisodesList!.offsetTop
         console.log("episodesListOffset=", listOffset);
-        debugger
+        console.log("contentRef height", contentRef.value.$el.offsetHeight);
+        logHeights()
     };
 
     const scrollToBottom = (duration?: number) => {
@@ -131,16 +159,29 @@
     };
 
     const onSeasonsMounted = () => {
-        console.log("in onSeasonsMounted");
-        const elShowEpisodesContainer = document.getElementById("ShowEpisodesContainer") as Element
-        console.log("elShowEpisodesContainer", elShowEpisodesContainer);
-        const elEpisodesList = document.getElementById("EpisodesList")
-        console.log("elEpisodesList", elEpisodesList);
-        const showEpisodesContainerMargin = window.getComputedStyle(elShowEpisodesContainer).marginTop
-        console.log("showEpisodesContainerMargin=", showEpisodesContainerMargin);
-        // nextTick()
+        nextTick()
+        console.log("*****in ShowDetail onSeasonsMounted");
+        
+        
+        // console.log("elShowEpisodesContainer", elShowEpisodesContainer);
+        // const elShowDetailContent = document.getElementById("ShowDetailContent") as Element
+        // console.log("elShowDetailContent", elShowDetailContent);
+        // console.log("elShowDetailContent height", elShowDetailContent);
+        // const elEpisodesList = document.getElementById("EpisodesList")
+        // console.log("elEpisodesList", elEpisodesList);
+        // console.log("contentRef height", contentRef.value.$el.offsetHeight);
+        // elEpisodesList!.style.height = `${episodesListHeight}px`
+        // console.log("finished ShowDetail onSeasonsMounted");
         // scrollToBottom(2000)
+        console.log("*****finished ShowDetail onSeasonsMounted");
     };
+
+    watch(contentRef, (newContentRef, oldContentRef) => {
+        console.log(`in watch contentRef`)
+        console.log("oldContentRef", oldContentRef)
+        console.log("newContentRef", newContentRef)
+        console.log("contentRef height", contentRef.value.$el.offsetHeight);
+    })
 
     const onScrolling = (event: any) => {
         //console.log("logScrolling : When Scrolling", event);
@@ -150,8 +191,8 @@
 </script>
 
 <template>
-    <ion-page>
-        <ion-header :translucent="true">
+    <ion-page id="ShowDetailPage">
+        <ion-header id="ShowDetailHeader" :translucent="true">
             <ion-toolbar mode="ios">
                 <ion-buttons slot="start">
                     <ion-button v-show="isDisplayBackButton" @click="router.back()">
@@ -173,7 +214,7 @@
             </ion-toolbar>
         </ion-header>
 
-        <ion-content ref="contentRef" scrollEvents="true" @ionScrollEnd="onScrollEnd($event)" style="--overflow: hidden">
+        <ion-content id="ShowDetailContent" ref="contentRef" scrollEvents="true" @ionScrollEnd="onScrollEnd($event)" style="--overflow: hidden">
             <div slot="fixed" style="height: 40px; width: 100%">
                 <ion-segment mode="ios" @ionChange="onSegmentChanged($event)" v-model="selectedSegment" ref="segmentRef" style="border-radius: 0; background: #e7e1e1">
                     <ion-segment-button v-for="(segment, index) in segments" :value="segment">

@@ -114,7 +114,7 @@
 
 <template>
     <div id="ShowEpisodesContainer" style="width: 100%; height: 100%; margin-top: 32px" ref="episodesContainerRef">
-        <ion-list id="EpisodesList" v-show="isDataLoaded" ref="seasonsListRef" style="padding-top: 0; overflow: auto; height: 578px;">
+        <ion-list id="EpisodesList" v-show="isDataLoaded" ref="seasonsListRef" style="padding-top: 0; overflow: auto;">
             <div v-for="(seasonContext, seasonIndex) in selectedShowContext.seasonContexts">
                 <div style="overflow: unset">
                     <ion-item-divider class="sticky" @click="toggleDisplaySeason(seasonContext)">

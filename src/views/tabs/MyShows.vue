@@ -133,7 +133,7 @@
 </script>
 
 <template>
-    <ion-page ref="pageRef">
+    <ion-page id="MyShowsPage" ref="pageRef">
         <ion-header :translucent="true" ref="headerRef">
             <ion-toolbar mode="ios">
                 <ion-buttons slot="start">
