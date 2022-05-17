@@ -140,19 +140,86 @@
         // const listOffset = elShowEpisodesContainer!.offsetTop - elEpisodesList!.offsetTop
         // console.log("episodesListOffset=", listOffset);
         // console.log("contentRef height", contentRef.value.$el.offsetHeight);
-        document.getElementById("EpisodesList")!.scrollTop = 0
+        
+        //document.getElementById("EpisodesList")!.scrollTop = 0
+        scrollTop(document.getElementById("EpisodesList"),1500)
         // const firstEpisode =  document.getElementsByClassName("first-episode")[0]
         // firstEpisode.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
         
     };
 
+    function scrollTop (scrollingElement, duration) {
+        // cancel if already on top
+        if (scrollingElement.scrollTop === 0) return;
+
+        const totalScrollDistance = scrollingElement.scrollTop;
+        let scrollY = totalScrollDistance, oldTimestamp = null;
+
+        function step (newTimestamp) {
+            if (oldTimestamp !== null) {
+                // if duration is 0 scrollY will be -Infinity
+                scrollY -= totalScrollDistance * (newTimestamp - oldTimestamp) / duration;
+                if (scrollY <= 0) return scrollingElement.scrollTop = 0;
+                scrollingElement.scrollTop = scrollY;
+            }
+            oldTimestamp = newTimestamp;
+            window.requestAnimationFrame(step);
+        }
+        window.requestAnimationFrame(step);
+    }
+
+    function scrollBottom (scrollingElement, duration) {
+        // cancel if already on top
+        if (scrollingElement.scrollTop === scrollingElement.offsetHeight) return;
+
+        const totalScrollDistance = scrollingElement.scrollHeight - scrollingElement.offsetHeight  - scrollingElement.scrollTop;
+        let scrollY = scrollingElement.scrollTop
+        let oldTimestamp = null;
+
+        console.log("-------------------------");
+        console.log("initial scrollingElement.offsetHeight", scrollingElement.offsetHeight);
+        console.log("initial scrollingElement.scrollHeight", scrollingElement.scrollHeight);
+        console.log("initial scrollingElement.scrollTop", scrollingElement.scrollTop);
+        console.log("initial totalScrollDistance", totalScrollDistance);
+        console.log("initial scrollY", scrollY);
+        console.log("-------------------------");
+        
+        let totalScrolledDistance = 0
+        function step (newTimestamp) {
+            if (oldTimestamp !== null) {
+                console.log("***********************");
+                const currentScrollIncrement = totalScrollDistance * (newTimestamp - oldTimestamp) / duration; 
+                console.log ("in step currentScrollIncrement", currentScrollIncrement);
+                scrollY += currentScrollIncrement
+                totalScrolledDistance += currentScrollIncrement
+                console.log("in step scrollY", scrollY);
+                if (totalScrolledDistance >= totalScrollDistance){
+                    scrollingElement.scrollTop = scrollingElement.scrollHeight;
+                    console.log("on exit scrollingElement.scrollTop", scrollingElement.scrollTop);
+                    return
+                }
+                scrollingElement.scrollTop = scrollY;
+                console.log("scrollingElement.scrollTop", scrollingElement.scrollTop);
+            }
+            oldTimestamp = newTimestamp;
+            window.requestAnimationFrame(step);
+        }
+        window.requestAnimationFrame(step);
+    }
+
     const scrollToBottom = (duration?: number) => {
         // duration = typeof duration == "number" ? duration : 0;
         // contentRef.value.$el.scrollToBottom(duration);
-        const elEpisodesList = document.getElementById("EpisodesList")
-        // elEpisodesList!.scrollTop = elEpisodesList!.scrollHeight;
-        const lastEpisode = document.getElementsByClassName("last-episode")[0]
-        lastEpisode.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
+        
+        // const elEpisodesList = document.getElementById("EpisodesList")
+        // console.log("before elEpisodesList!.scrollTop", elEpisodesList!.scrollTop);
+        // console.log("elEpisodesList!.scrollHeight", elEpisodesList!.scrollHeight);
+        //  elEpisodesList!.scrollTop = elEpisodesList!.offsetHeight;
+        // console.log("after elEpisodesList!.scrollTop", elEpisodesList!.scrollTop);
+        
+        //const lastEpisode = document.getElementsByClassName("last-episode")[0]
+        //lastEpisode.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
+        scrollBottom(document.getElementById("EpisodesList"),1500)
     };
 
     const scrollToPoint = (x?: number, y?: number, duration?: number) => {
