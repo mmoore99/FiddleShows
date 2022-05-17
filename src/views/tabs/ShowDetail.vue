@@ -60,28 +60,35 @@
         console.log("*****in ShowDetail onMounted");
         console.log("contentRef", contentRef);
         console.log("contentRef height", contentRef.value.$el.offsetHeight);
-        await setListHeight()
-        
-        
+        await setEpisodeListHeight()
+        scrollToBottom()
         console.log("*****finished ShowDetail onMounted");
     });
 
-    const setListHeight = async () => {
+    const setEpisodeListHeight = async () => {
+        // the following "sleep" statement is required to allow the height for the header & content to be established
+        // without the delay the header and content height are 0
+        // tried using await NextTick(), but it did not work
         await new Promise(r => setTimeout(r, 0));
-
-        const elShowDetailPage = document.getElementById("ShowDetailPage") as HTMLElement
-        const elShowDetailHeader = document.getElementById("ShowDetailHeader") as HTMLElement
+        
+        // const elShowDetailPage = document.getElementById("ShowDetailPage") as HTMLElement
+        // const elShowDetailHeader = document.getElementById("ShowDetailHeader") as HTMLElement
         const elShowEpisodesContainer = document.getElementById("ShowEpisodesContainer") as Element
+        // const elShowDetailContent = document.getElementById("ShowDetailContent") as HTMLElement
         const elEpisodesList = document.getElementById("EpisodesList")
 
-        const showDetailPageHeight = elShowDetailPage.offsetHeight
-        const showDetailHeaderHeight = elShowDetailHeader.offsetHeight
+        // const showDetailPageHeight = elShowDetailPage.offsetHeight
+        // const showDetailHeaderHeight = elShowDetailHeader.offsetHeight
+        // const showDetailContentHeight = elShowDetailContent.offsetHeight
         const showEpisodesContainerMargin = parseInt(window.getComputedStyle(elShowEpisodesContainer).marginTop.replace("px", ""))
-        const episodesListHeight = showDetailPageHeight - showDetailHeaderHeight - showEpisodesContainerMargin
+        // const episodesListHeight = showDetailPageHeight - showDetailHeaderHeight - showEpisodesContainerMargin
+        const episodesListHeight = contentRef.value.$el.offsetHeight  - showEpisodesContainerMargin
         elEpisodesList!.style.height = `${episodesListHeight}px`
 
-        console.log("showDetailPageHeight =", showDetailPageHeight);
-        console.log("showDetailHeaderHeight =", showDetailHeaderHeight);
+        console.log("contentRef height", contentRef.value.$el.offsetHeight);
+        // console.log("showDetailPageHeight =", showDetailPageHeight);
+        // console.log("showDetailHeaderHeight =", showDetailHeaderHeight);
+        // console.log("showDetailContentHeight =", showDetailContentHeight);
         console.log("showEpisodesContainerMargin =", showEpisodesContainerMargin);
         console.log("episodesListHeight", episodesListHeight);
     };
@@ -126,19 +133,26 @@
     const scrollToTop = (duration?: number) => {
         // duration = typeof duration == "number" ? duration : 0;
         // contentRef.value.$el.scrollToTop(duration);
-        const elShowEpisodesContainer = document.getElementById("ShowEpisodesContainer")
-        console.log("elShowEpisodesContainer", elShowEpisodesContainer);
-        const elEpisodesList = document.getElementById("EpisodesList")
-        console.log("elEpisodesList", elEpisodesList);
-        const listOffset = elShowEpisodesContainer!.offsetTop - elEpisodesList!.offsetTop
-        console.log("episodesListOffset=", listOffset);
-        console.log("contentRef height", contentRef.value.$el.offsetHeight);
-        logHeights()
+        // const elShowEpisodesContainer = document.getElementById("ShowEpisodesContainer")
+        // console.log("elShowEpisodesContainer", elShowEpisodesContainer);
+        // const elEpisodesList = document.getElementById("EpisodesList")
+        // console.log("elEpisodesList", elEpisodesList);
+        // const listOffset = elShowEpisodesContainer!.offsetTop - elEpisodesList!.offsetTop
+        // console.log("episodesListOffset=", listOffset);
+        // console.log("contentRef height", contentRef.value.$el.offsetHeight);
+        document.getElementById("EpisodesList")!.scrollTop = 0
+        // const firstEpisode =  document.getElementsByClassName("first-episode")[0]
+        // firstEpisode.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+        
     };
 
     const scrollToBottom = (duration?: number) => {
-        duration = typeof duration == "number" ? duration : 0;
-        contentRef.value.$el.scrollToBottom(duration);
+        // duration = typeof duration == "number" ? duration : 0;
+        // contentRef.value.$el.scrollToBottom(duration);
+        const elEpisodesList = document.getElementById("EpisodesList")
+        // elEpisodesList!.scrollTop = elEpisodesList!.scrollHeight;
+        const lastEpisode = document.getElementsByClassName("last-episode")[0]
+        lastEpisode.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
     };
 
     const scrollToPoint = (x?: number, y?: number, duration?: number) => {
@@ -159,20 +173,8 @@
     };
 
     const onSeasonsMounted = () => {
-        nextTick()
         console.log("*****in ShowDetail onSeasonsMounted");
         
-        
-        // console.log("elShowEpisodesContainer", elShowEpisodesContainer);
-        // const elShowDetailContent = document.getElementById("ShowDetailContent") as Element
-        // console.log("elShowDetailContent", elShowDetailContent);
-        // console.log("elShowDetailContent height", elShowDetailContent);
-        // const elEpisodesList = document.getElementById("EpisodesList")
-        // console.log("elEpisodesList", elEpisodesList);
-        // console.log("contentRef height", contentRef.value.$el.offsetHeight);
-        // elEpisodesList!.style.height = `${episodesListHeight}px`
-        // console.log("finished ShowDetail onSeasonsMounted");
-        // scrollToBottom(2000)
         console.log("*****finished ShowDetail onSeasonsMounted");
     };
 

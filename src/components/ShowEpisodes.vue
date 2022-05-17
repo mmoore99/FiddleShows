@@ -84,6 +84,15 @@
             
     };
 
+    const isFirstEpisode = (seasonIndex, episodeIndex) => {
+        return seasonIndex === 0 && episodeIndex === 0
+    };
+
+    const isLastEpisode = (seasonIndex, episodeIndex) => {
+        return seasonIndex === props.selectedShowContext.seasonContexts.length - 1
+            && episodeIndex === props.selectedShowContext.seasonContexts[seasonIndex].episodeContexts.length - 1
+    };
+
     const formattedAiredDate = (episodeContext: EpisodeContext) => {
         return episodeContext.formattedAiredDate();
         // console.log("formattedAiredDate:episode", episodeContext.episode);
@@ -126,7 +135,7 @@
                     </ion-item-divider>
                     <div v-show="isDisplayEpisodes(selectedShowContext, seasonIndex)">
                         
-                        <ion-item v-for="(episodeContext, episodeIndex) in seasonContext.episodeContexts" >
+                        <ion-item v-for="(episodeContext, episodeIndex, episodeContexts) in seasonContext.episodeContexts" :class="{ 'first-episode': isFirstEpisode(seasonIndex, episodeIndex), 'last-episode': isLastEpisode(seasonIndex,episodeIndex) }">
                             <ion-label @click="">
                                 <h3 style="font-size: 15px; font-weight: 600" v-if="seasonContext.season && episodeContext.episode">
                                     {{
