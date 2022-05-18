@@ -66,29 +66,24 @@
     });
 
     const setEpisodeListHeight = async () => {
-        // the following "sleep" statement is required to allow the height for the header & content to be established
-        // without the delay the header and content height are 0
+        // the following "delay loop" is required to allow the height for the content to be established
+        // without the delay the content height is 0
         // tried using await NextTick(), but it did not work
-        await new Promise(r => setTimeout(r, 100));
-        
-        // const elShowDetailPage = document.getElementById("ShowDetailPage") as HTMLElement
-        // const elShowDetailHeader = document.getElementById("ShowDetailHeader") as HTMLElement
-        const elShowEpisodesContainer = document.getElementById("ShowEpisodesContainer") as Element
-        // const elShowDetailContent = document.getElementById("ShowDetailContent") as HTMLElement
-        const elEpisodesList = document.getElementById("EpisodesList")
 
-        // const showDetailPageHeight = elShowDetailPage.offsetHeight
-        // const showDetailHeaderHeight = elShowDetailHeader.offsetHeight
-        // const showDetailContentHeight = elShowDetailContent.offsetHeight
+        let delayCount = 0
+        while (contentRef.value.$el.offsetHeight === 0) {
+            await new Promise(r => setTimeout(r, 10));
+            delayCount++
+        }
+        console.log("delayCount", delayCount);
+
+        const elShowEpisodesContainer = document.getElementById("ShowEpisodesContainer") as Element
+        const elEpisodesList = document.getElementById("EpisodesList")
         const showEpisodesContainerMargin = parseInt(window.getComputedStyle(elShowEpisodesContainer).marginTop.replace("px", ""))
-        // const episodesListHeight = showDetailPageHeight - showDetailHeaderHeight - showEpisodesContainerMargin
         const episodesListHeight = contentRef.value.$el.offsetHeight  - showEpisodesContainerMargin
         elEpisodesList!.style.height = `${episodesListHeight}px`
 
         console.log("contentRef height", contentRef.value.$el.offsetHeight);
-        // console.log("showDetailPageHeight =", showDetailPageHeight);
-        // console.log("showDetailHeaderHeight =", showDetailHeaderHeight);
-        // console.log("showDetailContentHeight =", showDetailContentHeight);
         console.log("showEpisodesContainerMargin =", showEpisodesContainerMargin);
         console.log("episodesListHeight", episodesListHeight);
     };
