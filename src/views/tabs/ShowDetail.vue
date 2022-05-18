@@ -144,7 +144,6 @@
     };
 
     function scrollTop (scrollingElement, duration) {
-        // cancel if already on top
         if (scrollingElement.scrollTop === 0) return;
 
         const totalScrollDistance = scrollingElement.scrollTop;
@@ -152,7 +151,6 @@
 
         function step (newTimestamp) {
             if (oldTimestamp !== null) {
-                // if duration is 0 scrollY will be -Infinity
                 scrollY -= totalScrollDistance * (newTimestamp - oldTimestamp) / duration;
                 if (scrollY <= 0) return scrollingElement.scrollTop = 0;
                 scrollingElement.scrollTop = scrollY;
@@ -164,37 +162,36 @@
     }
 
     function scrollBottom (scrollingElement, duration) {
-        // cancel if already on top
         if (scrollingElement.scrollTop === scrollingElement.offsetHeight) return;
 
         const totalScrollDistance = scrollingElement.scrollHeight - scrollingElement.offsetHeight  - scrollingElement.scrollTop;
         let scrollY = scrollingElement.scrollTop
         let oldTimestamp = null;
 
-        console.log("-------------------------");
-        console.log("initial scrollingElement.offsetHeight", scrollingElement.offsetHeight);
-        console.log("initial scrollingElement.scrollHeight", scrollingElement.scrollHeight);
-        console.log("initial scrollingElement.scrollTop", scrollingElement.scrollTop);
-        console.log("initial totalScrollDistance", totalScrollDistance);
-        console.log("initial scrollY", scrollY);
-        console.log("-------------------------");
+        // console.log("-------------------------");
+        // console.log("initial scrollingElement.offsetHeight", scrollingElement.offsetHeight);
+        // console.log("initial scrollingElement.scrollHeight", scrollingElement.scrollHeight);
+        // console.log("initial scrollingElement.scrollTop", scrollingElement.scrollTop);
+        // console.log("initial totalScrollDistance", totalScrollDistance);
+        // console.log("initial scrollY", scrollY);
+        // console.log("-------------------------");
         
         let totalScrolledDistance = 0
         function step (newTimestamp) {
             if (oldTimestamp !== null) {
-                console.log("***********************");
+                // console.log("***********************");
                 const currentScrollIncrement = totalScrollDistance * (newTimestamp - oldTimestamp) / duration; 
-                console.log ("in step currentScrollIncrement", currentScrollIncrement);
+                //console.log ("in step currentScrollIncrement", currentScrollIncrement);
                 scrollY += currentScrollIncrement
                 totalScrolledDistance += currentScrollIncrement
-                console.log("in step scrollY", scrollY);
+                //console.log("in step scrollY", scrollY);
                 if (totalScrolledDistance >= totalScrollDistance){
                     scrollingElement.scrollTop = scrollingElement.scrollHeight;
-                    console.log("on exit scrollingElement.scrollTop", scrollingElement.scrollTop);
+                    //console.log("on exit scrollingElement.scrollTop", scrollingElement.scrollTop);
                     return
                 }
                 scrollingElement.scrollTop = scrollY;
-                console.log("scrollingElement.scrollTop", scrollingElement.scrollTop);
+                //console.log("scrollingElement.scrollTop", scrollingElement.scrollTop);
             }
             oldTimestamp = newTimestamp;
             window.requestAnimationFrame(step);
