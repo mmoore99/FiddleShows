@@ -69,7 +69,7 @@
         // the following "sleep" statement is required to allow the height for the header & content to be established
         // without the delay the header and content height are 0
         // tried using await NextTick(), but it did not work
-        await new Promise(r => setTimeout(r, 0));
+        await new Promise(r => setTimeout(r, 100));
         
         // const elShowDetailPage = document.getElementById("ShowDetailPage") as HTMLElement
         // const elShowDetailHeader = document.getElementById("ShowDetailHeader") as HTMLElement
