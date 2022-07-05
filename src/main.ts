@@ -37,7 +37,10 @@ import {
 const PROXY_URL = "https://fierce-castle-85156.herokuapp.com/";
 const CLIENT_ID = "f3939aa847cf9df9eb698298ec01c499bd0b8b0d76c0a1920a6e4c04e3130c39";
 const CLIENT_SECRET = "8c1902d0284fad4ff6b052f0fdbfd50be1075088ba5d6f33b218734067568148";
-const ACCESS_TOKEN = "908366de1b222a5cabfda200e6e829633a7c51234ce655d18674b3de5d7e8f4c";
+const ACCESS_TOKEN = "e7d4a0d644057d9ec5be73917921634dccbfb70babce8df8737fc84d99afd439";
+const REFRESH_TOKEN = "d414537085afbea945daa958f4e196548668ddc4554fe09a05c86d19d160841c"
+const CREATED_AT = 1657050548;
+const EXPIRES_IN = 7889238;
 
 const pinia = createPinia();
 
